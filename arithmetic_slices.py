@@ -7,25 +7,31 @@ from typing import *
 
 class Solution:
     def numberOfArithmeticSlices(self, A: List[int]) -> int:
+        # This is an O(N) solution.
         soln = 0
-        # Start point of sequence can must be such that there are 2 remaining
-        # elements in the array.
-        for start_index, start_value in enumerate(A[:-2]):
-            # Find the difference between the start value and the next value
-            # in the array.
-            delta = A[start_index + 1] - start_value
-            # Count the number of sequences of length greater than three
-            # that start at start_index that have a common difference of
-            # delta.
-            for a, b in zip(A[start_index + 1:-1], A[start_index + 2:]):
-                if b - a == delta:
-                    # If the difference remains delta, then this is an 
-                    # arithemetic sequence starting at start_index and
-                    # ending where b is.
-                    soln += 1
+        if len(A) > 2:
+            # Start with the first two items in the list.
+            sequence_length = 2
+            # Get the delta between them.
+            delta = A[1] - A[0]
+            # For every position in the list.
+            for end_index, end_value in enumerate(A[2:], start=2):
+                if A[end_index] - A[end_index - 1] == delta:
+                    # If the difference between this position and previous is
+                    # still delta, then increment the length of the current
+                    # sequence by one.
+                    sequence_length += 1
+                    # Then add the number of sequences longer than three items
+                    # that end here to the solution.  (That is length - 2).
+                    if sequence_length >= 3:
+                        soln += (sequence_length - 2)
                 else:
-                    # If the difference is not delta, stop.
-                    break
+                    # If the difference is not the same, then we must start a
+                    # new sequence beginning with A[end_index - 1] and
+                    # A[end_index].
+                    delta = A[end_index] - A[end_index - 1]
+                    sequence_length = 2
+
         return soln
 
 
@@ -41,3 +47,6 @@ def test_3():
 
 def test_4():
     assert Solution().numberOfArithmeticSlices([4, 3, 2, 1]) == 3
+
+def test_5():
+    assert Solution().numberOfArithmeticSlices([]) == 0
