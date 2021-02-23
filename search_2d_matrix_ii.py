@@ -3,16 +3,20 @@ LeetCode :: Search a 2D Matrix II
 jramaswami
 """
 from typing import *
-from bisect import bisect_left
 
 class Solution:
     def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
-        for row in matrix:
-            if row[0] <= target <= row[-1]:
-                i = bisect_left(row, target)
-                if i < len(row) and row[i] == target:
-                    return True
+        r = 0
+        c = len(matrix[0]) - 1
+        while r < len(matrix) and c >= 0:
+            if matrix[r][c] == target:
+                return True
+            elif matrix[r][c] < target:
+                r += 1
+            elif matrix[r][c] > target:
+                c -= 1
         return False
+
 
 def test_1():
     matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]]
