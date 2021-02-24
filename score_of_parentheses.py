@@ -2,20 +2,23 @@
 LeetCode :: Score of Parentheses
 jramaswami
 """
-def solve0(index, S):
-    """Recursive solution."""
-    if index >= len(S):
-        return 0 
-
-    if S[index] == '(' and S[index + 1] == ')':
-        return 1 + solve0(index + 2, S)
-    else:
-        return 2 * solve0(index + 1, S)
-
-
 class Solution:
     def scoreOfParentheses(self, S: str) -> int:
-        return solve0(0, S)
+        score = 0
+        mult = 1
+        i = 0
+        while i < len(S):
+            if S[i] == ')':
+                mult //= 2
+                i += 1
+            elif S[i] == '(' and S[i+1] == ')':
+                score += (mult * 1)
+                i += 2
+            elif S[i] == '(':
+                mult *= 2
+                i += 1
+
+        return score
 
 
 
