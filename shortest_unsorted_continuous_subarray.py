@@ -8,17 +8,35 @@ from math import inf
 
 class Solution:
     def findUnsortedSubarray(self, nums: List[int]) -> int:
-        nums0 = sorted(nums)
-        left = inf
+        left = None
         right = -inf
-        for i, (a, b) in enumerate(zip(nums, nums0)):
-            if a != b:
-                left = min(left, i)
+        curr_max = nums[0]
+        curr_max_index = 0
+        for i, n in enumerate(nums[1:], start = 1):
+            # Find the first inversion.  
+            if left is None and nums[i-1] > nums[i]:
+                # This is the first inversion that has been seen.  This means
+                # that the curr max should be the maximum number to the left of
+                # the inversion.  Where is the first place that we saw this
+                # current max? We have to go all the way back to that spot.
+                left = curr_max_index
+
+            # Keep track of the current max to the left and the first index
+            # where it occurs.
+            if n > curr_max:
+                curr_max = n
+                curr_max_index = i
+
+            # Keep track of the right most item that is less than an element to
+            # its left.
+            if n < curr_max:
                 right = max(right, i)
-        
-        if left == inf:
+
+        # If left is still None, then there was no inversion.
+        if left is None:
             return 0
-        return right - left + 1
+        # Otherwise, you will have to sort A[left:right] inclusive (so add 1).
+        return 1 + right - left
 
 
 def test_1():
@@ -47,4 +65,8 @@ def test_6():
 
 def test_7():
     nums = [2,3,3,2,4]
+    assert Solution().findUnsortedSubarray(nums) == 3
+
+def test_8():
+    nums = [1,2,4,5,3]
     assert Solution().findUnsortedSubarray(nums) == 3
