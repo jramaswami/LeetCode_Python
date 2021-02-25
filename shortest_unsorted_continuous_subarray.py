@@ -10,12 +10,16 @@ class Solution:
     def findUnsortedSubarray(self, nums: List[int]) -> int:
         left = inf
         right = -inf
+        curr_max = -inf
         for i, n in enumerate(nums[1:], start = 1):
             # Find an inversion.  
             if nums[i-1] > nums[i]:
                 # Keep track of the leftmost start of an inversion.
                 left = min(left, i-1)
-                # Keep track of the right most start of an inversion.
+            # Keep track of the right most item that is less than the max
+            # to the left.
+            curr_max = max(curr_max, n)
+            if n < curr_max:
                 right = max(right, i)
         # If left is still inf, then there was no inversion.
         if left == inf:
@@ -43,3 +47,8 @@ def test_4():
 def test_5():
     nums = [1,3,2,2,2]
     assert Solution().findUnsortedSubarray(nums) == 4
+
+def test_6():
+    nums = [2,1]
+    assert Solution().findUnsortedSubarray(nums) == 2
+
