@@ -8,26 +8,17 @@ from math import inf
 
 class Solution:
     def findUnsortedSubarray(self, nums: List[int]) -> int:
+        nums0 = sorted(nums)
         left = inf
         right = -inf
-        curr_max = nums[0]
-        for i, n in enumerate(nums[1:], start = 1):
-            # Find an inversion.  
-            if nums[i-1] > nums[i]:
-                # Keep track of the leftmost start of an inversion.
-                left = min(left, i-1)
-            # Keep track of the right most item that is less than the max
-            # to the left.
-            curr_max = max(curr_max, n)
-            print(i, n, curr_max, 'l', left, 'r', right)
-            if n < curr_max:
+        for i, (a, b) in enumerate(zip(nums, nums0)):
+            if a != b:
+                left = min(left, i)
                 right = max(right, i)
-        print(left, right)
-        # If left is still inf, then there was no inversion.
+        
         if left == inf:
             return 0
-        # Otherwise, you will have to sort A[left:right] inclusive (so add 1).
-        return 1 + right - left
+        return right - left + 1
 
 
 def test_1():
