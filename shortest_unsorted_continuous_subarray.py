@@ -10,7 +10,7 @@ class Solution:
     def findUnsortedSubarray(self, nums: List[int]) -> int:
         left = inf
         right = -inf
-        curr_max = -inf
+        curr_max = nums[0]
         for i, n in enumerate(nums[1:], start = 1):
             # Find an inversion.  
             if nums[i-1] > nums[i]:
@@ -52,3 +52,6 @@ def test_6():
     nums = [2,1]
     assert Solution().findUnsortedSubarray(nums) == 2
 
+def test_7():
+    nums = [2,3,3,2,4]
+    assert Solution().findUnsortedSubarray(nums) == 3
