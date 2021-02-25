@@ -19,8 +19,10 @@ class Solution:
             # Keep track of the right most item that is less than the max
             # to the left.
             curr_max = max(curr_max, n)
+            print(i, n, curr_max, 'l', left, 'r', right)
             if n < curr_max:
                 right = max(right, i)
+        print(left, right)
         # If left is still inf, then there was no inversion.
         if left == inf:
             return 0
