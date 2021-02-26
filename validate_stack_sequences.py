@@ -8,15 +8,15 @@ from collections import deque
 
 class Solution:
     def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool:
-        push_p = len(pushed) - 1
+        pop_p = 0
         stack = []
-        for p in popped:
+        for p in pushed:
             stack.append(p)
-            while stack and push_p >= 0 and stack[-1] == pushed[push_p]:
+            while stack and pop_p < len(popped) and stack[-1] == popped[pop_p]:
                 stack.pop()
-                push_p -= 1
+                pop_p += 1
 
-        return not stack and push_p == -1
+        return not stack and pop_p == len(popped)
 
 
 def test_1():
