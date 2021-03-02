@@ -14,19 +14,18 @@ def solve0(node):
     left_valid, left_min, left_max = solve0(node.left)
     right_valid, right_min, right_max = solve0(node.right)
 
-    # Correct for Nones
-    if left_min is None:
-        left_min = node.val
-        left_max = node.val
-
-    if right_min is None:
-        right_min = node.val
-        right_max = node.val
+    node_valid = left_valid and right_valid
+    node_min = node.val
+    node_max = node.val
+    if left_max is not None:
+        node_valid = node_valid and node.val > left_max
+        node_min = min(node.val, left_min)
+        node_max = max(node.val, left_max)
+    if right_min is not None:
+        node_valid = node_valid and node.val < right_min
+        node_min = min(node.val, right_min)
+        node_max = max(node.val, right_max)
     
-    node_valid = left_valid and right_valid and node.val >= left_max and node.val <= right_min
-    node_min = min(left_min, node.val, right_min)
-    node_max = max(left_max, node.val, right_max)
-
     return (node_valid, node_min, node_max)
 
 
@@ -58,3 +57,8 @@ def test_2():
 def test_3():
     root = make_tree([1,1])
     assert Solution().isValidBST(root) == False
+
+def test_4():
+    root = make_tree([5,4,6,null,null,3,7])
+    assert Solution().isValidBST(root) == False
+
