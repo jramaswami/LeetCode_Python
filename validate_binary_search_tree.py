@@ -2,31 +2,23 @@
 LeetCode :: Validate Binary Search Tree
 jramaswami
 """
-from typing import *
 from leetcode_bst import *
+from typing import *
+from math import inf
 
 
-def solve0(node):
-    # Return if subtree is valid and the min and maxes from the subtree.
+def solve0(node, less_than, more_than):
     if node is None:
-        return (True, None, None)
+        return True
 
-    left_valid, left_min, left_max = solve0(node.left)
-    right_valid, right_min, right_max = solve0(node.right)
+    if less_than <= node.val:
+        return False
 
-    node_valid = left_valid and right_valid
-    node_min = node.val
-    node_max = node.val
-    if left_min is not None:
-        node_valid = node_valid and node.val > left_max
-        node_min = min(node_min, left_min)
-        node_max = max(node_max, left_max)
-    if right_max is not None:
-        node_valid = node_valid and node.val < right_min
-        node_min = min(node_min, right_min)
-        node_max = max(node_max, right_max)
-    
-    return (node_valid, node_min, node_max)
+    if more_than >= node.val:
+        return False
+
+    return (solve0(node.left, node.val, more_than) and
+            solve0(node.right, less_than, node.val))
 
 
 class Solution:
@@ -34,7 +26,7 @@ class Solution:
         # Invariant in binary search tree is that for a given node,
         # it is larger than all items in its left subtree and less than
         # all the items in its right subtree.
-        return solve0(root)[0]
+        return solve0(root, inf, -inf)
 
 
 # Definition for a binary tree node.
