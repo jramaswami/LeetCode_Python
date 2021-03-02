@@ -17,14 +17,14 @@ def solve0(node):
     node_valid = left_valid and right_valid
     node_min = node.val
     node_max = node.val
-    if left_max is not None:
+    if left_min is not None:
         node_valid = node_valid and node.val > left_max
-        node_min = min(node.val, left_min)
-        node_max = max(node.val, left_max)
-    if right_min is not None:
+        node_min = min(node_min, left_min)
+        node_max = max(node_max, left_max)
+    if right_max is not None:
         node_valid = node_valid and node.val < right_min
-        node_min = min(node.val, right_min)
-        node_max = max(node.val, right_max)
+        node_min = min(node_min, right_min)
+        node_max = max(node_max, right_max)
     
     return (node_valid, node_min, node_max)
 
