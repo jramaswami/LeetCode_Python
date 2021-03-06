@@ -7,12 +7,12 @@ from typing import *
 
 class Solution:
     def minimumLengthEncoding(self, words: List[str]) -> int:
-        words0 = sorted(words, key=len, reverse=True)
         encoding = []
-        for wd in words0:
+        for wd in words:
+            wd_len = len(wd)
             encode_this = True
             for enc in encoding:
-                if enc.count(wd):
+                if enc[-len(wd):] == wd:
                     encode_this = False
                     break
             if encode_this:
@@ -32,3 +32,7 @@ def test_2():
 def test_3():
     words = ["feipyxx", "e"]
     assert Solution().minimumLengthEncoding(words) == 10
+
+def test_4():
+    words = ["me", "time"]
+    assert Solution().minimumLengthEncoding(words) == 5
