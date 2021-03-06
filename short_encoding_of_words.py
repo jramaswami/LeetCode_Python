@@ -7,8 +7,9 @@ from typing import *
 
 class Solution:
     def minimumLengthEncoding(self, words: List[str]) -> int:
+        words0 = sorted(words, key=len, reverse=True)
         encoding = []
-        for wd in words:
+        for wd in words0:
             wd_len = len(wd)
             encode_this = True
             for enc in encoding:
