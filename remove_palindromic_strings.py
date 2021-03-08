@@ -11,25 +11,18 @@ a single letter are palindromes.
     all letters in a single operation.
 
 (2) The string contains only 'a' or only 'b'.  We can remove all characters
-    in a single operation.
+    in a single operation.  This would also be a palindrome already.
 
 (3) The string is empty.  This requires zero operations.
 """
-from collections import Counter
-
-
 class Solution:
     def removePalindromeSub(self, s: str) -> int:
         if s:
-            ctr = Counter(s)
-            if 'a' in ctr and 'b' in ctr:
-                if s == s[::-1]:
-                    # Contains a and b but is already a palindrome.
-                    return 1
-                # Contains a and b and is not already a palindrome.
-                return 2
-            # Contains only a single letter.
-            return 1
+            if s == s[::-1]:
+                # Is already a palindrome.
+                return 1
+            # Contains a and b and is not already a palindrome.
+            return 2
         # Empty string.
         return 0
 
