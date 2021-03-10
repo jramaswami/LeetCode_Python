@@ -4,60 +4,17 @@ jramaswami
 """
 class Solution:
     def intToRoman(self, num: int) -> str:
-        romans = []
-        while num >= 1000:
-            romans.append("M")
-            num -= 1000
-        
-        while num >= 500:
-            if num >= 900:
-                romans.append("CM")
-                num -= 900
-            else:
-                romans.append("D")
-                num -= 500
-
-        while num >= 100:
-            if num >= 400:
-                romans.append("CD")
-                num -= 400
-            else:
-                romans.append("C")
-                num -= 100
-
-        while num >= 50:
-            if num >= 90:
-                romans.append("XC")
-                num -= 90
-            else:
-                romans.append("L")
-                num -= 50
-
-        while num >= 10:
-            if num >= 40:
-                romans.append("XL")
-                num -= 40
-            else:
-                romans.append("X")
-                num -= 10
-
-        while num >= 5:
-            if num >= 9:
-                romans.append("IX")
-                num -= 9
-            else:
-                romans.append("V")
-                num -= 5
-
+        numbers = [1,   4,    5,   9,   10,  40,   50,  90,   100, 400,  500, 900,  1000]
+        romans = ["I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"]
+        soln = []
         while num > 0:
-            if num >= 4:
-                romans.append("IV")
-                num -= 4
+            if num >= numbers[-1]:
+                num -= numbers[-1]
+                soln.append(romans[-1])
             else:
-                romans.append("I")
-                num -= 1
-
-        return "".join(romans)
+                numbers.pop()
+                romans.pop()
+        return "".join(soln)
 
 
 def test_1():
