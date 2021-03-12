@@ -4,12 +4,27 @@ jramaswami
 """
 class Solution:
     def hasAllCodes(self, s: str, k: int) -> bool:
-        codes = set()
-        for start, _ in enumerate(s):
-            if start + k <= len(s):
-                n = int(s[start:start+k], 2)
-                codes.add(n)
-        return len(codes) == pow(2, k)
+        limit = pow(2, k)
+        has_code = [False for _ in range(limit)]
+        # Initialize number to digit length k - 1
+        n = 0
+        if k > 1:
+            n = int(s[:k-1], 2)
+
+        for end, val in enumerate(s):
+            if end >= k-1:
+                # Shift binary digits one place to the left.
+                n <<= 1
+                # Add the the last digit.
+                n += int(val)
+                # Drop the right most bit, if it is set.
+                n %= limit
+                print(bin(n), end)
+                # Remember this number.
+                has_code[n] = True
+
+        return all(has_code)
+
 
 def test_1():
     assert Solution().hasAllCodes("00110", 2) == True
