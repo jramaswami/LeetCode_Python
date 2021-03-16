@@ -3,25 +3,19 @@ LeetCode :: March 2021 Challenge :: Best Time to Buy and Sell Stock with Transac
 jramaswami
 """
 from typing import *
-from math import inf
+from functools import lru_cache
 
 
 class Solution:
     def maxProfit(self, prices: List[int], fee: int) -> int:
         # With Larry's help!
 
-        not_holding_cache = [-inf for _ in prices]
-        not_holding_is_cached = [False for _ in prices]
-        holding_cache = [-inf for _ in prices]
-        holding_is_cached = [False for _ in prices]
-
+        @lru_cache(maxsize=None)
         def not_holding_stock(day):
             """Function representing a day where you are not holding a stock."""
             if day >= len(prices):
                 return 0
 
-            if not_holding_is_cached[day]:
-                return not_holding_cache[day]
             # If you are not holding a stock then you can buy the stock
             # today.  The profit of doing so will be the profit of holding
             # it tomorrow less the price of buying the stock.
@@ -32,18 +26,13 @@ class Solution:
             do_not_buy_stock = not_holding_stock(day + 1)
 
             best_profit = max(buy_stock, do_not_buy_stock)
-            not_holding_is_cached[day] = True
-            not_holding_cache[day] = best_profit
             return best_profit
 
-
+        @lru_cache(maxsize=None)
         def holding_stock(day):
             """Function representing a day where you are holding a stock."""
             if day >= len(prices):
                 return 0
-
-            if holding_is_cached[day]:
-                return holding_cache[day]
 
             # If you are holding a stock then you can sell the stock.  The
             # profit of this is the profit of not holding a stock tomorrow plus
@@ -53,8 +42,6 @@ class Solution:
             do_not_sell_stock = holding_stock(day + 1)
 
             best_profit = max(sell_stock, do_not_sell_stock)
-            holding_is_cached[day] = True
-            holding_cache[day] = best_profit
             return best_profit
 
 
