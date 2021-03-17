@@ -13,11 +13,10 @@ class Solution:
         self.radius = radius
         self.x_center = x_center
         self.y_center = y_center
-        
 
     def randPoint(self) -> List[float]:
-        r = math.sqrt(random.random() * self.radius)
-        theta = random.random() * 2 * math.pi
-        x = x_center + r * math.cos(theta)
-        y = y_center + r * math.sin(theta)
+        theta = random.uniform(0, 1) * 2 * math.pi
+        r = math.sqrt(random.uniform(0, 1)) * self.radius
+        x = self.x_center + (r * math.cos(theta))
+        y = self.y_center + (r * math.sin(theta))
         return [x, y]
