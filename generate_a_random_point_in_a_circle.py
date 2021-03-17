@@ -16,8 +16,8 @@ class Solution:
         
 
     def randPoint(self) -> List[float]:
-        r = random.random() * self.radius
+        r = math.sqrt(random.random() * self.radius)
         theta = random.random() * 2 * math.pi
-        x = r * math.cos(theta)
-        y = r * math.sin(theta)
+        x = x_center + r * math.cos(theta)
+        y = y_center + r * math.sin(theta)
         return [x, y]
