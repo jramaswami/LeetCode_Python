@@ -6,20 +6,51 @@ from typing import *
 from math import inf
 
 
+INCREASING = 1
+DECREASING = -1
+
+
 class Solution:
     def wiggleMaxLength(self, nums: List[int]) -> int:
-        increasing_dp = [1 for _ in nums]
-        decreasing_dp = [1 for _ in nums]
-        for i, n in enumerate(nums):
-            for j, m in enumerate(nums[i+1:], start=i+1):
-                # If n < m, then m can be increasing from n.
-                if n < m:
-                    increasing_dp[j] = max(increasing_dp[j], 1 + decreasing_dp[i])
-                # If n > m then m can be decreasing from m.
-                if n > m:
-                    decreasing_dp[j] = max(decreasing_dp[j], 1 + increasing_dp[i])
+        # You can start with either increasing or decreasing.
+        return max(linear_solution(nums, INCREASING), linear_solution(nums, DECREASING))
 
-        return max(max(decreasing_dp), max(increasing_dp))
+
+
+def linear_solution(nums, initial_parity):
+    stack = [nums[0]]
+    parity = initial_parity
+
+    for n in nums[1:]:
+        if parity == INCREASING:
+            if n > stack[-1]:
+                stack.append(n)
+                parity = DECREASING
+            else:
+                stack[-1] = min(stack[-1], n)
+        else:
+            if n < stack[-1]:
+                stack.append(n)
+                parity = INCREASING
+            else:
+                stack[-1] = max(stack[-1], n)
+    return len(stack)
+
+
+def dynamic_programming_solution(nums):
+    """Solution using dynamic programming; O(N^2)."""
+    increasing_dp = [1 for _ in nums]
+    decreasing_dp = [1 for _ in nums]
+    for i, n in enumerate(nums):
+        for j, m in enumerate(nums[i+1:], start=i+1):
+            # If n < m, then m can be increasing from n.
+            if n < m:
+                increasing_dp[j] = max(increasing_dp[j], 1 + decreasing_dp[i])
+            # If n > m then m can be decreasing from m.
+            if n > m:
+                decreasing_dp[j] = max(decreasing_dp[j], 1 + increasing_dp[i])
+
+    return max(max(decreasing_dp), max(increasing_dp))
 
 
 
