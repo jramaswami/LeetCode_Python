@@ -3,7 +3,6 @@ LeetCode :: March 2021 Challenge :: Wiggle Subsequence
 jramaswami
 """
 from typing import *
-from math import inf
 
 
 INCREASING = 1
@@ -16,25 +15,28 @@ class Solution:
         return max(linear_solution(nums, INCREASING), linear_solution(nums, DECREASING))
 
 
-
 def linear_solution(nums, initial_parity):
-    stack = [nums[0]]
+    last_number = nums[0]
     parity = initial_parity
+    soln = 1
 
     for n in nums[1:]:
         if parity == INCREASING:
-            if n > stack[-1]:
-                stack.append(n)
+            if n > last_number:
+                last_number = n
+                soln += 1
                 parity = DECREASING
             else:
-                stack[-1] = min(stack[-1], n)
+                last_number = min(last_number, n)
         else:
-            if n < stack[-1]:
-                stack.append(n)
+            if n < last_number:
+                last_number = n
+                soln += 1
                 parity = INCREASING
             else:
-                stack[-1] = max(stack[-1], n)
-    return len(stack)
+                last_number = max(last_number, n)
+
+    return soln
 
 
 def dynamic_programming_solution(nums):
