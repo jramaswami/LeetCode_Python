@@ -25,14 +25,14 @@ class Solution:
                 c = target - (a + b)
                 if c in ctr and c >= b:
                     # Cases
-                    if a == b:
+                    if a == b == c:
+                        t = (nCk(ctr[a], 3)) % MOD
+                        soln = (soln + t) % MOD
+                    elif a == b:
                         t = (nCk(ctr[a], 2) * ctr[c]) % MOD
                         soln = (soln + t) % MOD
                     elif b == c:
                         t = (ctr[a] * nCk(ctr[b], 2)) % MOD
-                        soln = (soln + t) % MOD
-                    elif a == b == c:
-                        t = (nCk(ctr[a], 3)) % MOD
                         soln = (soln + t) % MOD
                     else:
                         t = (ctr[a] * ctr[b] * ctr[c]) % MOD
@@ -54,3 +54,8 @@ def test_3():
     arr = [0,0,0]
     target = 0
     assert Solution().threeSumMulti(arr, target) == 1
+
+def test_4():
+    arr = [2,1,3]
+    target = 6
+    assert Solution().threeSumMulti(arr, target) == 6
