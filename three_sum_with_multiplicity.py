@@ -12,6 +12,8 @@ MOD = pow(10, 9) + 7
 
 def nCk(n, k):
     """Return n choose k."""
+    if n < k:
+        return 0
     return factorial(n) // (factorial(k) * factorial(n - k))
 
 
@@ -58,4 +60,4 @@ def test_3():
 def test_4():
     arr = [2,1,3]
     target = 6
-    assert Solution().threeSumMulti(arr, target) == 6
+    assert Solution().threeSumMulti(arr, target) == 1
