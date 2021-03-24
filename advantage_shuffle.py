@@ -7,29 +7,20 @@ from typing import *
 
 class Solution:
     def advantageCount(self, A: List[int], B: List[int]) -> List[int]:
-        A0 = sorted(A)
-        B0 = sorted((b, i) for i, b in enumerate(B))
-
-        discarded_B = []
-
+        A0 = sorted(A, reverse=True)
+        B0 = sorted([(b, i) for i, b in enumerate(B)], reverse=True)
         soln = [None for _ in A]
-
-        while B0:
-            while B0 and A0[-1] <= B0[-1][0]:
-                discarded_B.append(B0[-1])
-                B0.pop()
-
-            if B0:
-                i = B0[-1][1]
-                soln[i] = A0[-1]
-                B0.pop()
-                A0.pop()
-
-        for a, b in zip(A0, discarded_B):
-            i = b[1]
-            soln[i] = a
-
+        left = 0
+        right = len(A0) - 1
+        for b, i in B0:
+            if A0[left] > b:
+                soln[i] = A0[left]
+                left += 1
+            else:
+                soln[i] = A0[right]
+                right -= 1
         return soln
+
 
 
 def test_1():
