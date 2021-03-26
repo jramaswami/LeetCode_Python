@@ -3,23 +3,26 @@ LeetCode :: March 2021 Challenge :: Word Subsets
 jramaswami
 """
 from typing import *
-from collections import Counter
+from collections import Counter, defaultdict
 
 
 class Solution:
     def wordSubsets(self, A: List[str], B: List[str]) -> List[str]:
-        A_ctrs = [Counter(a) for a in A]
-        A_universal = [True for _ in A]
-
+        universal_ctr = defaultdict(int)
         for b in B:
             ctr_b = Counter(b)
-            for index_a, ctr_a in enumerate(A_ctrs):
-                for char_b, freq_b in ctr_b.items():
-                    if char_b not in ctr_a or freq_b > ctr_a[char_b]:
-                        A_universal[index_a] = False
-                        break
+            for char, freq in ctr_b.items():
+                universal_ctr[char] = max(universal_ctr[char], freq)
 
-        return [A[i] for i, t in enumerate(A_universal) if t]
+        soln = [True for _ in A]
+        for i, a in enumerate(A):
+            ctr_a = Counter(a)
+            for char, freq in universal_ctr.items():
+                if char not in ctr_a or freq > ctr_a[char]:
+                    soln[i] = False
+                    break
+
+        return [A[i] for i, t in enumerate(soln) if t]
 
 
 
