@@ -3,8 +3,6 @@ LeetCode :: March 2021 Challenge :: Palindromic Substrings
 jramaswami
 """
 from functools import lru_cache
-import sys
-sys.setrecursionlimit(1000000000)
 
 
 @lru_cache(maxsize=None)
@@ -24,8 +22,11 @@ def is_palindromic_substring(start_index, end_index, string):
 class Solution:
     def countSubstrings(self, s: str) -> int:
         count = 0
-        for start_index, _ in enumerate(s):
-            for end_index, _ in enumerate(s[start_index:], start=start_index):
+        for offset in range(0, len(s)):
+            for start_index, _ in enumerate(s):
+                end_index = start_index + offset
+                if end_index >= len(s):
+                    break
                 if is_palindromic_substring(start_index, end_index, s):
                     count += 1
         return count
