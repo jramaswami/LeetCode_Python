@@ -2,32 +2,25 @@
 LeetCode :: March 2021 Challenge :: Palindromic Substrings
 jramaswami
 """
-from functools import lru_cache
-
-
-@lru_cache(maxsize=None)
-def is_palindromic_substring(start_index, end_index, string):
-    if start_index == end_index:
-        return True
-    elif end_index - start_index == 1:
-        return string[start_index] == string[end_index]
-    else:
-        # An substring is a palindrome if the start and end chars are the 
-        # same and the substring between them is a palindrome.
-        return (string[start_index] == string[end_index] and 
-                is_palindromic_substring(start_index + 1, end_index - 1, string)
-        )
-
-
 class Solution:
     def countSubstrings(self, s: str) -> int:
+        dp = [[False for _ in enumerate(s)] for _ in enumerate(s)]
         count = 0
         for offset in range(0, len(s)):
             for start_index, _ in enumerate(s):
                 end_index = start_index + offset
                 if end_index >= len(s):
                     break
-                if is_palindromic_substring(start_index, end_index, s):
+                if start_index == end_index:
+                    dp[start_index][end_index] = True
+                elif end_index - start_index == 1:
+                    dp[start_index][end_index] = s[start_index] == s[end_index]
+                else:
+                    dp[start_index][end_index] = (s[start_index] == s[end_index]
+                            and dp[start_index + 1][end_index - 1]
+                    )
+
+                if dp[start_index][end_index]:
                     count += 1
         return count
         
