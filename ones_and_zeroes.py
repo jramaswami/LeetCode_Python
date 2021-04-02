@@ -3,33 +3,32 @@ LeetCode :: April 2021 Challenge :: Ones and Zeroes
 jramaswami
 """
 from typing import *
-from collections import Counter
-
-
-def solve0(index, length_acc, zeros_acc, ones_acc, S, max_zeros, max_ones):
-    """Recursive solution."""
-    if index >= len(S):
-        return length_acc
-
-    # Include this string.
-    local_soln = 0
-    if (zeros_acc + S[index]["0"] <= max_zeros 
-    and ones_acc + S[index]["1"] <= max_ones):
-        local_soln = solve0(index + 1, length_acc + 1, 
-                            zeros_acc + S[index]["0"], ones_acc + S[index]["1"],
-                            S, max_zeros, max_ones)
-    #Do not include this string.
-    local_soln = max(local_soln, solve0(index + 1, length_acc, zeros_acc, 
-                                        ones_acc, S, max_zeros, max_ones))
-
-    return local_soln
-
+from collections import Counter, defaultdict
 
 class Solution:
     def findMaxForm(self, strs: List[str], max_zeros: int, max_ones: int) -> int:
-        S = [Counter(s) for s in strs]
-        return solve0(0, 0, 0, 0, S, max_zeros, max_ones)
+        curr_dp = defaultdict(int)
+        next_dp = defaultdict(int)
 
+        for s in strs:
+            ctr = Counter(s)
+            z_ = ctr["0"]
+            o_ = ctr["1"]
+            # You can always go from (0, 0).
+            if z_ <= max_zeros and o_ <= max_ones:
+                next_dp[(z_, o_)] = max(next_dp[(z_, o_)], 1)
+            for (z, o) in curr_dp:
+                next_key = (z + z_, o + o_)
+                curr_key = (z, o)
+                # You can skip this one.
+                next_dp[curr_key] = max(next_dp[curr_key], curr_dp[curr_key])
+                # Or include it.
+                if z + z_ <= max_zeros and o + o_ <= max_ones:
+                    next_dp[next_key] = max(next_dp[next_key], curr_dp[curr_key] + 1)
+
+            curr_dp, next_dp = next_dp, defaultdict(int)
+
+        return (max(curr_dp.values()) if curr_dp.values() else 0)
 
 
 def test_1():
@@ -49,3 +48,11 @@ def test_3():
     strs = ["0","11","1000","01","0","101","1","1","1","0","0","0","0","1","0","0110101","0","11","01","00","01111","0011","1","1000","0","11101","1","0","10","0111"]
     m = 9
     n = 80
+    assert Solution().findMaxForm(strs, m, n) == 17
+
+def test_4():
+    """RTE"""
+    strs = ["00","000"]
+    m = 1
+    n = 10
+    assert Solution().findMaxForm(strs, m, n) == 0
