@@ -7,28 +7,21 @@ from typing import *
 
 class Solution:
     def longestValidParentheses(self, s: str) -> int:
-        # Stack with -1 marker as beginning.
-        stack = [-1]
-        # Initial solution.
+        stack = []
         soln = 0
-        # Iterate over string.
+        last_good_start = -1
         for i, c in enumerate(s):
             if c == '(':
-                # If this is an opening, push the index on the stack.
                 stack.append(i)
             else:
-                # If this is a closing, pop the opening off the stack.
-                stack.pop()
                 if stack:
-                    # If the stack is not empty, then we are valid up to
-                    # any unbalanced close or to the beginning. See if it
-                    # is the maximum length valid string.
-                    soln = max(soln, i - stack[-1])
+                    stack.pop()
+                    if stack:
+                        soln = max(soln, i - stack[-1])
+                    else:
+                        soln = max(soln, i - last_good_start)
                 else:
-                    # If the stack is empty, then it is invalid and we
-                    # have to mark that valid strings start after this
-                    # close, so push its index onto the stack.
-                    stack.append(i)
+                    last_good_start = i
         return soln
 
 
