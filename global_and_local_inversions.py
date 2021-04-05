@@ -1,33 +1,18 @@
 """
 LeetCode :: April 2021 Challenge :: Global and Local Inversions
 jramaswami
+
+REF: https://dev.to/seanpgallivan/solution-global-and-local-inversions-4f8p
 """
 from typing import *
 
 
-def count_local_inversions(A):
-    """
-    The number of local inversions is the number of i with 0 <= i < N 
-    and A[i] > A[i+1].
-    """
-    return sum(1 if ai > aj else 0 for ai, aj in zip(A[:-1], A[1:]))
-
-
-def count_global_inversions(A):
-    """
-    The number of (global) inversions is the number of i < j 
-    with 0 <= i < j < N and A[i] > A[j].
-    """
-    inversions = 0
-    for i, a in enumerate(A):
-        if i > a:
-            inversions += i - a
-    return inversions
-
-
 class Solution:
     def isIdealPermutation(self, A: List[int]) -> bool:
-        return count_local_inversions(A) == count_global_inversions(A)
+        for index, value in enumerate(A):
+            if abs(index - value) > 1:
+                return False
+        return True
 
 
 #
@@ -57,16 +42,3 @@ def test_6():
     """WA"""
     A = [2,1,0]
     assert Solution().isIdealPermutation(A) == False
-
-def main():
-    """Main program.  Generate a list where local inversions == global inversions."""
-    import random
-    A = list(range(10))
-    random.shuffle(A)
-    while count_local_inversions(A) != count_global_inversions(A):
-        random.shuffle(A)
-    print(A)
-
-
-if __name__ == '__main__':
-    main()
