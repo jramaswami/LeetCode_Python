@@ -18,50 +18,11 @@ def count_global_inversions(A):
     The number of (global) inversions is the number of i < j 
     with 0 <= i < j < N and A[i] > A[j].
     """
-    def merge(A, aux, left, mid, right):
-        inversions = 0
-        left_p = left
-        right_p = mid + 1
-        aux_p = left
-        while left_p <= mid and right_p <= right:
-            if A[left_p] <= A[right_p]:
-                aux[aux_p] = A[left_p]
-                left_p += 1
-                aux_p += 1
-            else: 
-                aux[aux_p] = A[right_p]
-                inversions += (mid - left_p + 1)
-                right_p += 1
-                aux_p += 1
-
-        while left_p <= mid:
-            aux[aux_p] = A[left_p]
-            left_p += 1
-            aux_p += 1
-
-        while right_p <= right:
-            aux[aux_p] = A[right_p]
-            right_p += 1
-            aux_p += 1
-
-        for aux_p in range(left, right + 1):
-            A[aux_p] = aux[aux_p]
-
-        return inversions
-
-    def mergesort(A, aux, left, right):
-        if left >= right:
-            return 0
-        mid = (left + right) // 2
-        inversions = mergesort(A, aux, left, mid)
-        inversions += mergesort(A, aux, mid + 1, right)
-        inversions += merge(A, aux, left, mid, right)
-        return inversions
-
-    A0 = list(A)
-    aux = list(A)
-    soln = mergesort(A0, aux, 0, len(A0) - 1)
-    return soln
+    inversions = 0
+    for i, a in enumerate(A):
+        if i > a:
+            inversions += i - a
+    return inversions
 
 
 class Solution:
@@ -88,6 +49,14 @@ def test_4():
     A = [32, 20, 10, 28, 34, 4, 8, 43, 21, 7, 27, 25, 40, 1, 41, 5, 48, 46, 24, 16, 23, 29, 3, 17, 2, 47, 14, 44, 38, 45, 12, 36, 26, 0, 9, 15, 13, 37, 39, 22, 42, 11, 18, 30, 49, 19, 31, 6, 35, 33]
     assert Solution().isIdealPermutation(A) == False
 
+def test_5():
+    A = [0, 2, 1, 3, 4, 5, 7, 6, 9, 8]
+    assert Solution().isIdealPermutation(A) == True
+
+def test_6():
+    """WA"""
+    A = [2,1,0]
+    assert Solution().isIdealPermutation(A) == False
 
 def main():
     """Main program.  Generate a list where local inversions == global inversions."""
