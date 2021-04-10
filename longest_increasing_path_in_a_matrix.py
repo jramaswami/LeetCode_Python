@@ -19,18 +19,24 @@ def vn_neighborhood(row_index, col_index, matrix):
 
 class Solution:
     def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
-        dist = [[1 for _ in row] for row in matrix]
-        queue = [(r, c) for r, row in enumerate(matrix) for c, _ in enumerate(row)]
-        new_queue = []
-        while queue:
-            for r, c in queue:
-                for r0, c0 in vn_neighborhood(r, c, matrix):
-                    if matrix[r0][c0] > matrix[r][c] and dist[r0][c0] < 1 + dist[r][c]:
-                        dist[r0][c0] = 1 + dist[r][c]
-                        new_queue.append((r0, c0))
-            queue, new_queue = new_queue, []
+        dist_cache = [[-1 for _ in row] for row in matrix]
+        has_cache = [[False for _ in row] for row in matrix]
 
-        return max(max(row) for row in dist)
+        def longest_path(r, c):
+            """Inner function to compute longest distance to r, c."""
+            if has_cache[r][c]:
+                return dist_cache[r][c]
+
+            longest = 0
+            for r0, c0 in vn_neighborhood(r, c, matrix):
+                if matrix[r0][c0] > matrix[r][c]:
+                    longest = max(longest, 1 + longest_path(r0, c0))
+
+            has_cache[r][c] = True
+            dist_cache[r][c] = longest
+            return longest
+
+        return max(1 + longest_path(r1, c1) for r1, row in enumerate(matrix) for c1, _ in enumerate(row))
 
 
 def test_1():
