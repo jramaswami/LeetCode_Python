@@ -17,25 +17,20 @@ def vn_neighborhood(row_index, col_index, matrix):
     return neighbors
 
 
-def longest_path(row_index, col_index, visited, matrix):
-    path_length = 0
-    for row_index0, col_index0 in vn_neighborhood(row_index, col_index, matrix):
-        if not visited[row_index0][col_index0] and matrix[row_index0][col_index0] > matrix[row_index][col_index]:
-            visited[row_index0][col_index0] = True
-            path_length = max(path_length, longest_path(row_index0, col_index0, visited, matrix))
-            visited[row_index0][col_index0] = False
-    return path_length + 1
-
-
 class Solution:
     def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
-        soln = 0
-        for row_index, row in enumerate(matrix):
-            for col_index, _ in enumerate(row):
-                visited = [[False for _ in row] for row in matrix]
-                visited[row_index][col_index] = True
-                soln = max(soln, longest_path(row_index, col_index, visited, matrix))
-        return soln
+        dist = [[1 for _ in row] for row in matrix]
+        queue = [(r, c) for r, row in enumerate(matrix) for c, _ in enumerate(row)]
+        new_queue = []
+        while queue:
+            for r, c in queue:
+                for r0, c0 in vn_neighborhood(r, c, matrix):
+                    if matrix[r0][c0] > matrix[r][c] and dist[r0][c0] < 1 + dist[r][c]:
+                        dist[r0][c0] = 1 + dist[r][c]
+                        new_queue.append((r0, c0))
+            queue, new_queue = new_queue, []
+
+        return max(max(row) for row in dist)
 
 
 def test_1():
