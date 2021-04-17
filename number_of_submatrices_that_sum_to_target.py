@@ -1,8 +1,10 @@
 """
 LeetCode :: April 2021 Challenge :: Number of Submatrices That Sum to Target
 jramaswami
+Thank you Larry!
 """
 from typing import *
+from collections import defaultdict
 
  
 def get_sum(top_r, top_c, bot_r, bot_c, sums):
@@ -25,16 +27,17 @@ class Solution:
                 sums[r][c] = col_sum + prev_row_sum
 
         soln = 0
-        for top_r, top_row in enumerate(matrix):
-            for top_c, _ in enumerate(top_row):
-                for bot_r, bot_row in enumerate(matrix[top_r:], start=top_r):
-                    for bot_c, _ in enumerate(bot_row[top_c:], start=top_c):
-                        S = get_sum(top_r, top_c, bot_r, bot_c, sums)
-                        if S == target:
-                            soln += 1
+        for top_r, _ in enumerate(sums):
+            for bot_r, _ in enumerate(sums[top_r:], start=top_r):
+                lookup = defaultdict(int)
+                lookup[0] = 1
+                current = 0
+                for c, _ in enumerate(sums[0]):
+                    current += get_sum(top_r, c, bot_r, c, sums)
+                    soln += lookup[current - target]
+                    lookup[current] += 1
 
         return soln
-
 
 
 def test_1():
