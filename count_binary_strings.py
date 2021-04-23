@@ -3,29 +3,14 @@ Leet Code :: April 2021 Challenge :: Count Binary Substrings
 jramaswami
 """
 from typing import *
+from itertools import groupby
 
 
 class Solution:
     def countBinarySubstrings(self, s: str) -> int:
         soln = 0
-        curr = "x"
-        left = 0
-        prev_left = 0
-        curr_count = 0
-        other_count = 0
-        for i, c in enumerate(s):
-            if c == curr:
-                curr_count += 1
-                if curr_count <= other_count:
-                    soln += 1
-            else:
-                curr = c
-                prev_left, left = left, i
-                curr_count, other_count = 1, curr_count
-                if curr_count <= other_count:
-                    soln += 1
-
-        return soln
+        groups = [sum(1 for _ in g) for k, g in groupby(s)]
+        return sum(min(a, b) for a, b in zip(groups[:-1], groups[1:]))
 
 
 def test_1():
