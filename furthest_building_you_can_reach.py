@@ -7,30 +7,22 @@ from typing import *
 
 class Solution:
     def furthestBuilding(self, heights: List[int], bricks: int, ladders: int) -> int:
-        print(f"{heights=}")
         queue = [(bricks, ladders)]
         new_queue = []
         for i, _ in enumerate(heights[:-1]):
             delta = heights[i+1] - heights[i]
-            print(f"@ building {i}: {heights[i]} -> {heights[i+1]} {delta=}")
             if delta > 0:
+                advance = False
                 for b, l in queue:
-                    advance = False
                     if l > 0:
                         new_queue.append((b, l - 1))
                         advance = True
                     if b >= delta:
-                        print(f"\t can use {delta} of {b} bricks; will have {b - delta} bricks left")
                         new_queue.append((b - delta, l))
-                        print(f"\t{new_queue}")
                         advance = True
-                print("switching queues")
                 queue, new_queue = new_queue, []
                 if not advance:
                     return i
-            else:
-                print("can just jump down")
-            print(f"{i} -> {i+1}: {queue}")
         return len(heights) - 1
 
 
