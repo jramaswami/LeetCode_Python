@@ -8,7 +8,8 @@ from typing import *
 class Solution:
     def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
         dp = [[0 for _ in row] for row in  obstacleGrid]
-        dp[0][0] = 1
+        if obstacleGrid[0][0] == 0:
+            dp[0][0] = 1
         for r, row in enumerate(obstacleGrid):
             for c, _ in enumerate(row):
                 if obstacleGrid[r][c]:
