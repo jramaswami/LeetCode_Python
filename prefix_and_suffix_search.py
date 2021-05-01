@@ -3,6 +3,7 @@ Leet Code :: May 2021 Challenge :: Prefix and Suffix Search
 jramaswami
 """
 from typing import *
+from functools import lru_cache
 
 
 def compare(word, prefix, suffix):
@@ -32,6 +33,7 @@ class WordFilter:
     def __init__(self, words: List[str]):
         self.words = sorted((-len(w), -i, w) for i, w in enumerate(words))
 
+    @lru_cache(maxsize=None)
     def f(self, prefix: str, suffix: str) -> int:
         for _, i, word in self.words:
             if compare(word, prefix, suffix):
