@@ -8,12 +8,14 @@ from typing import *
 class WordFilter:
 
     def __init__(self, words: List[str]):
-        self.words = sorted((-len(w), i, w) for i, w in enumerate(words))
+        self.words = sorted((-len(w), -i, w) for i, w in enumerate(words))
+        for t in self.words:
+            print(t)
 
     def f(self, prefix: str, suffix: str) -> int:
         for _, i, word in self.words:
             if word.startswith(prefix) and word.endswith(suffix):
-                return i
+                return -i
         return -1
 
 
@@ -48,6 +50,7 @@ def test_3():
     wf = WordFilter(*arguments[0])
     expected = [None,9,4,5,0,8,1,2,5,3,1]
     for meth, args, exp in zip(methods[1:], arguments[1:], expected[1:]):
+        print(meth, args, exp)
         assert getattr(wf, meth)(*args) == exp
 
 
