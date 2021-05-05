@@ -11,9 +11,12 @@ Ladder = namedtuple('Ladder', ['start', 'end'])
 
 class Solution:
     def jump(self, nums: List[int]) -> int:
+        if len(nums) == 1:
+            return 0
         current_ladder = Ladder(0, nums[0])
         waiting_ladder = Ladder(0, -1)
         ladders_used = 1
+        finished = len(nums) - 1
         for i, n in enumerate(nums[1:], start=1):
             if current_ladder.end < i:
                 current_ladder = waiting_ladder
