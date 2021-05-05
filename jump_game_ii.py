@@ -3,28 +3,20 @@ Leet Code :: Jump Game II
 jramaswami
 """
 from typing import *
-from collections import namedtuple
-
-
-Ladder = namedtuple('Ladder', ['start', 'end'])
 
 
 class Solution:
     def jump(self, nums: List[int]) -> int:
-        if len(nums) == 1:
+        if len(nums) <= 1:
             return 0
-        current_ladder = Ladder(0, nums[0])
-        waiting_ladder = Ladder(0, -1)
-        ladders_used = 1
-        finished = len(nums) - 1
-        for i, n in enumerate(nums[1:], start=1):
-            if current_ladder.end < i:
-                current_ladder = waiting_ladder
-                ladders_used += 1
-            ladder = Ladder(i, i + n)
-            if ladder.end > waiting_ladder.end:
-                waiting_ladder = ladder
-        return ladders_used
+        jumps_made = 1
+        left = 0
+        right = nums[0]
+        finish = len(nums) - 1
+        while right < finish:
+            jumps_made += 1
+            left, right = right, max(i + n for i, n in enumerate(nums[left:right+1], start=left))
+        return jumps_made
 
 
 def test_1():
