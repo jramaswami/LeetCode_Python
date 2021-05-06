@@ -3,32 +3,26 @@ Leet Code :: May 2021 Challenge :: Convert Sorted List to Binary Search Tree
 jramaswami
 """
 from typing import *
-from collections import deque
 from leetcode_bst import *
 from leetcode_linked_lists import *
 
 
+def solve(values, left, right):
+    if left > right:
+        return None
+    if left == right:
+        return TreeNode(values[left])
+    mid = int(round((left + right) / 2))
+    node = TreeNode(values[mid])
+    node.left = solve(values, left, mid-1)
+    node.right = solve(values, mid+1, right)
+    return node
+
+
 class Solution:
     def sortedListToBST(self, head: ListNode) -> TreeNode:
-        if head is None:
-            return None
-        values = deque()
+        values = []
         while head is not None:
             values.append(head.val)
             head = head.next
-        mid = len(values) // 2
-        mid_node = TreeNode(values[mid])
-        left_node = None
-        for i in range(mid):
-            new_node = TreeNode(values[i])
-            new_node.left = left_node
-            left_node = new_node
-        mid_node.left = left_node
-        right_node = mid_node
-        for i in range(mid+1, len(values)):
-            new_node = TreeNode(values[i])
-            right_node.right = new_node
-            right_node = new_node
-        return mid_node
-
-# WA [0,1,2,3,4,5]
+        return solve(values, 0, len(values) - 1)
