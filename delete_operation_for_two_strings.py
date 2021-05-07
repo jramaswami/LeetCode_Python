@@ -4,6 +4,7 @@ jramaswami
 """
 from typing import *
 from math import inf
+from functools import lru_cache
 
 
 class Solution:
@@ -11,52 +12,32 @@ class Solution:
         """
         Memoized recursive solution.
         """
-        # Memoization
-        has_cache = [[False for _ in range(len(word2) + 1)] for _ in range(len(word1) + 1)]
-        cache = [[inf for _ in range(len(word2) + 1)] for _ in range(len(word1) + 1)]
-
-
-        def set_cache(index1, index2, result):
-            """Set the cache value."""
-            has_cache[index1][index2] = True
-            cache[index1][index2] = result
-
-
+        @lru_cache(maxsize=None)
         def min_dist(index1, index2):
             """
             Return the minimum distance between word1[index:] and word2[index:]
             """
-            if has_cache[index1][index2]:
-                return cache[index1][index2]
-
             if index1 == len(word1) and index2 == len(word2):
                 # We have reached the end
                 return 0
 
             if index1 == len(word1):
                 # We can only delete from word2
-                result = 1 + min_dist(index1, index2 + 1)
-                set_cache(index1, index2, result)
-                return result
+                return 1 + min_dist(index1, index2 + 1)
 
             if index2 == len(word2):
                 # We can only delete from word1
-                result = 1 + min_dist(index1 + 1, index2)
-                set_cache(index1, index2, result)
-                return result
+                return 1 + min_dist(index1 + 1, index2)
 
             if word1[index1] == word2[index2]:
                 # We do not have to delete from either word.
-                result = min_dist(index1 + 1, index2 + 1)
-                set_cache(index1, index2, result)
-                return result
+                return min_dist(index1 + 1, index2 + 1)
 
             result = inf
             # Delete from word 1
             result = min(result, 1 + min_dist(index1 + 1, index2))
             # Delete from word2
             result = min(result, 1 + min_dist(index1, index2+1))
-            set_cache(index1, index2, result)
             return result
 
 
