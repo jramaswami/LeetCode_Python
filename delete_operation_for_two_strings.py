@@ -9,37 +9,58 @@ from math import inf
 class Solution:
     def minDistance(self, word1: str, word2: str) -> int:
         """
-        Compute longest common subsequence.  The remove letter the number of
-        letters from each word to make it the longest common subsequence.
+        Memoized recursive solution.
         """
+        # Memoization
+        has_cache = [[False for _ in range(len(word2) + 1)] for _ in range(len(word1) + 1)]
+        cache = [[inf for _ in range(len(word2) + 1)] for _ in range(len(word1) + 1)]
+
+
+        def set_cache(index1, index2, result):
+            """Set the cache value."""
+            has_cache[index1][index2] = True
+            cache[index1][index2] = result
+
 
         def min_dist(index1, index2):
             """
             Return the minimum distance between word1[index:] and word2[index:]
             """
+            if has_cache[index1][index2]:
+                return cache[index1][index2]
+
             if index1 == len(word1) and index2 == len(word2):
                 # We have reached the end
                 return 0
 
             if index1 == len(word1):
                 # We can only delete from word2
-                return 1 + min_dist(index1, index2 + 1)
+                result = 1 + min_dist(index1, index2 + 1)
+                set_cache(index1, index2, result)
+                return result
 
             if index2 == len(word2):
                 # We can only delete from word1
-                return 1 + min_dist(index1 + 1, index2)
+                result = 1 + min_dist(index1 + 1, index2)
+                set_cache(index1, index2, result)
+                return result
 
             if word1[index1] == word2[index2]:
                 # We do not have to delete from either word.
-                return min_dist(index1 + 1, index2 + 1)
+                result = min_dist(index1 + 1, index2 + 1)
+                set_cache(index1, index2, result)
+                return result
 
-            mn = inf
+            result = inf
             # Delete from word 1
-            mn = min(mn, 1 + min_dist(index1 + 1, index2))
+            result = min(result, 1 + min_dist(index1 + 1, index2))
             # Delete from word2
-            mn = min(mn, 1 + min_dist(index1, index2+1))
-            return mn
+            result = min(result, 1 + min_dist(index1, index2+1))
+            set_cache(index1, index2, result)
+            return result
 
+
+        # Call memoized top-down function.
         return min_dist(0, 0)
 
 
