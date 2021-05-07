@@ -3,7 +3,6 @@ Leet Code :: May 2021 Challenge :: Delete Operation for Two Strings
 jramaswami
 """
 from typing import *
-from collections import Counter
 
 
 class Solution:
