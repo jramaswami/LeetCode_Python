@@ -1,6 +1,8 @@
 """
 Leet Code :: May 2021 Challenge :: Construct Target Array With Multiple Sums
 jramaswami
+
+Thank you Larry!
 """
 from typing import *
 import heapq
@@ -13,12 +15,22 @@ class Solution:
         N = len(target)
         heapq.heapify(pq)
         while pq[0] < -1:
-            k = -heapq.heappop(pq)
-            j = k - (total - k)
-            if j < 0:
+            largest = -heapq.heappop(pq)
+            if largest == total:
                 return False
-            total = total - k + j
-            heapq.heappush(pq, -j)
+
+            if total - largest == 1:
+                return True
+
+            newest = total % (total - largest)
+            if newest >= largest:
+                return False
+            if newest <= 0:
+                return False
+
+            total = total - largest + newest
+            heapq.heappush(pq, -newest)
+
         return total == N
 
 
@@ -82,7 +94,9 @@ def random_possible_target(N):
 
 
 def main():
-    random_possible_target(15)
+    # random_possible_target(15)
+    target = [1,1,1,2]
+    assert Solution().isPossible(target) == True
 
 
 if __name__ == '__main__':
