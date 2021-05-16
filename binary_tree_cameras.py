@@ -57,7 +57,7 @@ def solve(node):
         # The left child could be on.  The right child must be watched.
         watched_off = min(watched_off, left_watched_on + right_watched_off)
         # The right child could be on.  The left child must be watched.
-        watched_off = min(watched_off, left_watched_off, + right_watched_on)
+        watched_off = min(watched_off, left_watched_off + right_watched_on)
         # Both children could be on.
         watched_off = min(watched_off, left_watched_on + right_watched_on)
         # If I am unwatched, then both children are off, but must be watched.
@@ -84,6 +84,6 @@ def test_2():
 
 def test_3():
     """WA"""
-    root = make_tree([0,0,0,null,null,null,0])
+    root = make_tree([1,2,3,null,null,null,4])
     print(root)
     assert Solution().minCameraCover(root) == 2
