@@ -3,11 +3,10 @@ LeetCode :: May 2021 Challenge :: Longest String Chain
 jramaswami
 """
 from typing import *
-from collections import namedtuple, defaultdict, Counter
-from string import ascii_lowercase
+from collections import namedtuple, defaultdict
 
 
-WordData = namedtuple('WordData', ['word', 'ctr', 'index'])
+WordData = namedtuple('WordData', ['word', 'index'])
 
 
 def can_chain(word_left, word_right):
@@ -16,16 +15,19 @@ def can_chain(word_left, word_right):
     letter.  
     """
     delta = 0
-    for c in ascii_lowercase:
-        if word_right.ctr[c] < word_left.ctr[c]:
-            return False
-        if word_right.ctr[c] > word_left.ctr[c] + 1:
-            return False
-        if word_right.ctr[c] == word_left.ctr[c] + 1:
+    left_index = 0
+    right_index = 0
+    while left_index < len(word_left.word):
+        if word_left.word[left_index] != word_right.word[right_index]:
             if delta:
                 return False
+            right_index += 1
             delta = 1
-    return delta == 1
+        else:
+            left_index += 1
+            right_index += 1
+
+    return True
 
 
 class Solution:
@@ -33,7 +35,7 @@ class Solution:
         words0 = defaultdict(list)
         dp = [1 for _ in words]
         word_lengths = set()
-        for w in (WordData(w, Counter(w), i) for i, w in enumerate(words)):
+        for w in (WordData(w, i) for i, w in enumerate(words)):
             word_lengths.add(len(w.word))
             words0[len(w.word)].append(w)
 
