@@ -18,7 +18,7 @@ class Solution:
 
         soln = []
         for paths in dupes.values():
-            if len(dupes) > 1:
+            if len(paths) > 1:
                 soln.append(paths)
         return soln
 
