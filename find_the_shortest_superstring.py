@@ -6,6 +6,7 @@ Thank you Larry!
 """
 from typing import *
 from math import inf
+from functools import lru_cache
 
 
 def merge_cost(w1, w2):
@@ -18,80 +19,77 @@ def merge_cost(w1, w2):
 
 class Solution:
     def shortestSuperstring(self, words: List[str]) -> str:
-
-        words0 = list(words)
-
-        # The cost of appending w2 after w1
-        cost = [[inf for _ in words0] for _ in words0]
-        for i, w1 in enumerate(words0):
-            for j, w2 in enumerate(words0):
+        # The cost of appending w2 after w1 where the cost is the number
+        # of letters to be removed from w2 to make the merge.
+        cost = [[inf for _ in words] for _ in words]
+        for i, w1 in enumerate(words):
+            for j, w2 in enumerate(words):
                 if i == j:
                     continue
                 cost[i][j] = merge_cost(w1, w2)
 
-
-        cache = dict()
-        # Gets the best word where the last word is index and mask is still
-        # contains items able to be used.
-
         # Adding i to some other string ...
+        @lru_cache(maxsize=None)
         def get_subset(i, mask):
-            wd1 = words0[i]
+            """
+            Return the best string merging words[i] to the remaining unmerged
+            words.  In the mask, if a bit is set, then the word is available
+            to be merged.
+            """
+            wd1 = words[i]
 
-            # print(f"get_subset({i=} mask={mask:013b}) {wd1=}")
-            # If no other strings have been used, then I cannot overlap.
+            # If no other strings have been used, then I cannot overlap, so
+            # just return me as the word.
             if mask == 0:
                 return wd1
 
-            key = (i, mask)
-            if key in cache:
-                return cache[key]
-
             soln = ""
             best_length = inf
-            for j, wd2 in enumerate(words0):
-                # Get me the best word starting with if it is in my mask.
+            for j, wd2 in enumerate(words):
+                # Get me the best merged word starting with wd2 if wd2 is
+                # available for merging.
                 if (mask & (1 << j)) > 0:
-                    # What is the cost of appending a word starting with wd2?
+                    # Get the cost for the merging wd2.
                     c = cost[i][j]
-                    # Get the best word that does not include me.
+                    # Get the best word that does not include wd2.
                     mask0 = mask ^ (1 << j)
                     r = get_subset(j, mask0)
-                    # r is the best word that starts with wd2, remove the
-                    # overalp from wd2 and then append it to wd1
-
+                    # Remove the overlap between wd1 and r (which starts with
+                    # wd2, then merge r with wd1.
                     current = wd1 + r[c:]
-                    # print(f"\t{wd1=} {i=} {wd2=} {j=} {r=} {c=} {current=} {soln=} {words0=}")
+                    # Keep track of the smalled possible word.
                     if len(current) < best_length:
                         best_length = len(current)
                         soln = current
-
-            cache[key] = soln
+            # Return the smallest possible word that starts with wd1
             return soln
 
+        # Give each word the chance to be the first word.
         best_word = ""
         best_length = inf
-        all_bits = (1 << len(words0)) - 1
-        # print(f"{all_bits:013b} {len(words0)=}")
-        for i, start_word in enumerate(words0):
+        all_bits = (1 << len(words)) - 1
+        for i, start_word in enumerate(words):
             mask = all_bits ^ (1 << i)
             curr = get_subset(i, mask)
-            # print(f"{start_word=}, {curr=} {mask:013b}")
             if len(curr) < best_length:
                 best_length = len(curr)
                 best_word = curr
-
         return best_word
+
 
 def test_1():
     words = ["alex","loves","leetcode"]
     assert Solution().shortestSuperstring(words) == "alexlovesleetcode"
 
+
 def test_2():
     words = ["catg","ctaagt","gcta","ttca","atgcatc"]
     assert Solution().shortestSuperstring(words) == "gctaagttcatgcatc"
 
+
 def test_3():
     """WA"""
     words = ["abcdef","efde","defab"]
-    assert Solution().shortestSuperstring(words) == "efdefabcdef"
+    # assert Solution().shortestSuperstring(words) == "efdefabcdef"
+    # Different solution from expected but valid.
+    assert Solution().shortestSuperstring(words) == "abcdefdefab"
