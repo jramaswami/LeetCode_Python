@@ -48,6 +48,8 @@ def solve_using_buckets(nums):
     mn = min(nums)
     mx = max(nums)
     rng = mx - mn
+    if rng == 0:
+        return 0
     bucket_count = len(nums) + 1
     bucket_size = int(ceil(rng / len(nums)))
     bucket_min = [inf for _ in range(bucket_count)]
@@ -57,13 +59,16 @@ def solve_using_buckets(nums):
         bucket_min[bucket_index] = min(bucket_min[bucket_index], n)
         bucket_max[bucket_index] = max(bucket_max[bucket_index], n)
 
-    curr_min = bucket_min[0]
-    curr_max = bucket_max[0]
-    soln = curr_max - curr_min
+    prev_min = bucket_min[0]
+    prev_max = bucket_max[0]
+    soln = prev_max - prev_min
     for i in range(1, bucket_count):
-        curr_min = curr_max
-        curr_max = max(curr_max, bucket_max[i])
-        soln = max(soln, curr_max - curr_min)
+        curr_min, curr_max = bucket_min[i], bucket_max[i]
+        if curr_min != inf:
+            soln = max(soln, curr_max - curr_min)
+            soln = max(soln, curr_min - prev_max)
+            prev_min, prev_max = curr_min, curr_max
+
     return soln
 
 
@@ -145,3 +150,23 @@ def test_4():
     """RTE"""
     nums = [1,1,1,1]
     assert Solution().maximumGap(nums) == nums[1] - nums[0]
+
+
+def test_5():
+    nums = [1,2,3,4,5]
+    assert Solution().maximumGap(nums) == 1
+
+
+def test_6():
+    nums = [1,2]
+    assert Solution().maximumGap(nums) == 1
+
+
+def test_7():
+    """WA"""
+    nums = [15252,16764,27963,7817,26155,20757,3478,22602,20404,6739,16790,
+            10588,16521,6644,20880,15632,27078,25463,20124,15728,30042,16604,
+            17223,4388,23646,32683,23688,12439,30630,3895,7926,22101,32406,
+            21540,31799,3768,26679,21799,23740]
+    assert Solution().maximumGap(nums) == 2901
+
