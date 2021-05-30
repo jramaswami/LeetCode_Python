@@ -1,84 +1,84 @@
-"""
-LeetCode :: May 2021 Challenge :: Maximum Gap
-jramaswami
-"""
-
-
-from typing import *
-from math import inf, ceil
-
-
-def radix_sort(nums):
     """
-    Sort nums using a radix sort.
-    Sorts in linear time with extra space proportional to N.
+    LeetCode :: May 2021 Challenge :: Maximum Gap
+    jramaswami
     """
-    # Do not mutate nums
-    nums0 = list(nums)
-    # Auxilliary array for radix sort
-    aux = list(nums0)
-    # Radix sort (binary)
-    for bit in range(31):
-        mask = 1 << bit
-        ones_index = sum(0 if n & mask else 1 for n in nums0)
-        zeros_index = 0
-        # Copy numbers into aux in a stable way
-        for n in nums0:
-            if n & mask:
-                aux[ones_index] = n
-                ones_index += 1
-            else:
-                aux[zeros_index] = n
-                zeros_index += 1
-        # Copy numbers back into nums0
-        for i, n in enumerate(aux):
-            nums0[i] = n
-
-    return nums0
 
 
-def solve_using_radix_sort(nums):
-    """Solution using a radix sort."""
-    nums0 = radix_sort(nums)
-    return max(b - a for a, b in zip(nums0, nums0[1:]))
+    from typing import *
+    from math import inf, ceil
 
 
-def solve_using_buckets(nums):
-    """Solution using buckets, i.e. Pigeon Hole Principle"""
-    mn = min(nums)
-    mx = max(nums)
-    rng = mx - mn
-    if rng == 0:
-        return 0
-    bucket_count = len(nums) + 1
-    bucket_size = int(ceil(rng / len(nums)))
-    bucket_min = [inf for _ in range(bucket_count)]
-    bucket_max = [-inf for _ in range(bucket_count)]
-    for n in nums:
-        bucket_index = (n - mn) // bucket_size
-        bucket_min[bucket_index] = min(bucket_min[bucket_index], n)
-        bucket_max[bucket_index] = max(bucket_max[bucket_index], n)
+    def radix_sort(nums):
+        """
+        Sort nums using a radix sort.
+        Sorts in linear time with extra space proportional to N.
+        """
+        # Do not mutate nums
+        nums0 = list(nums)
+        # Auxilliary array for radix sort
+        aux = list(nums0)
+        # Radix sort (binary)
+        for bit in range(31):
+            mask = 1 << bit
+            ones_index = sum(0 if n & mask else 1 for n in nums0)
+            zeros_index = 0
+            # Copy numbers into aux in a stable way
+            for n in nums0:
+                if n & mask:
+                    aux[ones_index] = n
+                    ones_index += 1
+                else:
+                    aux[zeros_index] = n
+                    zeros_index += 1
+            # Copy numbers back into nums0
+            for i, n in enumerate(aux):
+                nums0[i] = n
 
-    prev_min = bucket_min[0]
-    prev_max = bucket_max[0]
-    soln = prev_max - prev_min
-    for i in range(1, bucket_count):
-        curr_min, curr_max = bucket_min[i], bucket_max[i]
-        if curr_min != inf:
-            soln = max(soln, curr_max - curr_min)
-            soln = max(soln, curr_min - prev_max)
-            prev_min, prev_max = curr_min, curr_max
-
-    return soln
+        return nums0
 
 
-class Solution:
-    def maximumGap(self, nums: List[int]) -> int:
-        # Base case
-        if len(nums) < 2:
+    def solve_using_radix_sort(nums):
+        """Solution using a radix sort."""
+        nums0 = radix_sort(nums)
+        return max(b - a for a, b in zip(nums0, nums0[1:]))
+
+
+    def solve_using_buckets(nums):
+        """Solution using buckets, i.e. Pigeon Hole Principle"""
+        mn = min(nums)
+        mx = max(nums)
+        rng = mx - mn
+        if rng == 0:
             return 0
+        bucket_count = len(nums) + 1
+        bucket_size = int(ceil(rng / len(nums)))
+        bucket_min = [inf for _ in range(bucket_count)]
+        bucket_max = [-inf for _ in range(bucket_count)]
+        for n in nums:
+            bucket_index = (n - mn) // bucket_size
+            bucket_min[bucket_index] = min(bucket_min[bucket_index], n)
+            bucket_max[bucket_index] = max(bucket_max[bucket_index], n)
 
-        return solve_using_buckets(nums)
+        prev_min = bucket_min[0]
+        prev_max = bucket_max[0]
+        soln = prev_max - prev_min
+        for i in range(1, bucket_count):
+            curr_min, curr_max = bucket_min[i], bucket_max[i]
+            if curr_min != inf:
+                soln = max(soln, curr_max - curr_min)
+                soln = max(soln, curr_min - prev_max)
+                prev_min, prev_max = curr_min, curr_max
+
+        return soln
+
+
+    class Solution:
+        def maximumGap(self, nums: List[int]) -> int:
+            # Base case
+            if len(nums) < 2:
+                return 0
+
+            return solve_using_buckets(nums)
 
 
 #
