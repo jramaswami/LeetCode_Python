@@ -5,7 +5,7 @@ jramaswami
 
 
 from typing import *
-from math import inf
+from math import inf, ceil
 
 
 def radix_sort(nums):
@@ -37,19 +37,49 @@ def radix_sort(nums):
     return nums0
 
 
+def solve_using_radix_sort(nums):
+    """Solution using a radix sort."""
+    nums0 = radix_sort(nums)
+    return max(b - a for a, b in zip(nums0, nums0[1:]))
+
+
+def solve_using_buckets(nums):
+    """Solution using buckets, i.e. Pigeon Hole Principle"""
+    mn = min(nums)
+    mx = max(nums)
+    rng = mx - mn
+    bucket_count = len(nums) + 1
+    bucket_size = int(ceil(rng / bucket_count))
+    bucket_min = [inf for _ in range(bucket_count)]
+    bucket_max = [-inf for _ in range(bucket_count)]
+    for n in nums:
+        bucket_index = (n - mn) // bucket_size
+        bucket_min[bucket_index] = min(bucket_min[bucket_index], n)
+        bucket_max[bucket_index] = max(bucket_max[bucket_index], n)
+
+    curr_min = bucket_min[0]
+    curr_max = bucket_max[0]
+    soln = curr_max - curr_min
+    for i in range(1, bucket_count):
+        curr_min = curr_max
+        curr_max = max(curr_max, bucket_max[i])
+        soln = max(soln, curr_max - curr_min)
+    return soln
+
+
 class Solution:
     def maximumGap(self, nums: List[int]) -> int:
         # Base case
         if len(nums) < 2:
             return 0
 
-        nums0 = radix_sort(nums)
-        return max(b - a for a, b in zip(nums0, nums0[1:]))
+        return solve_using_buckets(nums)
 
 
 #
 # Testing
 #
+
 
 from random import randint
 
@@ -93,3 +123,19 @@ def test_3():
             811747902, 85287056, 153715637, 238057113, 464988403, 804640746,
             923629363, 422614035, 706863466, 488361434]
     assert Solution().maximumGap(nums) == 38223101
+
+
+def test_random():
+    N = pow(10, 4)
+    min_n, max_n = 0, pow(10, 9)
+    for _ in range(10):
+        A = [randint(min_n, max_n) for _ in range(N)]
+        B = sorted(A)
+        expected = min(b - a for a, b in zip(B, B[1:]))
+        result = Solution().maximumGap(A)
+
+
+def test_3():
+    """RTE"""
+    nums = [1,10000000]
+    assert Solution().maximumGap(nums) == nums[1] - nums[0]
