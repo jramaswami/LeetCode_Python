@@ -49,7 +49,7 @@ def solve_using_buckets(nums):
     mx = max(nums)
     rng = mx - mn
     bucket_count = len(nums) + 1
-    bucket_size = int(ceil(rng / bucket_count))
+    bucket_size = int(ceil(rng / len(nums)))
     bucket_min = [inf for _ in range(bucket_count)]
     bucket_max = [-inf for _ in range(bucket_count)]
     for n in nums:
@@ -138,4 +138,10 @@ def test_random():
 def test_3():
     """RTE"""
     nums = [1,10000000]
+    assert Solution().maximumGap(nums) == nums[1] - nums[0]
+
+
+def test_4():
+    """RTE"""
+    nums = [1,1,1,1]
     assert Solution().maximumGap(nums) == nums[1] - nums[0]
