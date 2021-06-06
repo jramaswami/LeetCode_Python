@@ -22,24 +22,49 @@ class Solution:
             if before and after:
                 length = 1 + endpoints[n - 1].length + endpoints[n + 1].length
                 soln = max(soln, length)
+
                 left_endpoint = EndPoint(endpoints[n + 1].other, length)
-                right_endpont = EndPoint(endpoints[n - 1].other, length)
-                endpoints[right_endpoint.other] = left_endpoint
-                endpoints[left_endpoint.other] = right_endpoint
+                right_endpoint = EndPoint(endpoints[n - 1].other, length)
+                left_endpoint_key = right_endpoint.other
+                right_endpoint_key = left_endpoint.other
+
+                removals = [n + 1, n - 1, endpoints[n + 1].other, endpoints[n - 1].other]
+                for r in removals:
+                    endpoints.pop(r, None)
+
+                endpoints[left_endpoint_key] = left_endpoint
+                endpoints[right_endpoint_key] = right_endpoint
             elif before:
+
                 length = 1 + endpoints[n - 1].length
                 soln = max(soln, length)
+
                 left_endpoint = EndPoint(endpoints[n - 1].other, length)
                 right_endpoint = EndPoint(n, length)
-                endpoints[right_endpoint.other] = left_endpoint
-                endpoints[left_endpoint.other] = right_endpoint
+                left_endpoint_key = right_endpoint.other
+                right_endpoint_key = left_endpoint.other
+
+                removals = [n - 1, endpoints[n - 1].other]
+                for r in removals:
+                    endpoints.pop(r, None)
+
+                endpoints[left_endpoint_key] = left_endpoint
+                endpoints[right_endpoint_key] = right_endpoint
             elif after:
                 length = 1 + endpoints[n + 1].length
                 soln = max(soln, length)
+
                 left_endpoint = EndPoint(endpoints[n + 1].other, length)
                 right_endpoint = EndPoint(n, length)
-                endpoints[right_endpoint.other] = left_endpoint
-                endpoints[left_endpoint.other] = right_endpoint
+                left_endpoint_key = right_endpoint.other
+                right_endpoint_key = left_endpoint.other
+
+                removals = [n + 1, endpoints[n + 1].other]
+                for r in removals:
+                    endpoints.pop(r, None)
+
+                endpoints[left_endpoint_key] = left_endpoint
+                endpoints[right_endpoint_key] = right_endpoint
             else:
                 length = 1
                 soln = max(soln, length)
