@@ -10,38 +10,30 @@ from leetcode_trees import *
 
 class Solution:
     def buildTree(self, preorder: List[int], inorder: List[int]) -> TreeNode:
-        p = 1
+        dummy = TreeNode(None, None, None)
+        parent = dummy
         i = 0
-        print(f"{preorder=}")
-        print(f"{inorder=}")
-        visited_preorder = dict()
-        visited_inorder = dict()
-        visited_preorder[preorder[0]] = TreeNode(preorder[0], None, None)
-        root = current = visited_preorder[preorder[0]]
+        p = 0
+        nodes = {v: TreeNode(v, None, None) for v in preorder}
+        visited_preorder = set()
+        visited_inorder = set()
         while p < len(preorder):
-            print(f"{i=} {inorder[i]=} {p=} {preorder[p]=} {current.val=}")
-            while current.val == inorder[i]:
-                print(f"{current.val=} == {inorder[i]=}")
-                i += 1
-                print(f"advancing i to {i} {inorder[i]=}")
-                if i + 1 < len(inorder) and inorder[i] in visited_preorder:
-                    current = visited_preorder[inorder[i]]
-                    visited_inorder[inorder[i]] = current
-                    print('moving current to ', current.val)
-
-            new_node = TreeNode(preorder[p])
-            visited_preorder[new_node.val] = new_node
-            print(f"{i=} {inorder[i]=} {p=} {preorder[p]=} {current.val=}")
-            print(f"connecting {current.val} -> {new_node.val}")
-            p += 1
-            # How do I know that it is right?
-            if current.val in visited_inorder:
-                current.right = new_node
-                current = new_node
+            curr = nodes[preorder[p]]
+            visited_preorder.add(curr.val)
+            if parent.val in visited_inorder:
+                parent.right = curr
             else:
-                current.left = new_node
-                current = new_node
-        return root
+                parent.left = curr
+            parent = curr
+
+            if inorder[i] == curr.val:
+                while i < len(inorder) and inorder[i] in visited_preorder:
+                    visited_inorder.add(inorder[i])
+                    parent = nodes[inorder[i]]
+                    i += 1
+            p += 1
+
+        return dummy.left
 
 
 def tree_preorder(node, acc):
@@ -90,7 +82,5 @@ def test_3():
     tree_preorder(root, preorder_result)
     inorder_result = []
     tree_inorder(root, inorder_result)
-    print(f"{preorder=} {preorder_result=}")
-    print(f"{inorder=} {inorder_result=}")
     assert preorder == preorder_result 
     assert inorder == inorder_result
