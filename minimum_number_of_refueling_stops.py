@@ -6,51 +6,33 @@ jramaswami
 
 import heapq
 from typing import *
-from collections import namedtuple
-
-
-Waypoint = namedtuple('Waypoint', ['stops', 'fuel', 'station'])
-Station = namedtuple('Station', ['miles', 'fuel'])
 
 
 class Solution:
     def minRefuelStops(self, target: int, startFuel: int, stations: List[List[int]]) -> int:
-        Q = [Waypoint(0, startFuel, 0)]
-        stations0 = [Station(0, 0)] + [Station._make(t) for t in stations]
-        stations0.append(Station(target, 0))
-        while Q:
-            print(Q)
-            curr_waypoint = heapq.heappop(Q)
-            if curr_waypoint.station == len(stations0) - 1:
-                return curr_waypoint.stops
-            # Distance to next station
-            distance = (stations0[curr_waypoint.station + 1].miles - 
-                        stations0[curr_waypoint.station].miles
-            )
-            # Go to next station without refueling/stopping, if you can 
-            # reach it.
-            remaining_fuel = curr_waypoint.fuel - distance
-            if remaining_fuel >= 0:
-                nonstop_waypoint = Waypoint(curr_waypoint.stops,
-                                            remaining_fuel,
-                                            curr_waypoint.station + 1
-                )
-                heapq.heappush(Q, nonstop_waypoint)
-            # Go to next station after stopping to refuel, if you can 
-            # reach it.
-            remaining_fuel = (curr_waypoint.fuel + 
-                              stations0[curr_waypoint.station].fuel - 
-                              distance
-            )
-            if remaining_fuel >= 0:
-                refueled_waypoint = Waypoint(curr_waypoint.stops + 1,
-                                            remaining_fuel,
-                                            curr_waypoint.station + 1
-                )
-                heapq.heappush(Q, refueled_waypoint)
-
-        return -1
-
+        # Add "dummy" station for target.
+        stations.append((target, 0))
+        stops = 0
+        auto_fuel = startFuel
+        prev_fuels = []
+        prev_location = 0
+        for curr_location, station_fuel in stations:
+            # Go to next station.
+            distance = curr_location - prev_location
+            auto_fuel = auto_fuel - distance
+            # If auto ran out of fuel, go back in time to fuel up using
+            # the largest fuel from previous stations.
+            while auto_fuel < 0 and prev_fuels:
+                refuel = -heapq.heappop(prev_fuels)
+                auto_fuel = auto_fuel + refuel
+                stops = stops + 1
+            # If auto still has negative fuel, auto could not reach station.
+            if auto_fuel < 0:
+                return -1
+            # "Remember" the fuel at current station.
+            heapq.heappush(prev_fuels, -station_fuel)
+            prev_location = curr_location
+        return stops
 
 
 def test_1():
