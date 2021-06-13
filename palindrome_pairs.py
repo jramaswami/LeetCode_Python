@@ -5,22 +5,56 @@ jramaswami
 
 
 from typing import *
-from itertools import chain, product
+
+
+def is_palindrome(s):
+    """Simplest way to test for a palindrome."""
+    return s == s[::-1]
 
 
 class Solution:
     def palindromePairs(self, words: List[str]) -> List[List[int]]:
-        def is_palindrome(a, b):
-            """Return True if a and b can form palindrome."""
-            for a, b in zip(chain(a, b), chain(reversed(b), reversed(a))):
-                if a != b:
-                    return False
-            return True
-
+        words_lookup = {w: i for i, w in enumerate(words)}
         soln = []
-        for a, b in product(enumerate(words), repeat=2):
-            if a[0] != b[0] and is_palindrome(a[1], b[1]):
-                soln.append([a[0], b[0]])
+        for i, word in enumerate(words):
+            # Case 1: word == "": this will allow palindrome for 
+            # all words that are already palindromes.
+            if word == "":
+                for word0 in words:
+                    if is_palindrome(word0):
+                        j = words_lookup[word0]
+                        if i != j:
+                            soln.append([i, j])
+                            soln.append([j, i])
+
+            # Case 2: word + word[::-1] is a palindrome.
+            rev_word = word[::-1]
+            if rev_word in words_lookup:
+                j = words_lookup[rev_word]
+                if i != j:
+                    soln.append([i, words_lookup[rev_word]])
+
+            for cut in range(1, len(word)):
+                left = word[:cut]
+                right = word[cut:]
+                rev_left = left[::-1]
+                rev_right = right[::-1]
+                
+                # Case 3: if left is a palindrome and rev_right is in words,
+                # then rev_right + word is a palindrome.
+                if is_palindrome(left):
+                    if rev_right in words_lookup:
+                        j = words_lookup[rev_right]
+                        if i != j:
+                            soln.append([j, i])
+
+                # Case 4: if right is a palindrome and rev_left is in words,
+                # then word + rev_right is a palindrome.
+                if is_palindrome(right):
+                    if rev_left in words_lookup:
+                        j = words_lookup[rev_left]
+                        if i != j:
+                            soln.append([i, j])
 
         return soln
 
@@ -44,6 +78,9 @@ def test_3():
 
 
 def test_4():
-    words = ["fhhffbebghdddiff","ahjbihicdicb","ehgdieggfefgaddgejcf","eicjjcbeedhe","bdabceihdh","jaad","ghedccf","fe","fcdjccagbccgaiae","cfjagghgiba","jehe","ch","ggadgg","ccjccfffdjgdibef","cahhjcfafbcg","eehdbc","aa","dadgj","jjjjehih","jiabjaafejdfigjdg","cbdh","habcjhfffcabidah","aeah","bjhbhajeh","jehihbfbdbcgdjdbega","hghffabjidfgjcj","afiihfegdac","ecchjadbaif","biadfacfedjgcjfeaeeh","b","hfghaiejdedgcag","ahdaagcjc","jdgdfcaeggbaecdbc","eajhcebbfabeefb","geeejii","cdbefgb","dbjhca","bfdhebhecg","ea","d","ddhjf","ach","dfejfachajfjf","cgjdijahfdfbj","gh","gegbcbjhfh","hjehffb","f","begaehdcdeed","hcjga","cajgd","chhbhfhijbhcejjbdjbh","fjgcf","hjjjfejgggihe","ejjjabcebh","jgcebedjdiijdghj","idbacgghbacjeiifj","abejcbfigijdgdjedcc","jjjfbchigcegffhdac","cea","jiigibjf","acdie","agdcajbba","gedbedfjehfbbaie","dfbghjggb","di","afccbdjie","hbaihh","ecbahegecffhcicajiaa","ccbcdeedfe","eicjigbabfjeg","j","gcacdcbafiajcdhff","jje","dacgffdhijiaebbaf","bbcg","bcdceegg","dafgcbbiejdghdggf","jifb","dcfdhabgiceffgeia","dbiebccagfjcabiahea","dahg","jjbce","ddiabfcc","ecededaghbadieecifie","agcjihifbjhggj","idib","jbcdbicgbijgbecdcjdf","edjheajfddbdjecdgjcc","jdgfijb","bdicehcae","bidaece","jifhgia","hjeihaecfgbhbgdd","gjj","djjgihhfbgba","eagghidchdjiedddccee","fghceajcge","jdhheeegghjijjcb","cbbbhhifhe","ijgjfjjibjdhf","jcbeebbifdcbgcjdj","feifaicf","idceadifheibgia","fgcfajeag","jfggfeaeeiihfbicd","bigiehgcbhfbghhccbf","biijjigf","affgaegbejfcbggac","gaibaceicdhjdbheejg","fieab","g","fhffeicjaedbeiagd","eibg","gfb","he","idijfc","cfib","baehdhjehgbbghb","bjfgdjd","fiecdjhfhhdihihgaege","fbgjdcggbeb","jcdjbchgbchcgb","ecegacheejgjgffjheg","cdfdibiachdiag","bicjaed","fjfeegab","iahajbefebefj","ebjejigieedjegbhag","jhhcifijdjgfgdii","fdfedabiicg","ajh","cjafaaddefiecaiih","bb","efdeicecafdehfeehgje","hhciejab","hggiahdegfdaj","bcaehfaa","jgeajhgihifcifbga","edag","ieehacagjbijib","ichhfebiefijdjfdf","jejc","jhcdb","cbjageidfajfjfcbggah","hddgecjddagaje","dffcjbiib","fejdbgdhejahjcfaggb","hfgajjedicedhcee","gdihjegg","ijbhfejjahdbajcbf","beaiigacdiicahgiig","aed","ehidhcf","eaehagedbfciihj","baacigefjaf","jciaieahg","idichajfahjfehbdgf","hcahg","h","edbihgfgechehcdb","gijabhbdedcjddhjihd","ehibabbh","ejcjbcjjiicbejfdcc","cjfiaegbeibjbaiifd","eaahbga","chcggghfgacejdjfhgg","jbjaaigjbjbhdh","hfddehabf","edad","dabhaghjiciji","gbiijcjabihgijcghhg","bcifahfed","dgdhbhbbccjciffjdae","jdaihi","jh","dc","jgfadajbafhdigbef","bjbgagfgcgbdgceagf","ebigf","fbbgbjcdbjbifbjc","fefjbc","edjjba","dbbjbefbcdgbfca","af","chf","gijbfjfdbj","egefhfci","fbgbjbgb","ebfjhgefdgdca","jbehjgebbda","eibhdejhfidhfdfa","jjhgjfbjhjehihcahb","haggjjfagibegeiiej","hdchic","ebdfijigie","hjddjcfciihdcfjjcf","hihec","ehbiffdiihhfg","iabfgcjhfcfhdjc","biddjjhbhahfdbdgcegi","fdadj","jdjecidejb","figaghhhdehgigfgbhc","jicfddgcjeedddge","ejiiijdjciebhjdgeiai","hiaeefbjf","fiefihddcejbbc","efhdf","diajdf","gebjdfeidch","gcgcecedbffeiea","fichj","cbcgab","je","efijhfgcgee","jcdhajhbgi","cfjghgc","bbhggggidbbffegbgac","hiifd","jegfahdhaiegbfi","ebahi","fififjaa","djbghfagbgafbddfejgc","iehjecjcgdcdfajgagih","gfhjgaigdeebifeb","hfdfaaddeba","ijhhaajdheaddabgfea","ebgfcacdhehafabfdb","e","ba","dageabbacjh","iccc","iagedbi","ichbgeafbaid","aeeghhafhjbej","iac","ceijfhci","ghhahajcj","dhcaecgcgc","ia","ebdcciacadgjdbefgg","ebdiffigdhbfgjhdeaca","hbhhidjgeacjcij","cbcc","giahgeejgcdihheie","jefc","caababdh","bgbhbccbbbgjgdhfcd","ehhaeeiegjcjjgdg","a","dfjjbbj","fchi","aedabbchididi","ajfiidhjfahfaedc","ggiejacjeccegid","fjab","fdehcaehhcfbhf","iddhbhfdbjdj","jcija","jdch","iehgfgdcieaiaibfh","egffddciffhhgejj","eh","jicbehffi","bgacjgege","dcgefjacdfaiciaa","jbg","ddhahhcbiffaciaied","efaehhagjfheeggb","fgda","jdjfhfagcbeag","affcfaaddic","gf","cihfibbbaejjja","bgibgdhgfdhdaeibeji","haidadafdchjihjibg","eedbehbgfdgc","hijdhfhff","ad","eeifhhbfbcaebh","fhfa","aihg","ciafibahj","dfgdifbheaai","bddhih","idfgda","cjghcbejbafdgb","ehjjgchhdh","eejeb","ijccdea","jhfbebci","ddjgieice","icdjaejcjdagedecbecb","fdegiehagcbcg","djidafihhfbeagicdci","egbfhafdagfddfa","iebhjefjcbfgd","eihfcdcgd","fdddjbcfhja","idjgbeddf","cediceic","gjehcahfhafbibajbd","djdaegagcig","gdajffjhjajchdidfc","cgjfidd","aeajjacdhdh","i","fa","dihhbbdajd","fdggifehada","fgbdidcabg","jhdchb","ajddbdjbci","bcidiedhehechcjfc","aifagabjbgdedaf","cegegcie","dhedji","fhaadbebchde","gbccfccefhcdf","hbjaec","jjjjaaij","dheihjbjicebjga","dcbca","bhfifhbbhgjgjifh","hibggbdbhafibhaed","edfidcaif","ai","ehiddghdhjeiedafagb","fgijccga","aibbcjcbjecgdfj","gaabgchde","fdfhhhefdejfbbje","hjjjeggfbijiafhceci","ieiddfcihgjbjideaef","bceaadejh","hdfcgbcjcabed","hihefjehhbhbde","ceigijcidiebbdb","gjihibdejdhc","cdagdhhjag","gadehjfedfgbbech","chh","jeafacahcagdhbi","ijiffjdfafadbajcae","hjheecgcja","hgfhbi","gdbibjhieffcaad","ie","heecigi","aii","cicaheiefeg","cabgiheiegchbaffd","baibj","fbheehadifchbbgge","hgecdbcdj","dhdafjbfcjcadc","hbfig","cgjfcde","gihfgdhadjgcf","ejgfaa","jf","jggh","jhgahggbgf","jifg","hjieaafiefbcheiahgg","gc","jdbdajjgaigjeb","jdjjhgfjb","jdhdijjihifbdfdejbc","aigbhegifcfi","iicgbiaffchedc","adfjafbi","jeejbdijhbeeab","cb","bibjjhjaifhfjhf","bbe","jgdfjdjh","dicdjdchecihhgciafg","eaigdcaifgha","hhjgbdegbdeaa","gjacggegfgdjchdg","iifa","dbbbefdicfcdj","haj","hffic","ceafj","ciffcigdhecbbjafeig","hdagch","eafhafeidhga","ebhidaei","jghijfbdgghcicbebcii","ifiahegdbghje","gccjgefcicadbcicdb","ibfag","bcehdcbjf","jjacieb","baeddecgfejjdfgib","fefjcggffhe","egaihgfjagf","cjjffcgcfidedeeh","deidj","cijbcfd","cc","cjbeedbdad","hiagdbi","ifejheifhajfbgcbh","ddjiggcedfaiicjbejeh","dbecgfjjjh","bhfhcgbbd","cg","cicbggdhg","bffjbdfhgfj","icafafah","hjacdd","ibfbiije","bfgbhdj","egica","abdcjefadhadcegcbace","cfhbjfadcafiabaded","fgcccafechffaecach","efbci","aeddcc","fb","aiddb","giieghegcgfacjf","fbbbcdag","jeebgaciggijdcc","fficgjfdjecjg","ijaeecbjgg","jiicjbhcijhebiaffhi","ifhbaghgebghiieidhd","fhjcjjbicedbf","cadcigigibg","dbihhc","fijajfdaffghhjidddd","jbgiccdcidhidddfhj","ehfgdeaagfcajiihcg","gedeab","bibfdbijhcaaj","db","eheh","ahbeafjfde","heibggeiibidbj","dajcgdga","hbgb","fjiahjhfgcaibfjehh","jdbcdgjjceihceg","dih","fbj","fjiheaffffbdcdfh","gjafeeigjicjfci","bad","ageaed","hbedbjdi","dafdadfacchbadagbf","biijebbfiebgbagcdbj","cdfajdgahhfiabihja","dbafbahegd","ehd","dhjeedfegi","fbicdjdhahebiijcjig","ieagijcbg","jhhg","hejefcebhhjahhbeh","ghafhejecgfbhbhdei","c","gggcibjcgjjghcdgj","gigcidjbif","ihjidcehghbc","hbidagbe","dgdhbdj","cihajhgbccegd","jdacejeadaejchj","acchaihghbaebdi","heebgieb","eadehddjiche","fjejehjdgejficdid","egaecdfdbfdjfc","gfccgbdciiijiaagifb","jhcedajifhi","ihcihj","gef","jhjah","bjfejhcjbjefgdce","ddaijf","iejc","hdhdcijhihjde","djajbgbhgajahdadgae","fifedh","cejhbfdegdefif","ddajbgici","dbgjbicgaagbaahcd","eeighagcadjab","cjhjdhi","bjejacfahdgajabff","jeih","jcbgifbgihdfdhbgffij","cjedf","eiefaffcjjgieccah","effeeiecchjda","ebejjgbcccbd","ahdihcegijhjcaidcacj","jbifdfefgh","fceagacdec","ghgf","aahcgaebihahajbjbga","abgbiiaecddbh","hjifajddfafggifggc","cihgbcdcje","gabiafjhdgc","cfee","fiaibggfj","eejebdedjjgbdea","giicaadefiigaieebeif","cagdficd","ifeehgfebffjdjec","gaifacejhgaejgfdabci","eaibddgbafiddhcd","ifdahajh","dad","gdafaehfdfdfcccajba","afdicig","dcjijhg","ihjcejjdjeb","ab","ffefdhdjgadehfjef","gjecjghefaidhgjb","ifjgihheafbbdibgeb","ghagigjhggbbdg","cigbiecafbee","hg","fcedjhfb","bhegjahbfibhgaeiee","edbeaaaabfigaicaihc","ecfbibi","cdabii","hhccebdijcebhaej","aiidhdfgibabgehf","bg","caaeagajacjcfj","ejjfbiff","gjibjjdejga","ifdafbbbehafgebia","bdfdigdebdifjccca","hgghfhc","dbeg","cggdcjfebgbc","hbdcabeeje","bhebcfi","hjdcdbfhffajea","ieifcahic","fbjf","ifdbbiabhhj","cfhj","gbicdjfdjjjheaedc","edbbhhjchgjcchjh","bjbcejafi","gbfefjcjieehee","aididgf","chgieiidjhbhd","aijigbeigfcdeadidba","iifacgafiiadafbdefgb","gjjbhcje","fhaeahdhcgbdg","ccadabjjeibfhgifd","cfhheeeecffbgibagff","hjgabbgeegb","aebi","gddgcge","cdbjjbhceiagbja","aahgieicjdbifjdgaha","dgeie","jgeihgeeijhecjhd","bfagddadg","aaeabhdiga","faeecdfebia","ifbii","hfchcfhgahdhgc","gefjjjbfcjjh","gecdifjbb","bhidbjf","jihbfgbghfdaifh","gfjjdeifbbgijc","jj","aga","bgdgbijbaibhigjga","cidc","eibda","fdieibeafcdibiiibhcf","aifhbghj","hahajebejc","daaffhjf","agehcfhbggf","jdfaffbachebgfihi","eagefh","agfdbhdidhhighbaieic","jaebbdcaahbgah","cjijggdfdcijdigg","iagjghbifchceedcddig","ciegjijaigchabf","feiiddaib","diddbjdidcgcjiggj","hejchdii","bcfddjfgdahghdabie","ejhdjggd","jijigjehfdabiei","egefifigbebedciebgg","hdcccgecafafcihjbgg","abi","ihfjbiajagbeifjedgg","jicdifjh","cdiaicgajbbjjbfeaebe","cicjegahefghfgbgdi","hgfahiaeabfief","hgfffabhhhbgh","edeccjfcbhgd","ecbecdhdgaejieaij","fjig","idbafcibechiheibih","fihffghajhdfechbadij","fdfjbebehi","bgejgfbhaidjhebadfij","hdfhejcabafdiagbbb","gcigagahaffifaeagdig","fiafihiddf","gjjciifibf","jahffhhfhedageb","fbhdjeccjeigahfhhb","jgcgebjdbgfd","fecjgeagggadcaedgdea","igcbahagjbbcahaifah","fjh","gjfchfhiajbc","bhibhiaiafdg","bfiadehbjfi","dahhfabcbaidcgcd","dggcbfbcghhj","ibicjjedabfi","hdec","gaggda","bied","djecejdeaea","iib","cbhihcjfdhgfbh","jjddhicjaedfeiejca","hjiigfidaabfiia","dhjhegagcjjigc","ahbfgcei","bjcibcichebjcagf","iggbfdfagcahgejbhedj","bcbdjbcjdjfbge","djfidbdeh","dibij","egdhjfd","bfjecfieafde","eific","cdchehci","gjgcfccjghdfjhfhfh","jjfbjgbccdjbjfhfci","iijajce","bfcibfgeibd","ajjhcjibhei","haiighajie","bhcdddai","eghhiddfjbdfhhffbhig","ifhaaeciec","jefjjf","ejcabfbaijadhbbec","iiij","iiddfdhbbbhed","aeig","bidjhddgbbfii","ej","jeidjfgjcb","jhbdgb","cijbbgihbdifcbgdhha","jfbgiiebfgbjh","dajegbfdibeacghbda","hiihehadicgd","cgieiacfieihjddc","ehdhdihbigfc","iigcgjegchggfa","ffcf","fjgcbcffccg","cfeddiffeejjdcfcb","ihe","cijbfeeccd","gbfagjaadcbbedfh","ege","bhfeeda","jbijgidfaiifif","eefehgghjadfb","achbdgeibgfffafajdhd","fbddhhiijbccda","gdeegaed","cggfj","djaa","cbghhbdh","agdhgbdacc","ihjbdicajgeaghee","hjaaigeeefjcf","gih","dhgehaeggfffhddihaa","cahgjdcjejfbefhfcg","hhgcecgcfj","aehhe","chjhcfafggjb","aia","bfcghccc","gdfiefjidhibdh","chggaicdeeeihe","aeecbahgdhijdhj","geji","heejedgg","bahdibgfdd","ggaacaedahj","dcfagcjffjj","eiibj","bdcgacca","baigjaf","eagj","bfhd","eghfe","gbeieeeeddcajd","hbabf","aiich","caaebacihj","jbcbhfefiedb","jhhhg","cabbhgbddcibb","gajfefjfchccd","dehccedeghhgb","fceadjbdihchiaefgig","deib","acbcefbdigfj","bce","bjhdidejaaabi","iffei","fjjjd","eejdiacbbjcbehbefd","bjb","dhfcfajbgdidc","dgaifiada","bhjefbjhgje","gacfgifjhhcabiihgieb","gegfcbgfgbd","jgbffaihddahhheebh","djbgcjggjifidcjieca","bajai","ifbbicabfgceaeahde","igbahdcbdbcie","fcideiajgec","gihfedcddhgajc","ehfeihfdeehegjdbdi","cadhjchdh","hhaiiaebb","afidcgjbc","hgbdcgdeeiajijee","geghhe","beh","egfccbbhgbgijg","figeejbcjgedhhfeieci","ejgjfiha","dbb","eaibfhehhha","eeeabjjdigadjcgeaec","aeabagigdadeebg","ccdedheiedefajcg","daiiaaijgdifdgafhai"]
-    expected = sorted([[0,1],[1,0]])
+    words = []
+    with open('palindrome_pairs_test4.txt', 'r') as testin:
+        for line in testin:
+            words.append(line.strip())
+    expected = sorted([[7,47],[229,7],[10,71],[11,466],[159,11],[20,15],[16,250],[250,16],[159,22],[38,229],[250,38],[632,40],[44,111],[159,44],[44,531],[65,39],[307,65],[673,73],[73,584],[229,73],[366,75],[29,86],[94,111],[584,94],[115,159],[229,115],[115,263],[133,29],[29,133],[466,142],[152,38],[169,229],[520,169],[175,71],[159,175],[176,39],[466,176],[184,250],[47,184],[184,308],[188,47],[214,71],[229,214],[214,673],[230,29],[250,230],[230,525],[232,307],[236,327],[240,307],[250,240],[240,327],[466,244],[263,229],[159,263],[263,115],[273,111],[47,273],[279,250],[39,279],[250,281],[308,47],[250,308],[308,184],[327,250],[307,327],[327,240],[342,466],[348,307],[229,348],[350,250],[350,240],[361,71],[47,361],[366,111],[466,366],[366,410],[374,466],[29,374],[376,133],[229,376],[184,382],[403,466],[466,403],[410,466],[111,410],[410,366],[423,47],[29,423],[440,39],[29,440],[441,229],[159,441],[445,159],[452,525],[459,115],[7,482],[47,505],[520,279],[525,250],[29,525],[525,230],[531,159],[111,531],[531,44],[539,29],[111,539],[185,545],[584,71],[71,584],[609,230],[632,361],[641,734],[29,643],[667,673],[71,669],[673,229],[71,673],[673,214],[683,47],[263,686],[706,250],[327,708],[708,240],[734,641],[736,374],[115,760],[764,39],[133,764]])
     assert sorted(Solution().palindromePairs(words)) == expected
