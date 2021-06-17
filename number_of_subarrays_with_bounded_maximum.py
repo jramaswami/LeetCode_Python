@@ -3,8 +3,7 @@ LeetCode :: June 2021 Challenge :: Number of Subarrays with Bounded Maximum
 jramaswami
 """
 
-
-import heapq
+from collections import deque
 
 
 class Solution:
@@ -18,52 +17,27 @@ class Solution:
     """
     def numSubarrayBoundedMax(self, nums, left, right):
         """Solve problem."""
-        print(f"numSubarrayBoundedMax({nums=} {left=} {right=})")
-        i = 0
-        j = 0
-        Q = []
+        values_gte_left = deque((x, i) for i, x in enumerate(nums) if x >= left)
+        values_gt_right = deque((x, i) for i, x in enumerate(nums) if x > right)
+        values_gt_right.append((None, len(nums)))
+        values_gte_left.append((None, len(nums)))
         soln = 0
-        while i < len(nums):
-            # print(f"{i=} {j=}")
-            while j < len(nums) and nums[j] <= right:
-                heapq.heappush(Q, (-nums[j], j))
-                if left <= -Q[0][0] <= right:
-                    soln += 1
-                    print(f"1 *** {nums[i:j+1]}")
-                j += 1
-            # j now points points to a number more than right or the end of the
-            # array.  Move i right until it runs out of values greater than
-            # left.
-            k = None if j >= len(nums) else nums[j]
-            # print(f"{k=} {i=} {j=} {Q=}")
+        for i, n in enumerate(nums):
 
-            # We have already counted all subarrays starting at i, so move
-            # forward one place.
-            i += 1
-            while i <= j:
-                # Remove any items that came before i
-                while Q and Q[0][1] < i:
-                    heapq.heappop(Q)
-                # print(f"{i=} {Q=}")
-                if Q and -Q[0][0] >= left:
-                    soln += 1
-                    print(f"2 *** {nums[i:j]}")
-                i += 1
-            # Move j and i beyond the number that is too big.
-            j += 1
-            i = j
+            while values_gte_left and values_gte_left[0][1] < i:
+                values_gte_left.popleft()
+
+            while values_gt_right and values_gt_right[0][1] <= i:
+                values_gt_right.popleft()
+
+            if n <= right:
+                # Subarrays starting with me that have left <= max <= right
+                # begin where the next value >= left is and end where then
+                # next value > right is.
+                if values_gt_right[0][1] > values_gte_left[0][1]:
+                    delta = values_gt_right[0][1] - values_gte_left[0][1]
+                    soln += delta
         return soln
-
-
-def brute_force(nums, left, right):
-    print(nums)
-    soln = 0
-    for i in range(len(nums)):
-        for j in range(i+1, len(nums)+1):
-            if left <= max(nums[i:j]) <= right:
-                print(i, j, nums[i:j], max(nums[i:j]))
-                soln += 1
-    print('brute force solution', soln)
 
 
 def test_1():
@@ -76,8 +50,14 @@ def test_1():
 
 def test_2():
     nums = [17, 7, 18, 11, 5, 12, 1, 2, 20, 14, 16, 8, 19, 6, 8, 14, 15, 11, 18, 11]
-    # nums = [17, 7, 18, 11, 5, 12]
     left = 10
     right = 15
-    brute_force(nums, left, right)
+    assert Solution().numSubarrayBoundedMax(nums, left, right) == 25
+
+
+def test_3():
+    """RTE"""
+    nums = [16, 69, 88, 85, 79, 87, 37, 33, 39, 34]
+    left = 55
+    right = 57
     assert Solution().numSubarrayBoundedMax(nums, left, right) == 25
