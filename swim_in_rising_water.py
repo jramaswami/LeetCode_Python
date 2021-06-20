@@ -4,6 +4,7 @@ jramaswami
 """
 
 
+import heapq
 from collections import deque
 from math import inf
 
@@ -23,28 +24,18 @@ class Solution:
                 if inbounds(r0, c0):
                     yield (r0, c0)
 
-        for row in grid:
-            print(row)
-
-        dp = [[inf for val in row] for row in grid]
-        visited = [[False for _ in row] for row in grid]
-        queue = deque([(grid[0][0], 0, 0)])
-        visited[0][0] = True
+        high_water = [[inf for val in row] for row in grid]
+        high_water[0][0] = grid[0][0]
+        queue = [(grid[0][0], 0, 0)]
         while queue:
-            hw, r, c = queue.popleft()
-            print(hw, r, c)
+            hw, r, c = heapq.heappop(queue)
             if r == len(grid) - 1 and c == len(grid[0]) - 1:
                 return hw
-            # From here, swimmer should go to the minimum neighbor
-            # that has not been visited.
-            ns = [(grid[r0][c0], r0, c0) for r0, c0 in neighbors(r, c) if not visited[r0][c0]]
-            if ns:
-                hw0, r0, c0 = min(ns)
-                print(f"({hw}, {r}, {c}) -> ({hw0}, {r0}, {c0})")
-                hw0 = max(hw, hw0)
-                queue.append((hw0, r0, c0))
-                visited[r0][c0] = True
-
+            for r0, c0 in neighbors(r, c):
+                hw0 = max(hw, grid[r0][c0])
+                if high_water[r0][c0] > hw0:
+                    heapq.heappush(queue, (hw0, r0, c0))
+                    high_water[r0][c0] = hw0
 
 
 def test_1():
