@@ -8,11 +8,10 @@ from collections import deque
 
 
 class Solution():
-    def lowestCommonAncestor(self, root, p, q):
+    def lowestCommonAncestor(self, root, p_node, q_node):
         # First, use a BFS to traverse tree and assign a level to each node
         # and a parent for each node.  Dictionaries can be used for this
-        # because node values are unique.  We can also use this step to find
-        # the nodes for values p and q.  Each node is enqueued for an O(N)
+        # because node values are unique.  Each node is enqueued for an O(N)
         # time complexity.  With level, parent, and queue we need O(N) extra
         # space.
         level = dict()
@@ -20,14 +19,8 @@ class Solution():
         queue = deque()
         queue.append((root, 0))
         parent[root] = None
-        p_node = None
-        q_node = None
         while queue:
             node, lvl = queue.popleft()
-            if node == p:
-                p_node = node
-            if node == q:
-                q_node = node
             level[node] = lvl
             if node.left is not None:
                 parent[node.left] = node
@@ -52,7 +45,6 @@ class Solution():
         while q_node != p_node:
             q_node = parent[q_node]
             p_node = parent[p_node]
-
 
         # Overall, this is a O(N) solution.
         return q_node
