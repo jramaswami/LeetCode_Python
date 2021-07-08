@@ -4,40 +4,26 @@ jramaswami
 """
 
 
-from collections import defaultdict
-
-
 class Solution:
     def findLength(self, nums1, nums2):
-        # First can nums2 and find the positions of each number.
-        posns = defaultdict(list)
-        for i, n in enumerate(nums2):
-            posns[n].append(i)
+        # Make dp matrix
+        dp = [[0 for _ in nums2] for _ in nums1]
 
+        def get(r, c):
+            """Convenience function."""
+            if r < 0 or c < 0:
+               return 0
+            return dp[r][c]
+
+        # Populate dp matrix
         soln = 0
-        # Iterate over nums1 and find the longest subarray starting at i.
-        for i, n in enumerate(nums1):
-            # Do not continue if it is not possible to find a subarray longer
-            # than the current solution.
-            if len(nums1) - i < soln:
-                break
-
-            for j in posns[n]:
-                # Do not continue if it is not possible to find a subarray longer
-                # than the current solution.
-                if len(nums2) - j < soln:
-                    break
-
-                a = i
-                b = j
-                curr = 0
-                while a < len(nums1) and b < len(nums2) and nums1[a] == nums2[b]:
-                    curr += 1
-                    a += 1
-                    b += 1
-                soln = max(soln, curr)
-
+        for i, a in enumerate(nums1):
+            for j, b in enumerate(nums2):
+                if a == b:
+                    dp[i][j] = get(i-1, j-1) + 1
+                    soln = max(soln, dp[i][j])
         return soln
+
 
 
 def test_1():
