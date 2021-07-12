@@ -9,24 +9,12 @@ from collections import defaultdict
 
 class Solution():
     def isIsomorphic(self, S, T):
-        S_posns = defaultdict(list)
-        T_posns = defaultdict(list)
-
-        for i, c in enumerate(S):
-            S_posns[c].append(i)
-        for i, c in enumerate(T):
-            T_posns[c].append(i)
-
-        checked = set()
+        map_s_to_t = dict()
+        map_t_to_s = dict()
         for s, t in zip(S, T):
-            if s not in checked:
-                if S_posns[s] != T_posns[t]:
-                    return False
-                else:
-                    checked.add(s)
-
+            if map_s_to_t.setdefault(s, t) != t or map_t_to_s.setdefault(t, s) != s:
+                return False
         return True
-
 
 
 def test_1():
@@ -51,4 +39,11 @@ def test_4():
     """WA"""
     S = "bbbaaaba"
     T = "aaabbbba"
+    assert Solution().isIsomorphic(S, T) == False
+
+
+def test_5():
+    """WA"""
+    S = "badc"
+    T = "baba"
     assert Solution().isIsomorphic(S, T) == False
