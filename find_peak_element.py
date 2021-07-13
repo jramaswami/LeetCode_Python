@@ -11,7 +11,7 @@ class Solution:
     def findPeakElement(self, nums):
         for i, mid in enumerate(nums):
             left = nums[i-1] if i - 1 >= 0 else -inf
-            right = nums[i+1] if i + 1 < len(nums) else inf
+            right = nums[i+1] if i + 1 < len(nums) else -inf
             if left < mid and mid > right:
                 return i
 
