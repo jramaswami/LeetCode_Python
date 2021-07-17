@@ -55,11 +55,19 @@ class Solution():
                 right_len = len(bits) - msb[j]
 
                 if left_len == mid_len and mid_len == right_len:
-                    left = bits[msb[0]:i+1]
-                    mid = bits[msb[i+1]:j]
-                    right = bits[msb[j]:]
-                    if left == mid and mid == right:
+                    # Optimization: don't copy out new arrays.
+                    ok = True
+                    for k in range(left_len):
+                        a = msb[0] + k
+                        b = msb[i+1] + k
+                        c = msb[j] + k
+                        if not (bits[a] == bits[b] and bits[b] == bits[c]):
+                            ok = False
+                            break
+
+                    if ok:
                         return [i, j]
+
         return [-1, -1]
 
 
