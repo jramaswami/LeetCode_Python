@@ -76,6 +76,10 @@ class Solution():
         # Build a leveled graph from the words.
         level_adj = bfs(begin_word, end_word, adj)
 
+        # Make sure there is a path between begin_word and end_word.
+        if not level_adj or end_word not in level_adj[-1]:
+            return []
+
         # Build all the possible paths from end_word to begin_word using
         # the leveled graph.
         queue = [[end_word]]
@@ -136,6 +140,15 @@ def test_5():
     begin_word = "hot"
     end_word = "dog"
     word_list = ["hot","dog"]
+    expected = []
+    result = Solution().findLadders(begin_word, end_word, word_list)
+    assert sorted(result) == sorted(expected)
+
+
+def test_6():
+    begin_word = "hit"
+    end_word = "zzz"
+    word_list = ["hot","dot","dog","lot","log"]
     expected = []
     result = Solution().findLadders(begin_word, end_word, word_list)
     assert sorted(result) == sorted(expected)
