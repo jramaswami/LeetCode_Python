@@ -13,12 +13,12 @@ class Solution:
         #     (a) arr[0] < arr[1] < ... < arr[i-1] < arr[i]
         #     (b) arr[i] > arr[i+1] > ... > arr[len(arr)-1]
         i = 0
-        while i < len(arr) and arr[i] < arr[i+1]:
+        while i + 1 < len(arr) and arr[i] < arr[i+1]:
             i += 1
         j = len(arr) - 1
-        while j >= 0 and arr[j-1] > arr[j]:
+        while j - 1 >= 0 and arr[j-1] > arr[j]:
             j -= 1
-        return i == j
+        return i > 0 and j < len(arr) - 1 and i == j
 
 
 def test_1():
