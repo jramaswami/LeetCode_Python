@@ -7,9 +7,9 @@ class Solution:
     def checkIfExist(self, arr):
         # The module only speaks about linear searching.  The constraints say
         # that len(arr) <= 500.  An O(N^2) algorithm should be fast enough.
-        for n in arr:
-            for m in arr:
-                if n * 2 == m:
+        for i, n in enumerate(arr):
+            for j, m in enumerate(arr):
+                if i != j and n * 2 == m:
                     return True
         return False
 
