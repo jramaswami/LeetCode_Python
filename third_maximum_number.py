@@ -9,17 +9,14 @@ import heapq
 
 class Solution:
     def thirdMax(self, nums):
-        if len(nums) < 3:
-            return max(nums)
-
         H = []
-
         for n in nums:
             if n not in H:
                 heapq.heappush(H, n)
-            print(n, H)
             while len(H) > 3:
                 heapq.heappop(H)
+        if len(H) < 3:
+            return max(H)
         return H[0]
 
 
