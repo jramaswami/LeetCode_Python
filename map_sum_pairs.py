@@ -1,6 +1,8 @@
 """
 LeetCode :: July 2021 Challenge :: Map Sum Pairs
 jramaswami
+
+REF: Algorithms, Sedwick, pp. 732-738
 """
 
 
@@ -12,6 +14,7 @@ class TrieNode:
     def __init__(self):
         self.sum = 0
         self.next = dict()
+        self.word = None
         for c in string.ascii_lowercase:
             self.next[c] = None
 
@@ -31,8 +34,9 @@ class MapSum:
         if node is None:
             node = TrieNode()
 
-        node.sum += val
         if index == len(key):
+            node.word = key
+            node.sum = val
             return node
 
         node.next[key[index]] = self._insert(node.next[key[index]], index + 1, key, val)
@@ -40,18 +44,33 @@ class MapSum:
 
     def  sum(self, prefix):
         """Return the sum of vals for any key with the given prefix."""
-        return self._sum(self.root, 0, prefix)
+        node = self._get(self.root, 0, prefix)
+        prefix0 = list(prefix)
+        Q = []
+        self._collect(node, prefix0, Q)
+        return sum(Q)
 
-    def _sum(self, node, index, prefix):
+    def _get(self, node, index, prefix):
+        """Get the terminal node for prefix."""
+        if node is None:
+            return None
+        if index == len(prefix):
+            return node
+        c = prefix[index]
+        return self._get(node.next[c], index + 1, prefix)
+
+    def _collect(self, node, prefix, Q):
         """Internal method to return sum of all keys with the given prefix."""
         if node is None:
-            return 0
+            return
 
-        if index == len(prefix):
-            return node.sum
+        if node.word is not None:
+            Q.append(node.sum)
 
-        return self._sum(node.next[prefix[index]], index + 1, prefix)
-
+        for c in string.ascii_lowercase:
+            prefix.append(c)
+            self._collect(node.next[c], prefix, Q)
+            prefix.pop()
 
 
 def test_1():
