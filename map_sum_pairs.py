@@ -28,13 +28,13 @@ class MapSum:
 
     def _insert(self, node, index, key, val):
         """Internal method to insert key into trie."""
-        if index >= len(key):
-            return None
-
         if node is None:
             node = TrieNode()
 
         node.sum += val
+        if index == len(key):
+            return node
+
         node.next[key[index]] = self._insert(node.next[key[index]], index + 1, key, val)
         return node
 
@@ -47,7 +47,7 @@ class MapSum:
         if node is None:
             return 0
 
-        if index + 1 >= len(prefix):
+        if index == len(prefix):
             return node.sum
 
         return self._sum(node.next[prefix[index]], index + 1, prefix)
@@ -69,6 +69,16 @@ def test_2():
     calls = ["MapSum", "insert", "sum", "insert", "sum"]
     args = [[], ["a",3], ["ap"], ["b",2], ["a"]]
     expected = [None,None,0,None,3]
+    ms = MapSum()
+    for c, a, e in zip(calls[1:], args[1:], expected[1:]):
+        assert getattr(ms, c)(*a) == e
+
+
+def test_3():
+    """WA"""
+    calls = ["MapSum", "insert", "sum", "insert", "insert", "sum"]
+    args = [[], ["apple",3], ["ap"], ["app",2], ["apple", 2], ["ap"]]
+    expected = [None,None,3,None,None,4]
     ms = MapSum()
     for c, a, e in zip(calls[1:], args[1:], expected[1:]):
         assert getattr(ms, c)(*a) == e
