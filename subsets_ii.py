@@ -3,38 +3,28 @@ LeetCode :: August 2021 Challenge :: Subsets II
 jramaswami
 """
 
-import collections
-
-
-def powerset(keys, freqs, key_index, acc):
-    """
-    Generator for powerset. Yields a tuple that contains the frequency of
-    each key in the subset.
-    """
-    if key_index >= len(keys):
-        yield tuple(acc)
-    else:
-        key = keys[key_index]
-        max_freq = freqs[key]
-        for m in range(max_freq + 1):
-            acc[key_index] = m
-            yield from powerset(keys, freqs, key_index + 1, acc)
-
-
-def build_subset(subset_map, keys):
-    """Function that takes the set map & keys to produce the subset."""
-    acc = []
-    for n, k in zip(subset_map, keys):
-        acc.extend(k for _ in range(n))
-    return acc
-
-
 class Solution:
     def subsetsWithDup(self, nums):
-        freqs = collections.Counter(nums)
-        keys = list(freqs.keys())
-        acc = [0 for _ in keys]
-        return list(build_subset(m, keys) for m in powerset(keys, freqs, 0, acc))
+        # To get same sets as test cases.
+        nums.sort()
+
+        # Use bitmask to get all subsets.
+        N = 1 << (len(nums) + 1)
+        all_subsets = []
+        for n in range(N):
+            subset = []
+            for b in range(len(nums)):
+                if n & (1 << b):
+                    subset.append(nums[b])
+            all_subsets.append(subset)
+
+        # Dedupe the subsets using sorting to find duplicates.
+        all_subsets.sort()
+        unique_subsets = []
+        for subset in all_subsets:
+            if not unique_subsets or subset != unique_subsets[-1]:
+                unique_subsets.append(subset)
+        return unique_subsets
 
 
 def test_1():
