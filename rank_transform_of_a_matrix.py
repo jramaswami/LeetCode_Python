@@ -52,42 +52,6 @@ class UnionFind:
         return v in self.rank
 
 
-Element = collections.namedtuple('Element', ['row', 'col', 'val', 'rank'])
-
-def row_generator(r, matrix, rank):
-    """
-    Generator that returns (row, col, value, rank) for every element in row.
-    """
-    for c, (mat_val, rank_val) in enumerate(zip(matrix[r], rank[r])):
-        yield Element(r, c, mat_val, rank_val)
-
-def col_generator(c, matrix, rank):
-    """
-    Generator that returns (row, col, value, rank) for every element in column.
-    """
-    for r, (mat_row, rank_row) in enumerate(zip(matrix, rank)):
-        yield Element(r, c, mat_row[c], rank_row[c])
-
-def max_ranked(row, col, matrix, rank):
-    """
-    Returns the element with the maximum rank in the row/colum.
-    """
-    curr_val = matrix[row][col]
-    max_rank = -math.inf
-    max_elem = None
-    for elem in col_generator(col, matrix, rank):
-        if elem.rank > max_rank:
-            max_rank, max_elem = elem.rank, elem
-        elif elem.rank == max_rank and elem.val < curr_val:
-            max_rank, max_elem = elem.rank, elem
-    for elem in row_generator(row, matrix, rank):
-        if elem.rank > max_rank:
-            max_rank, max_elem = elem.rank, elem
-        elif elem.rank == max_rank and elem.val < curr_val:
-            max_rank, max_elem = elem.rank, elem
-    return max_elem
-
-
 class Solution:
     def matrixRankTransform(self, matrix):
 
@@ -97,36 +61,38 @@ class Solution:
             for c, val in enumerate(row):
                 all_vals[val].append((r, c))
 
+        row_max = [-1 for _ in matrix]
+        col_max = [-1 for _ in matrix[0]]
+
         for curr_val in sorted(all_vals):
 
             # Build DSU
             uf = UnionFind()
             for r, c in all_vals[curr_val]:
                 uf.make_set((r, c))
+
             for a, b in itertools.combinations(all_vals[curr_val], 2):
                 if a[0] == b[0] or a[1] == b[1]:
                     # If the two values share a column or row, union.
                     uf.union_set(a, b)
 
             for r, c in all_vals[curr_val]:
-                # First see if my DSU set has been ranked.
-                if uf.has_rank((r, c)):
-                    soln[r][c] = uf.get_rank((r, c))
-
                 # Determine the value and position of the maximum value
                 # that has been ranked in my row and col.
-                max_elem = max_ranked(r, c, matrix, soln)
+                max_rank = 0
+                if row_max[r] >= 0:
+                    max_rank = max(max_rank, soln[r][row_max[r]])
+                if col_max[c] >= 0:
+                    max_rank = max(max_rank, soln[col_max[c]][c])
 
-                if max_elem is None:
-                    # If there are no values ranked yet, then I should
-                    # have rank of 1.
+                if max_rank == 0:
+                    # If there has been no rank in my row/col then set my rank
+                    # to 1.
                     soln[r][c] = 1
-                elif max_elem.val == curr_val:
-                    # If the max ranked element has the same value as me,
-                    # then I should be the same value as it.
-                    soln[r][c] = max_elem.rank
                 else:
-                    soln[r][c] = max_elem.rank + 1
+                    # Otherwise, temporarily set my rank to 1 more than the
+                    # current max rank in my row/col.
+                    soln[r][c] = max_rank + 1
 
                 # I am now the max ranked element in my row and column.
                 uf.set_rank((r, c), soln[r][c])
@@ -134,6 +100,8 @@ class Solution:
             for r, c in all_vals[curr_val]:
                 # Set all the values to the maximum rank of their set.
                 soln[r][c] = uf.get_rank((r, c))
+                row_max[r] = c
+                col_max[c] = r
 
         return soln
 
