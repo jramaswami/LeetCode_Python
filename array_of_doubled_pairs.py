@@ -19,14 +19,14 @@ class Solution:
                 nums.pop()
 
             # Fill
-            a = nums[-1]
+            a = nums.pop()
             if freqs[a] > 0:
+                freqs[a] -= 1
+                arr0[i*2] = a
                 b = 2 * a
                 if freqs[b] > 0:
-                    arr0[i*2], arr0[(i*2)+1] = a, b
-                    freqs[a] -= 1
+                    arr0[(i*2)+1] = a
                     freqs[b] -= 1
-                    nums.pop()
                 else:
                     return False
             else:
@@ -68,4 +68,3 @@ def test_6():
     """WA"""
     arr = [-33,0]
     assert Solution().canReorderDoubled(arr) == False
-
