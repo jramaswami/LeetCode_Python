@@ -30,7 +30,6 @@ class Solution:
     def rectangleArea(self, rectangles):
         # Sort the rectangles by y values.
         rectangles.sort(key=lambda r: (r[1], r[3]))
-        print(rectangles)
 
         # Create events along x-axis
         event_set = set()
@@ -42,9 +41,10 @@ class Solution:
         events = sorted(event_set)
         for a, b in zip(events[:-1], events[1:]):
             active_rectangles = [r for r in rectangles if is_active(r, a) and is_active(r, b)]
-            intervals = merge_intervals(active_rectangles)
-            for l, r in intervals:
-                total_area += (r - l) * (b - a)
+            if active_rectangles:
+                intervals = merge_intervals(active_rectangles)
+                for l, r in intervals:
+                    total_area += (r - l) * (b - a)
 
         return total_area % MOD
 
@@ -64,5 +64,5 @@ def test_2():
 
 def test_3():
     rectangles = [[0,0,1,1],[2,2,3,3]]
-    expected = 49
+    expected = 2
     assert Solution().rectangleArea(rectangles) == expected
