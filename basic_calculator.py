@@ -64,14 +64,13 @@ class Solution:
             self._operate()
 
     def _compute(self):
-        prev_token = None
+        prev_token = "("
         token_type, token = self._get_token()
         while token_type != EOF:
             if token == '-' and prev_token == '(':
                 # Negative numbers
                 token = '_'
-            # print(self.opstack, self.valstack)
-            # print(token_type, token)
+
             if token_type == OPERATOR:
                 self.opstack.append(token)
             elif token_type == GROUPER:
@@ -92,14 +91,8 @@ class Solution:
                 if self.opstack and self.opstack[-1] != '(':
                     self._operate()
 
-            # print(self.opstack, self.valstack)
-            # print()
-
             prev_token = token
             token_type, token = self._get_token()
-
-        # print('final', self.opstack, self.valstack)
-        print("EOF")
 
     def calculate(self, expression):
         self.expression = expression
@@ -132,4 +125,3 @@ def test_5():
     """RTE"""
     expression = "-2 +1"
     assert Solution().calculate(expression) == -1
-
