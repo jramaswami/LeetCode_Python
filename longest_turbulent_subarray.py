@@ -22,6 +22,8 @@ class Solution:
                 return start_index + 1
             # Get the first delta
             prev_delta = sign(arr[start_index] - arr[start_index + 1])
+            if prev_delta == 0:
+                return start_index + 1
             # Get the remaining deltas from the right.
             curr_index = start_index + 1
             if curr_index + 1 >= len(arr):
@@ -40,6 +42,7 @@ class Solution:
         start_index = 0
         while start_index < len(arr):
             end_index = traverse(start_index)
+            print(start_index, end_index, arr[start_index:end_index])
             soln = max(soln, end_index - start_index)
             if end_index - 1 != start_index:
                 start_index  = end_index - 1
@@ -81,4 +84,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
