@@ -4,6 +4,10 @@ jramaswami
 """
 
 
+from functools import lru_cache
+
+
+@lru_cache(maxsize=None)
 def solve(i, j, S, T):
     # Base case: we have found and consumed all letters of the target word.
     if j >= len(T):
@@ -48,5 +52,5 @@ def test_3():
     """TLE"""
     S = "aabdbaabeeadcbbdedacbbeecbabebaeeecaeabaedadcbdbcdaabebdadbbaeabdadeaabbabbecebbebcaddaacccebeaeedababedeacdeaaaeeaecbe"
     T = "bddabdcae"
-    expected = 5
+    expected = 10582116
     assert Solution().numDistinct(S, T) == expected
