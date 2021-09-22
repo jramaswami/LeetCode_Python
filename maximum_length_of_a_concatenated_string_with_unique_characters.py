@@ -4,29 +4,39 @@ jramaswami
 """
 
 
-from collections import defaultdict
+from collections import namedtuple
+
+
+Word = namedtuple('Word', ['chars', 'length'])
 
 
 class Solution:
 
     def maxLength(self, arr):
-        SOURCE = -1
-        SINK = -2
 
-        letter_sets = [set(word) for word in arr]
-        def dfs(node, visited, letter_acc, length_acc):
-            result = length_acc
-            for neighbor, neighbor_word in enumerate(arr):
-                neighbor_set = letter_sets[neighbor]
-                if neighbor not in visited and letter_acc.isdisjoint(neighbor_set):
-                    visited.add(neighbor)
-                    result = max(result, dfs(neighbor, visited, letter_acc | neighbor_set, length_acc + len(neighbor_word)))
-                    visited.remove(neighbor)
+        def combine(bitmask, words):
+            """
+            Combine the words based on the bitmask.  If there is any overlap
+            return 0.  If there is no overlap return length of combined word.
+            """
+            T = set()
+            result = 0
+            for i in range(len(words)):
+                bit = 1 << i
+                if bit & bitmask:
+                    if not T.isdisjoint(words[i].chars):
+                        return 0
+                    T.update(words[i].chars)
+                    result += words[i].length
             return result
 
-        visited = set()
-        soln = dfs(SOURCE, visited, set(), 0)
+        soln = 0
+        words = [Word(set(word), len(word)) for word in arr]
+        for bitmask in range(1, pow(2, len(words))):
+            result = combine(bitmask, words)
+            soln = max(soln, result)
         return soln
+
 
 
 def test_1():
@@ -52,7 +62,10 @@ def test_4():
     for c in 'abcdefghijklmnop':
         arr.append(c * 26)
     expected = 26 * 16
-    for word in arr:
-        print(word)
     assert Solution().maxLength(arr) == expected
-    assert False
+
+def test_5():
+    """WA"""
+    arr = ["yy","bkhwmpbiisbldzknpm"]
+    expected = 0
+    assert Solution().maxLength(arr) == expected
