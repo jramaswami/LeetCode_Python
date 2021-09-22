@@ -31,7 +31,7 @@ class Solution:
             return result
 
         soln = 0
-        words = [Word(set(word), len(word)) for word in arr]
+        words = [Word(set(word), len(word)) for word in arr if len(set(word)) == len(word)]
         for bitmask in range(1, pow(2, len(words))):
             result = combine(bitmask, words)
             soln = max(soln, result)
@@ -61,8 +61,9 @@ def test_4():
     arr = []
     for c in 'abcdefghijklmnop':
         arr.append(c * 26)
-    expected = 26 * 16
+    expected = 0
     assert Solution().maxLength(arr) == expected
+
 
 def test_5():
     """WA"""
