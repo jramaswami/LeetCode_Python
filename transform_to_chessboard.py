@@ -29,9 +29,9 @@ class Solution:
             if board[0][i] == i % 2:
                 col_moves_needed += 1
 
-        if ones_in_first_row < (board_length / 2) or ones_in_first_row > ((board_length + 1) / 2):
+        if ones_in_first_row < (board_length // 2) or ones_in_first_row > ((board_length + 1) // 2):
             return -1
-        if ones_in_first_col < (board_length / 2) or ones_in_first_col > ((board_length + 1) / 2):
+        if ones_in_first_col < (board_length // 2) or ones_in_first_col > ((board_length + 1) // 2):
             return -1
 
         if board_length % 2:
