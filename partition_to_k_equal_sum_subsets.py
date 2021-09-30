@@ -4,59 +4,41 @@ jramaswami
 """
 
 
-from collections import defaultdict
-from itertools import combinations
-from functools import reduce
-from operator import and_
-
-
 class Solution:
 
     def canPartitionKSubsets(self, nums, k):
-        def powerset_generator(nums):
-            """Use bitmasks to generate powerset of nums."""
-            N = len(nums)
-            for mask in range(1 << N):
-                yield mask, sum(n for i, n in enumerate(nums) if mask & (1 << i))
-
-        def disjoint(combo):
-            """Return True if the bitmasks in combo do not intersect."""
-            bits = combo[0]
-            for c in combo[1:]:
-                if bits & c:
-                    return False
-                bits |= c
+        # Corner case: if k is 1 the answer is always true.
+        if k == 1:
             return True
 
-        def uses_all(combo, N):
-            """Return true if combo uses all numbers."""
-            all_mask = (1 << N) - 1
-            mask = 0
-            for c in combo:
-                mask |= c
-            return mask == all_mask
+        # Corner case: to divide nums into k parts there must be at least
+        # k elements in nums.
+        if len(nums) < k:
+            return False
+
+        # We are dividing nums into k equal parts, that is all parts
+        # have the same sum, call it s.  The total of the array must
+        # be k * s, so the sum of the array must be divisible by k.
+        if sum(nums) % k:
+            return False
 
 
-        # Take the powerset of nums and get each possible set and its sum.
-        sums = defaultdict(list)
-        for mask, p in powerset_generator(nums):
-            sums[p].append(mask)
+        def solve(index, acc, target):
+            """Recursive solution."""
+            # Base case
+            if index >= len(nums):
+                return (a == target for a in acc)
 
-        # Look at every k-combination of sums and return True if one of the
-        # combination has not intersections.
-        for s in sums:
-            for combo in combinations(sums[s], k):
-                if disjoint(combo) and uses_all(combo, len(nums)):
-                    print(nums)
-                    for c in combo:
-                        print(f"{c:016b}", to_tuple(nums, c), s, sum(to_tuple(nums, c)))
-                    return True
-        return False
+            for i, _ in enumerate(acc):
+                if acc[i] + nums[index] <= target:
+                    acc[i] += nums[index]
+                    if solve(index + 1, acc, target):
+                        return True
+                    acc[i] -= nums[index]
+            return False
 
+        return solve(0, [0 for _ in range(k)], sum(nums) // k)
 
-
-def to_tuple(nums, mask):
-    return tuple(n for i, n in enumerate(nums) if mask & (1 << i))
 
 def test_1():
     nums = [4,3,2,3,5,2,1]
@@ -91,4 +73,12 @@ def test_5():
     nums = [98,102,9,36,57,44,30,35,28,9851,90,29,9751,44,66,9652]
     k = 8
     expected = False
+    assert Solution().canPartitionKSubsets(nums, k) == expected
+
+
+def test_6():
+    """TLE"""
+    nums = [730,580,401,659,5524,405,1601,3,383,4391,4485,1024,1175,1100,2299,3908]
+    k = 4
+    expected = True
     assert Solution().canPartitionKSubsets(nums, k) == expected
