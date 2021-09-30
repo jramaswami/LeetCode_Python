@@ -27,31 +27,31 @@ class Solution:
         if sum(nums) % k:
             return False
 
+        target = sum(nums) // k
 
-        def solve(acc, target, visited, k):
-            """Recursive solution."""
-            # Base case 1.
-            if k == 0:
-                print(visited)
+        # Use a bitmask to find all possible subsets that add to target.
+        possible_subsets = []
+        for mask in range(1 << len(nums)):
+            subset_sum = sum(n for i, n in enumerate(nums) if mask & (1 << i))
+            if subset_sum == target:
+                possible_subsets.append(mask)
+
+        @lru_cache(maxsize=None)
+        def solve(mask):
+            # If we have used all the numbers then return True
+            if mask == 0:
                 return True
 
-            # Base case 2.
-            if acc == target:
-                print(visited, acc, target, k)
-                return solve(0, target, visited, k - 1)
-
-            for i, n in enumerate(nums):
-                if not visited[i] and nums[i] + acc <= target:
-                    # With this one.
-                    visited[i] = True
-                    if solve(acc + nums[i], target, visited, k):
+            for pmask in possible_subsets:
+                if (mask & pmask) == pmask:
+                    # If all the values in pmask are avaiable, recurse after
+                    # removing the pmask values from availability.
+                    if solve(mask ^ pmask):
                         return True
-                    visited[i] = False
 
             return False
 
-        print(sum(nums), sum(nums) // k)
-        return solve(0, sum(nums) // k, [False for _ in nums], k)
+        return solve((1 << len(nums)) - 1)
 
 
 def test_1():
