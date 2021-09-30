@@ -28,6 +28,15 @@ class Solution:
                 bits |= c
             return True
 
+        def uses_all(combo, N):
+            """Return true if combo uses all numbers."""
+            all_mask = (1 << N) - 1
+            mask = 0
+            for c in combo:
+                mask |= c
+            return mask == all_mask
+
+
         # Take the powerset of nums and get each possible set and its sum.
         sums = defaultdict(list)
         for mask, p in powerset_generator(nums):
@@ -37,7 +46,7 @@ class Solution:
         # combination has not intersections.
         for s in sums:
             for combo in combinations(sums[s], k):
-                if disjoint(combo):
+                if disjoint(combo) and uses_all(combo, len(nums)):
                     print(nums)
                     for c in combo:
                         print(f"{c:016b}", to_tuple(nums, c), s, sum(to_tuple(nums, c)))
@@ -73,5 +82,13 @@ def test_3():
 def test_4():
     nums = [4535, 1759, 3903, 1939, 9637, 9822, 254, 5237, 8474, 9188, 5095, 3277, 1191, 5012, 7605, 8457]
     k = 2
+    expected = False
+    assert Solution().canPartitionKSubsets(nums, k) == expected
+
+
+def test_5():
+    """TLE"""
+    nums = [98,102,9,36,57,44,30,35,28,9851,90,29,9751,44,66,9652]
+    k = 8
     expected = False
     assert Solution().canPartitionKSubsets(nums, k) == expected
