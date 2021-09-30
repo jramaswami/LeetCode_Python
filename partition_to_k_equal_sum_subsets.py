@@ -1,7 +1,12 @@
 """
 LeetCode :: September 2021 Challenge :: Partition to K Equal Sum Subsets
 jramaswami
+
+Thank You Larry!
 """
+
+
+from functools import lru_cache
 
 
 class Solution:
@@ -23,21 +28,30 @@ class Solution:
             return False
 
 
-        def solve(index, acc, target):
+        def solve(acc, target, visited, k):
             """Recursive solution."""
-            # Base case
-            if index >= len(nums):
-                return (a == target for a in acc)
+            # Base case 1.
+            if k == 0:
+                print(visited)
+                return True
 
-            for i, _ in enumerate(acc):
-                if acc[i] + nums[index] <= target:
-                    acc[i] += nums[index]
-                    if solve(index + 1, acc, target):
+            # Base case 2.
+            if acc == target:
+                print(visited, acc, target, k)
+                return solve(0, target, visited, k - 1)
+
+            for i, n in enumerate(nums):
+                if not visited[i] and nums[i] + acc <= target:
+                    # With this one.
+                    visited[i] = True
+                    if solve(acc + nums[i], target, visited, k):
                         return True
-                    acc[i] -= nums[index]
+                    visited[i] = False
+
             return False
 
-        return solve(0, [0 for _ in range(k)], sum(nums) // k)
+        print(sum(nums), sum(nums) // k)
+        return solve(0, sum(nums) // k, [False for _ in nums], k)
 
 
 def test_1():
@@ -81,4 +95,12 @@ def test_6():
     nums = [730,580,401,659,5524,405,1601,3,383,4391,4485,1024,1175,1100,2299,3908]
     k = 4
     expected = True
+    assert Solution().canPartitionKSubsets(nums, k) == expected
+
+
+def test_7():
+    """WA"""
+    nums = [2,2,2,2,3,4,5]
+    k = 4
+    expected = False
     assert Solution().canPartitionKSubsets(nums, k) == expected
