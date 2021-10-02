@@ -1,10 +1,12 @@
 """
 LeetCode :: October 2021 Challenge :: Dungeon Game
 jramaswami
+
+Thank You Larry!
 """
 
 
-from collections import defaultdict
+from functools import lru_cache
 from math import inf
 
 
@@ -13,39 +15,36 @@ class Solution:
 
     def calculateMinimumHP(self, dungeon):
 
-        path_hp = [[-inf for _ in row] for row in dungeon]
-        curr_hp = [[set() for _ in row] for row in dungeon]
+        @lru_cache(maxsize = None)
+        def get_min(r, c):
+            # Base case: to enter the princess' cell you must have be alive.
+            if r == len(dungeon) - 1 and c == len(dungeon[0]) - 1:
+                if dungeon[r][c] >= 0:
+                    return 1
+                return -dungeon[r][c] + 1
 
-        for r, row in enumerate(dungeon):
-            for c, room in enumerate(row):
-                if r == 0 and c == 0:
-                    path_hp[r][c] = room
-                    curr_hp[r][c] = set([room])
+            result = inf
+
+            # What is the minimum if you go to the right.
+            if c + 1 < len(dungeon[0]):
+                min_right = get_min(r, c + 1)
+                if dungeon[r][c] >= min_right:
+                    result = min(result, 1)
                 else:
-                    # You can come from above.
-                    if r > 0:
-                        for hp in curr_hp[r-1][c]:
-                            hp0 = hp + room
-                            path0 = min(path_hp[r-1][c], hp0)
-                            if path0 > path_hp[r][c]:
-                                path_hp[r][c] = path0
-                                curr_hp[r][c] = set([hp0])
-                            elif path0 == path_hp[r][c]:
-                                curr_hp[r][c].add(hp0)
-                    # You can com from the left.
-                    if c > 0:
-                        for hp in curr_hp[r][c-1]:
-                            hp0 = hp + room
-                            path0 = min(path_hp[r][c-1], hp0)
-                            if path0 > path_hp[r][c]:
-                                path_hp[r][c] = path0
-                                curr_hp[r][c] = set([hp0])
-                            elif path0 == path_hp[r][c]:
-                                curr_hp[r][c].add(hp0)
+                    result = min(result, min_right - dungeon[r][c])
 
-        if path_hp[-1][-1] <= 0:
-            return (-1 * path_hp[-1][-1]) + 1
-        return 1
+            # What is the minimum if you go down.
+            if r + 1 < len(dungeon):
+                min_down = get_min(r + 1, c)
+                if dungeon[r][c] >= min_down:
+                    result = min(result, 1)
+                else:
+                    result = min(result, min_down - dungeon[r][c])
+
+            return result
+
+        return get_min(0, 0)
+
 
 
 def test_1():
@@ -86,4 +85,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
