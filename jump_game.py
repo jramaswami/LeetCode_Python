@@ -11,7 +11,7 @@ class Solution:
         for i, n in enumerate(nums):
             if i <= max_reachable:
                 max_reachable =  max(max_reachable, i + n)
-        return max_reachable >= len(nums)
+        return max_reachable >= len(nums) - 1
 
 
 def test_1():
