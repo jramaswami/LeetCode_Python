@@ -22,10 +22,11 @@ class Solution:
 
         def dfs(r, c, i, visited):
             """DFS to see if the word is present."""
-            if i >= len(word):
-                return True
-
             if board[r][c] == word[i]:
+
+                if i == len(word) - 1:
+                    return True
+
                 visited.add((r, c))
                 for r0, c0 in neighbors(r, c):
                     if (r0, c0) not in visited and dfs(r0, c0, i+1, visited):
