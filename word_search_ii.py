@@ -9,11 +9,12 @@ import math
 
 class TrieNode:
 
-    def __init__(self, is_root=False):
-        self.value = ""
+    def __init__(self, value="", is_root=False):
+        self.value = value
         self.end_word = -1
         self.children = [None for _ in range(26)]
-        self.count = 1
+        self.count = 0
+        self.is_root = is_root
         if is_root:
             self.count = math.inf
 
@@ -21,7 +22,7 @@ class TrieNode:
         return self.children[ord(char) - ord('a')]
 
     def insert_child(self, char):
-        self.children[ord(char) - ord('a')] = TrieNode()
+        self.children[ord(char) - ord('a')] = TrieNode(value=char)
 
     def remove_child(self, char):
         self.children[ord(char) - ord('a')] = None
@@ -35,6 +36,10 @@ class TrieNode:
     def empty(self):
         return self.count == 0
 
+    def __repr__(self):
+        sch = [chr(ord('a') + i) for i, c in enumerate(self.children) if c]
+        return f"TrieNode({self.value=} {self.end_word=} {self.count=} self.children={sch} {self.is_root=})"
+
 
 class Solver:
 
@@ -43,7 +48,7 @@ class Solver:
     def __init__(self, board, words):
         self.board = board
         self.visited = [[False for _ in row] for row in board]
-        self.root = TrieNode()
+        self.root = TrieNode(is_root=True)
         self.words = words
         self.found = [False for _ in self.words]
         for index, word in enumerate(self.words):
@@ -55,8 +60,7 @@ class Solver:
         for c in word:
             if not curr.get_child(c):
                 curr.insert_child(c)
-            else:
-                curr.increment()
+            curr.increment()
             curr = curr.get_child(c)
         curr.increment()
         curr.end_word = index
@@ -67,6 +71,7 @@ class Solver:
         for c in word:
             curr.decrement()
             curr = curr.get_child(c)
+
         curr.decrement()
         curr = self.root
         following = None
@@ -147,5 +152,5 @@ def test_4():
     """RTE"""
     board = [["o","a","a","n"],["e","t","a","e"],["i","h","k","r"],["i","f","l","v"]]
     words = ["oath","pea","eat","rain","hklf", "hf"]
-    expected = []
+    expected = ["oath","eat","hklf","hf"]
     assert sorted(Solution().findWords(board, words)) == sorted(expected)
