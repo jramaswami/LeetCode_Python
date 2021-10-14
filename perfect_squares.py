@@ -4,28 +4,34 @@ jramaswami
 """
 
 
+from math import inf
+from functools import lru_cache
+
+
+import sys
+sys.setrecursionlimit(pow(10, 9))
+
+
 class Solution:
     def numSquares(self, n):
-        # At worst, you can reach n by adding n ones.
-        dp = [n for _ in range(n+1)]
 
-        # However, we can reach each perfect square in just 1.
-        for k in range(n):
-            sq = k * k
-            if sq > n:
-                break
-            dp[sq] = 1
+        @lru_cache(maxsize=None)
+        def solve(k):
+            """Return the minimum square sums to k."""
+            if k == 0:
+                return 0
 
-        # Dynamic programming to update every possible value j + k where
-        # k is a perfect square.
-        for j, _ in enumerate(dp):
-            for k in range(n):
-                sq = k * k
-                if j + sq > n:
-                    break
-                dp[j + sq] = min(dp[j + sq], dp[j] + 1)
+            result = inf
+            for j in range(1, k):
+                sq = j * j
+                delta = k - sq
+                if delta >= 0:
+                    result = min(result, 1 + solve(delta))
 
-        return dp[-1]
+            return result
+
+        return solve(n)
+
 
 
 def test_1():
