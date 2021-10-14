@@ -4,13 +4,6 @@ jramaswami
 """
 
 
-import collections
-import heapq
-
-
-QItem = collections.namedtuple('QItem', ['items', 'sum'])
-
-
 class Solution:
 
     def __init__(self):
@@ -26,16 +19,22 @@ class Solution:
 
     def numSquares(self, n):
         useful_squares = [k for k in self.squares if k <= n]
-        Q = [QItem(1, k) for k in useful_squares]
-        while Q:
-            item = heapq.heappop(Q)
-            if item.sum == n:
-                return item.items
+        # At worst, you can reach n by adding n ones.
+        dp = [n for _ in range(n+1)]
 
+        # However, we can reach each perfect square in just 1.
+        for k in useful_squares:
+            dp[k] = 1
+
+        # Dynamic programming to update every possible value j + k where
+        # k is a perfect square.
+        for j, _ in enumerate(dp):
             for k in useful_squares:
-                if item.sum + k > n:
+                if j + k > n:
                     break
-                heapq.heappush(Q, QItem(item.items + 1, item.sum + k))
+                dp[j + k] = min(dp[j + k], dp[j] + 1)
+
+        return dp[-1]
 
 
 def test_1():
@@ -49,3 +48,8 @@ def test_2():
 def test_3():
     """TLE"""
     assert Solution().numSquares(351) == 4
+
+
+def test_4():
+    """TLE"""
+    assert Solution().numSquares(4586) == 2
