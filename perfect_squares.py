@@ -5,34 +5,25 @@ jramaswami
 
 
 class Solution:
-
-    def __init__(self):
-        # Cache the squares up to the maximum n.
-        max_n = pow(10, 4)
-        self.squares = []
-        for k in range(1, max_n):
-            sq = k * k
-            if sq > max_n:
-                break
-            self.squares.append(sq)
-
-
     def numSquares(self, n):
-        useful_squares = [k for k in self.squares if k <= n]
         # At worst, you can reach n by adding n ones.
         dp = [n for _ in range(n+1)]
 
         # However, we can reach each perfect square in just 1.
-        for k in useful_squares:
-            dp[k] = 1
+        for k in range(n):
+            sq = k * k
+            if sq > n:
+                break
+            dp[sq] = 1
 
         # Dynamic programming to update every possible value j + k where
         # k is a perfect square.
         for j, _ in enumerate(dp):
-            for k in useful_squares:
-                if j + k > n:
+            for k in range(n):
+                sq = k * k
+                if j + sq > n:
                     break
-                dp[j + k] = min(dp[j + k], dp[j] + 1)
+                dp[j + sq] = min(dp[j + sq], dp[j] + 1)
 
         return dp[-1]
 
