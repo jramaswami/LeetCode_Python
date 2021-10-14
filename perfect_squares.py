@@ -4,34 +4,23 @@ jramaswami
 """
 
 
-from math import inf
-from functools import lru_cache
-
-
-import sys
-sys.setrecursionlimit(pow(10, 9))
-
-
 class Solution:
     def numSquares(self, n):
+        queue = [0]
+        new_queue = []
+        soln = 1
+        while True:
+            for j in queue:
+                for k in range(1, n+1):
+                    m = j + (k * k)
+                    if m > n:
+                        break
 
-        @lru_cache(maxsize=None)
-        def solve(k):
-            """Return the minimum square sums to k."""
-            if k == 0:
-                return 0
-
-            result = inf
-            for j in range(1, k):
-                sq = j * j
-                delta = k - sq
-                if delta >= 0:
-                    result = min(result, 1 + solve(delta))
-
-            return result
-
-        return solve(n)
-
+                    if m == n:
+                        return soln
+                    new_queue.append(m)
+            queue, new_queue = new_queue, []
+            soln += 1
 
 
 def test_1():
@@ -50,3 +39,8 @@ def test_3():
 def test_4():
     """TLE"""
     assert Solution().numSquares(4586) == 2
+
+
+def test_5():
+    """TLE"""
+    assert Solution().numSquares(1) == 1
