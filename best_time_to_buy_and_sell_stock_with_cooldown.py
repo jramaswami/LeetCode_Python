@@ -3,48 +3,35 @@ LeetCode :: October Challenge :: 309. Best Time to Buy and Sell Stock with Coold
 jramaswami
 """
 
-import collections
-import enum
 
-
-QItem = collections.namedtuple('QItem', ['state', 'profit'])
-
-
-class State(enum.IntEnum):
-    CAN_BUY = 0
-    CAN_SELL = 1
-    COOLDOWN = 2
+import functools
 
 
 class Solution:
 
     def maxProfit(self, prices):
-        prev = collections.defaultdict(int)
-        prev[QItem(State.CAN_BUY, 0)] = 0
-        curr = collections.defaultdict(int)
+        @functools.lru_cache(maxsize=None)
+        def max_buy(i):
+            # What is the maximum profit I can my if I buy this stock?
+            # This will be the maximum profit of any sell that before
+            # the index before me.
+            if i - 1 > 0:
+                return max(max_sell(j) - prices[i] for j in range(0, i - 1))
+            elif i >= 0:
+                return -prices[i]
+            return 0
 
-        soln = 0
-        for price in prices:
-            for item, holding in prev.items():
-                soln = max(soln, item.profit)
-                if item.state == State.CAN_BUY:
-                    # Buy.
-                    next_item = QItem(State.CAN_SELL, item.profit)
-                    curr[next_item] = max(curr[next_item], price)
-                    # Do not buy.
-                    curr[item] = max(curr[item], holding)
-                if item.state == State.CAN_SELL:
-                    # Sell.
-                    profit = holding - price
-                    next_item = QItem(State.CAN_SELL, item.profit + profit)
-                    curr[next_item] = max(curr[next_item], 0)
-                    # Don't sell.
-                    curr[item] = max(curr[item], holding)
-                if item.state == State.COOLDOWN:
-                    # Cooldown over.
-                    curr[item] = max(QItem(State.CAN_BUY, item.profit), 0)
-            prev, curr = curr, collections.defaultdict(int)
+        @functools.lru_cache(maxsize=None)
+        def max_sell(i):
+            # What is the maximum profit if I sell a stock here?
+            # It will the maximum profit of any buy before me when
+            # I sell the stock bought at the current price.
+            if i > 0:
+                T = max(max_buy(j) + prices[i] for j in range(0, i))
+                return max(0, T)
+            return 0
 
+        soln = max(max_buy(len(prices) - 1), max_sell(len(prices) - 1))
         return soln
 
 
