@@ -1,6 +1,8 @@
 """
 LeetCode :: October Challenge :: 309. Best Time to Buy and Sell Stock with Cooldown
 jramaswami
+
+Thank You, Larry!
 """
 
 
@@ -10,29 +12,55 @@ import functools
 class Solution:
 
     def maxProfit(self, prices):
-        @functools.lru_cache(maxsize=None)
-        def max_buy(i):
-            # What is the maximum profit I can my if I buy this stock?
-            # This will be the maximum profit of any sell that before
-            # the index before me.
-            if i - 1 > 0:
-                return max(max_sell(j) - prices[i] for j in range(0, i - 1))
-            elif i >= 0:
-                return -prices[i]
-            return 0
 
         @functools.lru_cache(maxsize=None)
-        def max_sell(i):
-            # What is the maximum profit if I sell a stock here?
-            # It will the maximum profit of any buy before me when
-            # I sell the stock bought at the current price.
-            if i > 0:
-                T = max(max_buy(j) + prices[i] for j in range(0, i))
-                return max(0, T)
-            return 0
+        def buy(i):
+            """
+            On day i, I can buy the stock because: (1) cooldown is over and (2)
+            I do not currently own a stock. Return the maximum profit.
+            """
 
-        soln = max(max_buy(len(prices) - 1), max_sell(len(prices) - 1))
-        return soln
+            # Base case
+            if i >= len(prices):
+                return 0
+
+            # I can choose *not* to buy the stock.  Given this I can still
+            # buy a stock on the next day.
+            max_profit_not_buying = buy(i+1)
+
+            # I can choose to buy the stock.  This means that I will have to
+            # sell the stock tomorrow or later.  Remember to deduct the cost
+            # of buying the stock.
+            max_profit_buying = sell(i+1) - prices[i]
+
+            return max(max_profit_not_buying, max_profit_buying)
+
+        @functools.lru_cache(maxsize=None)
+        def sell(i):
+            """
+            On day i, I can sell a stock because I own one (the price of which
+            has already been deducted from my profit).
+            """
+
+            # Base case
+            if i >= len(prices):
+                return 0
+
+            # I can choose to hold the stock.  I will have to sell it tomorrow
+            # or later.
+            max_profit_not_selling = sell(i+1)
+
+            # I can choose to sell the stock today.  This means I will get
+            # todays price back and I can buy day after tomorrow.
+            max_profit_selling = prices[i] + buy(i+2)
+
+            return max(max_profit_not_selling, max_profit_selling)
+
+
+        # On day 0, I can buy a stock because I do not own one and am not
+        # in a cooling down period.
+        return buy(0)
+
 
 
 def test_1():
