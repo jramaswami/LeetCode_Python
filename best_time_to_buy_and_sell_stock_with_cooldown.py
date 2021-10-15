@@ -7,39 +7,43 @@ import collections
 import enum
 
 
-QItem = collections.namedtuple('QItem', ['state', 'profit', 'stock'])
+QItem = collections.namedtuple('QItem', ['state', 'profit'])
 
 
-class State(enum.Enum):
-    CAN_BUY = enum.auto()
-    CAN_SELL = enum.auto()
-    COOLDOWN = enum.auto()
+class State(enum.IntEnum):
+    CAN_BUY = 0
+    CAN_SELL = 1
+    COOLDOWN = 2
 
 
 class Solution:
 
     def maxProfit(self, prices):
-        queue = [QItem(State.CAN_BUY, 0, 0)]
-        new_queue = []
+        prev = collections.defaultdict(int)
+        prev[QItem(State.CAN_BUY, 0)] = 0
+        curr = collections.defaultdict(int)
 
         soln = 0
-        for p in prices:
-            for item in queue:
-                soln = max(item.profit, soln)
+        for price in prices:
+            for item, holding in prev.items():
+                soln = max(soln, item.profit)
                 if item.state == State.CAN_BUY:
                     # Buy.
-                    new_queue.append(QItem(State.CAN_SELL, item.profit, p))
-                    # Don't buy.
-                    new_queue.append(item)
-                elif item.state == State.CAN_SELL:
-                    # Sell
-                    new_queue.append(QItem(State.COOLDOWN, item.profit + item.stock - p, 0))
+                    next_item = QItem(State.CAN_SELL, item.profit)
+                    curr[next_item] = max(curr[next_item], price)
+                    # Do not buy.
+                    curr[item] = max(curr[item], holding)
+                if item.state == State.CAN_SELL:
+                    # Sell.
+                    profit = holding - price
+                    next_item = QItem(State.CAN_SELL, item.profit + profit)
+                    curr[next_item] = max(curr[next_item], 0)
                     # Don't sell.
-                    new_queue.append(item)
-                elif item.state == State.COOLDOWN:
-                    # Cooldown period is over.
-                    new_queue.append(QItem(State.CAN_BUY, item.profit, 0))
-            queue, new_queue = new_queue, []
+                    curr[item] = max(curr[item], holding)
+                if item.state == State.COOLDOWN:
+                    # Cooldown over.
+                    curr[item] = max(QItem(State.CAN_BUY, item.profit), 0)
+            prev, curr = curr, collections.defaultdict(int)
 
         return soln
 
