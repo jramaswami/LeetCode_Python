@@ -9,9 +9,12 @@ class Solution:
 
         def invert(node):
             if node:
-                node.left, node.right = node.right, node.left
-                invert(node.left)
-                invert(node.right)
+                return TreeNode(
+                    node.val,
+                    invert(node.right),
+                    invert(node.left)
+                )
+            else:
+                return None
 
-        invert(root)
-        return root
+        return invert(root)
