@@ -25,39 +25,40 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
-        def bfs(r, c, liberty):
-            """BFS to determine connected component."""
-            queue = collections.deque()
-            queue.append((r, c))
-            while queue:
-                r0, c0 = queue.popleft()
-                liberty[r0][c0] = True
-                for r1, c1 in neighbors(r0, c0):
-                    if board[r1][c1] == 'O' and not liberty[r1][c1]:
-                        queue.append((r1, c1))
-
-        def check(r, c, liberty):
-            """Use the BFS if (r, c) is a O on the edge of the board."""
-            if board[r][c] == 'O' and not liberty[r][c]:
-                bfs(r, c, liberty)
-
+        queue = collections.deque()
         liberty = [[False for _ in row] for row in board]
 
+        # Gather Os on the edge of the board.
         # Top row
         for c, _ in enumerate(board[0]):
-            check(0, c, liberty)
+            if board[0][c] == 'O':
+                queue.append((0, c))
+                liberty[0][c] = True
 
         # Bottom row
         N = len(board)
         for c, _ in enumerate(board[N-1]):
-            check(N-1, c, liberty)
+            if board[N-1][c] == 'O':
+                queue.append((N-1, c))
+                liberty[N-1][c] = True
 
         # Left/right column
         M = len(board[0])
         for r, _ in enumerate(board[1:-1], start=1):
-            print((r, 0), (r, M-1))
-            check(r, 0, liberty)
-            check(r, M-1, liberty)
+            if board[r][0] == 'O':
+                queue.append((r, 0))
+                liberty[r][0] = True
+            if board[r][M-1] == 'O':
+                queue.append((r, M-1))
+                liberty[r][M-1] = True
+
+        # BFS to determine Os connected to the edge.
+        while queue:
+            r, c = queue.popleft()
+            for r0, c0 in neighbors(r, c):
+                if board[r0][c0] == 'O' and not liberty[r0][c0]:
+                    queue.append((r0, c0))
+                    liberty[r0][c0] = True
 
         # Make captures
         for r, row in enumerate(board):
