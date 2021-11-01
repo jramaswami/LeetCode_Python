@@ -54,7 +54,8 @@ class Solution:
 
         # Left/right column
         M = len(board[0])
-        for r, _ in enumerate(board[1:-1]):
+        for r, _ in enumerate(board[1:-1], start=1):
+            print((r, 0), (r, M-1))
             check(r, 0, liberty)
             check(r, M-1, liberty)
 
