@@ -6,12 +6,22 @@ jramaswami
 
 class Solution:
     def findNumOfValidWords(self, words, puzzles):
-        word_letters = [set(word) for word in words]
-        puzzle_letters = [set(puzzle) for puzzle in puzzles]
+        def word_to_bitmask(word):
+            word_mask = 0
+            for c in word:
+                word_mask |= 1 << (ord(c) - ord('a'))
+            return word_mask
+
+        def first_letter_valid(puzzle, word_mask):
+            puzzle_bit = 1 << (ord(puzzle[0]) - ord('a'))
+            return puzzle_bit & word_mask
+
+        word_letters = [word_to_bitmask(word) for word in words]
+        puzzle_letters = [word_to_bitmask(puzzle) for puzzle in puzzles]
         soln = [0 for _ in puzzles]
         for i, word in enumerate(word_letters):
             for j, puzzle in enumerate(puzzle_letters):
-                if puzzles[j][0] in word and word <= puzzle:
+                if first_letter_valid(puzzles[j], word) and word & puzzle == word:
                     soln[j] += 1
         return soln
 
