@@ -11,7 +11,7 @@ class Solution:
         soln = [0 for _ in puzzles]
         for i, word in enumerate(word_letters):
             for j, puzzle in enumerate(puzzle_letters):
-                if puzzles[j][0] in word and all(c in puzzle for c in word):
+                if puzzles[j][0] in word and word <= puzzle:
                     soln[j] += 1
         return soln
 
