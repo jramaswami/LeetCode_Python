@@ -13,9 +13,11 @@ class Solution:
     def dailyTemperatures(self, temperatures):
         following_temperatures = [len(temperatures) for _ in range(101)]
         answers = [len(temperatures) for _ in temperatures]
+        max_temp = 0
         for i in range(len(temperatures) - 1, -1, -1):
             temp = temperatures[i]
-            for t in range(temp+1, 101):
+            max_temp = max(max_temp, temp)
+            for t in range(temp+1, max_temp+1):
                 if following_temperatures[t] < len(temperatures):
                     answers[i] = min(
                         answers[i],
