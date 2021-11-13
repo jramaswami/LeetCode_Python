@@ -24,7 +24,9 @@ class Solution:
                         following_temperatures[t] - i
                     )
             following_temperatures[temp] = i
-        return [0 if i == len(temperatures) else i for i in answers]
+            if answers[i] == len(temperatures):
+                answers[i] = 0
+        return answers
 
 
 def test_1():
