@@ -9,22 +9,20 @@ for the next temperature greater.  This will be O(70 * N) or O(N).
 """
 
 
-import math
-
-
 class Solution:
     def dailyTemperatures(self, temperatures):
-        following_temperatures = dict()
-        answers = [math.inf for _ in temperatures]
+        following_temperatures = [len(temperatures) for _ in range(101)]
+        answers = [len(temperatures) for _ in temperatures]
         for i in range(len(temperatures) - 1, -1, -1):
             temp = temperatures[i]
             for t in range(temp+1, 101):
-                answers[i] = min(
-                    answers[i],
-                    following_temperatures.get(t, math.inf) - i
-                )
+                if following_temperatures[t] < len(temperatures):
+                    answers[i] = min(
+                        answers[i],
+                        following_temperatures[t] - i
+                    )
             following_temperatures[temp] = i
-        return [0 if i == math.inf else i for i in answers]
+        return [0 if i == len(temperatures) else i for i in answers]
 
 
 def test_1():
