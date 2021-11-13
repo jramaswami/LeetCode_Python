@@ -2,30 +2,40 @@
 LeetCode :: November 2021 Challenge :: 739. Daily Temperatures
 jramaswami
 
-There are only 100 - 30 or 70 possible temperators.  Moving from right
-to left, we can keep track of the rightmost index of any existing
-temperatures.  For each index we can search from temperatures[i]+1 to 100
-for the next temperature greater.  This will be O(70 * N) or O(N).
+Thank you Larry!
 """
+
+
+import collections
+
+
+SItem = collections.namedtuple('SItem', ['temperature', 'index'])
 
 
 class Solution:
     def dailyTemperatures(self, temperatures):
-        following_temperatures = [len(temperatures) for _ in range(101)]
         answers = [len(temperatures) for _ in temperatures]
-        max_temp = 0
+        stack = []
         for i in range(len(temperatures) - 1, -1, -1):
-            temp = temperatures[i]
-            max_temp = max(max_temp, temp)
-            for t in range(temp+1, max_temp+1):
-                if following_temperatures[t] < len(temperatures):
-                    answers[i] = min(
-                        answers[i],
-                        following_temperatures[t] - i
-                    )
-            following_temperatures[temp] = i
-            if answers[i] == len(temperatures):
+            # Remove any values smaller than temperature[i] because they
+            # will not be the nearest higher temperature to anything to
+            # the left of temperatures[i] because temperatures[i] will be.
+            while stack and stack[-1].temperature <= temperatures[i]:
+                stack.pop()
+
+            if stack:
+                # The only remaining items on the stack are greater than
+                # temperatures[i].  The top of the stack will be the first
+                # temperature higher than temperatures[i].
+                answers[i] = stack[-1].index - i
+            else:
+                # There is nothing on the stack, therefore, there is no answer
+                # for temperatures[i].
                 answers[i] = 0
+
+            # Add temperatures[i] to the stack.
+            stack.append(SItem(temperatures[i], i))
+
         return answers
 
 
