@@ -1,22 +1,21 @@
 """
-binarysearch.com :: Find All Numbers Disappeared in Array
+LeetCode :: November 2021 Challenge :: 448. Find All Numbers Disappeared in an Array
 jramaswami
 """
 
 
 class Solution:
     def findDisappearedNumbers(self, nums):
-        # Find the length of the array
-        N = len(nums)
-        # Set up a boolean array to indicate that n is in nums.
-        present = [0 for _ in range(N+1)]
-        present[0] = 1  # ignore zero
-        # Iterate over nums and mark every num in nums as present.  Duplicates
-        # will not cause a problem.
+        # Mark n as present by changing nums[n] to a negative number.
+        # (Adjust for zero based indexing.)
         for n in nums:
-            present[n] = 1
-
-        return [i for i, p in enumerate(present) if p == 0]
+            i = abs(n) - 1
+            # Only mark if it hasn't already been marked.
+            if nums[i] >= 0:
+                nums[i] *= -1
+        # Gather indices where n is a positive number and therefore not
+        # present.  (Adjust for zero based indexing.)
+        return [i+1 for i, n in enumerate(nums) if n > 0]
 
 
 def test_1():
