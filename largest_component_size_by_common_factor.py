@@ -1,12 +1,12 @@
 """
 LeetCode :: November 2021 Challenge :: 952. Largest Component Size by Common Factor
 jramaswami
+
+Hints from Larry.
 """
 
 
-import math
 import collections
-import itertools
 
 
 class UnionFind:
@@ -40,30 +40,32 @@ class UnionFind:
 
 
 class Solution:
-    def __init__(self):
-        limit = pow(10,5) // 2
-        is_prime = [True for _ in range(limit + 1)]
-        is_prime[0] = is_prime[1] = False
-        for i in range(4, len(is_prime), 2):
-            is_prime[i] = False
-        p = 3
-        while p * p <= len(is_prime):
-            if is_prime[p]:
-                for i in range(p + p, len(is_prime), p):
-                    is_prime[i] = False
-            p += 2
-        self.PRIMES = [p for p, _ in enumerate(is_prime) if is_prime[p]]
 
     def largestComponentSize(self, nums):
         uf = UnionFind()
-        for n in nums:
-            uf.make_set(n)
 
-        for P in self.PRIMES:
-            A = [n for n in nums if n % P == 0]
-            for k in A:
-                uf.union_set(A[0], k)
-        return uf.max_size()
+        # Get the prime factors for all numbers less than or equal to the
+        # maximum number in nums.
+        prime_factors = [[] for _ in range(max(nums) + 1)]
+        prime_factors[0] = [0]
+        prime_factors[1] = [1]
+        for P, _ in enumerate(prime_factors[2:], start=2):
+            uf.make_set(P)
+            if not prime_factors[P]:
+                # P is prime since it has no factors.
+                for k in range(P, len(prime_factors), P):
+                    prime_factors[k].append(P)
+
+        # Use each number to unite its prime factors.
+        for n in nums:
+            for f in prime_factors[n][1:]:
+                uf.union_set(f, prime_factors[n][0])
+
+        # Get the parent for each number using its factors (which should all
+        # be in the same set and have the same parent).  Then get a count of
+        # the frequence for each parent.
+        parents = collections.Counter(uf.find_set(prime_factors[n][0]) for n in nums)
+        return max(parents.values())
 
 
 def test_1():
