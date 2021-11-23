@@ -61,7 +61,7 @@ class Solution:
 
         for P in self.PRIMES:
             A = [n for n in nums if n % P == 0]
-            for k in A[1:]:
+            for k in A:
                 uf.union_set(A[0], k)
         return uf.max_size()
 
