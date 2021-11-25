@@ -4,15 +4,20 @@ jramaswami
 """
 
 
+import math
+
+
 class Solution:
 
     def maxSubArray(self, nums):
         # Kadane's algorithm
         curr_sum = 0
-        max_sum = 0
+        # The soln must have at least one item in it.
+        max_sum = -math.inf
         for n in nums:
-            curr_sum = max(0, curr_sum + n)
+            curr_sum = curr_sum + n
             max_sum = max(max_sum, curr_sum)
+            curr_sum = max(curr_sum, 0)
         return max_sum
 
 
