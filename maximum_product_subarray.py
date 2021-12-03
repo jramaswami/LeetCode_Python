@@ -9,24 +9,41 @@ import math
 
 class Solution:
     def maxProduct(self, nums):
-        curr = 1
-        prefix = []
+
+        def solve(arr):
+            "This works but only if there are no zeros in the array."
+            curr = 1
+            prefix = []
+            soln = -math.inf
+            for n in arr:
+                curr *= n
+                prefix.append(curr)
+
+            for left, _ in enumerate(prefix):
+                for right, P in enumerate(prefix[left:], start=left):
+                    if left == right:
+                        soln = max(soln, arr[left])
+                    elif left == 0:
+                        soln = max(soln, P)
+                    else:
+                        soln = max(soln, P // prefix[left - 1])
+            return soln
+
+        # Partition the array by zeros.
+        working = []
         soln = -math.inf
         for n in nums:
-            curr *= n
-            prefix.append(curr)
-
-        for left, _ in enumerate(prefix):
-            for right, P in enumerate(prefix[left:], start=left):
-                if left == right:
-                    soln = max(soln, nums[left])
-                elif left == 0:
-                    soln = max(soln, P)
-                else:
-                    if prefix[left - 1] != 0:
-                        soln = max(soln, P // prefix[left - 1])
+            if n == 0:
+                # Since a zero solution is possible.
+                soln = max(soln, 0)
+                # Now get the solution from the working array.
+                soln = max(soln, solve(working))
+                # Reset working array.
+                working = []
+            else:
+                working.append(n)
+        soln = max(soln, solve(working))
         return soln
-
 
 
 def test_1():
