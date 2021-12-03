@@ -4,18 +4,23 @@ jramaswami
 """
 
 
+import math
+
+
 class Solution:
     def maxProduct(self, nums):
         curr = 1
         prefix = []
+        soln = -math.inf
         for n in nums:
             curr *= n
             prefix.append(curr)
 
-        soln = 0
         for left, _ in enumerate(prefix):
-            for right, P in enumerate(prefix[left+1:], start=left+1):
-                if left == 0:
+            for right, P in enumerate(prefix[left:], start=left):
+                if left == right:
+                    soln = max(soln, nums[left])
+                elif left == 0:
                     soln = max(soln, P)
                 else:
                     if prefix[left - 1] != 0:
@@ -31,7 +36,7 @@ def test_1():
 
 
 def test_2():
-    nums = [2,0,-1]
+    nums = [-2,0,-1]
     expected = 0
     assert Solution().maxProduct(nums) == expected
 
@@ -48,3 +53,9 @@ def test_4():
     expected = -2
     assert Solution().maxProduct(nums) == expected
 
+
+def test_5():
+    "WA"
+    nums = [1,0,-1,2,3,-5,-2]
+    expected = 60
+    assert Solution().maxProduct(nums) == expected
