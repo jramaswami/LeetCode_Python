@@ -18,6 +18,8 @@ class Solution:
                 # If n is zero, we must start over.  Reset curr to 1.
                 # A zero solution is possible, so apply it.
                 curr = 1
+                # Reset first_neg
+                first_neg = 0
             else:
                 # Apply n to curr.
                 curr *= n
