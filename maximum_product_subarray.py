@@ -9,40 +9,32 @@ import math
 
 class Solution:
     def maxProduct(self, nums):
-
-        def solve(arr):
-            "This works but only if there are no zeros in the array."
-            curr = 1
-            prefix = []
-            soln = -math.inf
-            for n in arr:
-                curr *= n
-                prefix.append(curr)
-
-            for left, _ in enumerate(prefix):
-                for right, P in enumerate(prefix[left:], start=left):
-                    if left == right:
-                        soln = max(soln, arr[left])
-                    elif left == 0:
-                        soln = max(soln, P)
-                    else:
-                        soln = max(soln, P // prefix[left - 1])
-            return soln
-
-        # Partition the array by zeros.
-        working = []
-        soln = -math.inf
+        curr = 1
+        # Start with a solution that is the maximum for a single number.
+        soln = max(nums)
+        first_neg = 0
         for n in nums:
             if n == 0:
-                # Since a zero solution is possible.
-                soln = max(soln, 0)
-                # Now get the solution from the working array.
-                soln = max(soln, solve(working))
-                # Reset working array.
-                working = []
+                # If n is zero, we must start over.  Reset curr to 1.
+                # A zero solution is possible, so apply it.
+                curr = 1
             else:
-                working.append(n)
-        soln = max(soln, solve(working))
+                # Apply n to curr.
+                curr *= n
+                if curr < 1:
+                    if first_neg:
+                        # If curr is negative and we have already had a
+                        # negative product, remove all the numbers up to
+                        # and including that first negative number from curr
+                        # and apply that as a possible solution.
+                        soln = max(soln, curr // first_neg)
+                    else:
+                        # If we have not had a negative number yet, set the
+                        # first_neg.
+                        first_neg = curr
+                else:
+                    # If the product is positive, apply it to the solution.
+                    soln = max(soln, curr)
         return soln
 
 
@@ -75,4 +67,11 @@ def test_5():
     "WA"
     nums = [1,0,-1,2,3,-5,-2]
     expected = 60
+    assert Solution().maxProduct(nums) == expected
+
+
+def test_6():
+    "WA"
+    nums = [-1,0,-2,2]
+    expected = 2
     assert Solution().maxProduct(nums) == expected
