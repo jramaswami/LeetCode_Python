@@ -30,29 +30,32 @@ class StreamChecker:
 
     def __init__(self, words):
         self.words = set(words)
-        self.active_searches = []
+        self.searches = []
         self.letter_map = collections.defaultdict(list)
         for word in self.words:
             self.letter_map[word[0]].append(word)
+        self.boundary = 0
+
+    def _swap(self, index):
+        self.searches[index], self.searches[self.boundary] = self.searches[self.boundary], self.searches[index]
+        self.boundary += 1
 
     def query(self, letter):
         # First advance any active searches.
-        next_searches = []
         result = False
-        for search in self.active_searches:
+        for i, search in enumerate(self.searches[self.boundary:], start=self.boundary):
             advanced = search.advance(letter)
             result = result or search.done()
-            if advanced:
-                next_searches.append(search)
+            if not advanced or search.done():
+                self._swap(i)
 
         # Add any new search on first letter.
         for word in self.letter_map[letter]:
             search = Search(word)
             result = result or search.done()
             if not search.done():
-                next_searches.append(search)
+                self.searches.append(search)
 
-        self.active_searches = next_searches
         return result
 
 
