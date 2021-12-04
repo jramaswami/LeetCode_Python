@@ -7,33 +7,17 @@ jramaswami
 import collections
 
 
-class Search:
-
-    def __init__(self, word):
-        self.index = 0
-        self.word = word
-
-    def advance(self, letter):
-        self.index += 1
-        if self.index < len(self.word) and self.word[self.index] == letter:
-            return True
-        return False
-
-    def done(self):
-        return self.index == len(self.word) - 1
-
-    def __repr__(self):
-        return f"Search({self.word=} {self.index=}"
+Search = collections.namedtuple('Search', ['word', 'index'])
 
 
 class StreamChecker:
 
     def __init__(self, words):
-        self.words = set(words)
+        self.words = words
         self.searches = []
         self.letter_map = collections.defaultdict(list)
-        for word in self.words:
-            self.letter_map[word[0]].append(word)
+        for i, word in enumerate(self.words):
+            self.letter_map[word[0]].append(i)
         self.boundary = 0
 
     def _swap(self, index):
@@ -44,16 +28,27 @@ class StreamChecker:
         # First advance any active searches.
         result = False
         for i, search in enumerate(self.searches[self.boundary:], start=self.boundary):
-            advanced = search.advance(letter)
-            result = result or search.done()
-            if not advanced or search.done():
+            search_word = self.words[search.word]
+            if search_word[search.index+1] == letter:
+                # Search can advance.
+                if search.index + 1 == len(search_word) - 1:
+                    # If it advances to last letter we have a true search.
+                    # Swap out the search.
+                    result = True
+                    self._swap(i)
+                else:
+                    # Update search.
+                    self.searches[i] = Search(search.word, search.index + 1)
+            else:
+                # Search cannot advance, swap it out.
                 self._swap(i)
 
         # Add any new search on first letter.
         for word in self.letter_map[letter]:
-            search = Search(word)
-            result = result or search.done()
-            if not search.done():
+            if len(self.words[word]) == 1:
+                result = True
+            else:
+                search = Search(word, 0)
                 self.searches.append(search)
 
         return result
