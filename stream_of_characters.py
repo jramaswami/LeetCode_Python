@@ -17,6 +17,9 @@ class StreamChecker:
             self.letter_map[word[-1]].append(i)
 
     def _check(self, i):
+        # The suffix must be longer or equal in length to the word.
+        if len(self.suffix) < len(self.words[i]):
+            return False
         for a, b in zip(reversed(self.words[i]), reversed(self.suffix)):
             if a != b:
                 return False
@@ -61,4 +64,5 @@ def test_3():
     expected = [None,False,False,False,False,False,True,True,True,True,True,False,False,True,True,True,True,False,False,False,True,True,True,True,True,True,False,True,True,True,False]
     checker = StreamChecker(*arguments[0])
     for m, a, e in zip(methods[1:], arguments[1:], expected[1:]):
+        print(f"{m}({a}) == {e}")
         assert getattr(checker, m)(*a) == e
