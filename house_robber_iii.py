@@ -4,10 +4,14 @@ jramaswami
 """
 
 
+import functools
+
+
 class Solution:
 
     def rob(self, root):
 
+        @functools.cache
         def traverse(house, can_rob):
             if house is None:
                 return 0
