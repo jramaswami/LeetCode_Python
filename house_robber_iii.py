@@ -7,21 +7,24 @@ jramaswami
 class Solution:
 
     def rob(self, root):
-        even_nodes = []
-        odd_nodes = []
 
-        def traverse(node, level):
-            if node:
-                if level % 2:
-                    odd_nodes.append(node.val)
-                else:
-                    even_nodes.append(node.val)
-                traverse(node.left, level + 1)
-                traverse(node.right, level + 1)
+        def traverse(house, can_rob):
+            if house is None:
+                return 0
 
-        traverse(root, 0)
+            # I can rob this house, but then I cannot rob direct children.
+            rob_this_house = 0
+            if can_rob:
+                rob_this_house = (
+                        house.val +
+                        traverse(house.left, False) +
+                        traverse(house.right, False)
+                )
+            # I can skip this house and rob the direct children.
+            skip_this_house = (
+                traverse(house.left, True) +
+                traverse(house.right, True)
+            )
+            return max(rob_this_house, skip_this_house)
 
-        return max(
-                sum(even_nodes) if even_nodes else 0,
-                sum(odd_nodes) if odd_nodes else 0
-        )
+        return traverse(root, True)
