@@ -7,19 +7,23 @@ jramaswami
 class Solution:
 
     def insertionSortList(self, head):
-        sorted_list = None
-        curr_unsorted = head
-        while curr_unsorted:
-            # Pop the first node off the unsorted list.
-            new_node = ListNode(curr_unsorted.val)
-            curr_unsorted = curr_unsorted.next
-            # Put that item at the head of the sorted list.
-            new_node.next = sorted_list
-            sorted_list = new_node
-            # Swap that item with the next until it is in the right place.
-            curr = sorted_list
-            while curr.next:
-                if curr.val > curr.next.val:
-                    curr.val, curr.next.val = curr.next.val, curr.val
-                curr = curr.next
-        return sorted_list
+        arr = []
+        curr = head
+        while curr:
+            arr.append(curr.val)
+            curr = curr.next
+
+        for i in range(1, len(arr)):
+            x = arr[i]
+            j = i - 1
+            while j >= 0 and arr[j] > x:
+                arr[j+1] = arr[j]
+                j -= 1
+            arr[j+1] = x
+
+        new_head = ListNode(arr[0])
+        curr = new_head
+        for val in arr[1:]:
+            curr.next = ListNode(val)
+            curr = curr.next
+        return new_head
