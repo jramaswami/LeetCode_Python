@@ -1,6 +1,8 @@
 """
 LeetCode :: December 2021 Challenge :: 310. Minimum Height Trees
 jramaswami
+
+REF: https://www.tutorialcup.com/interview/tree/minimum-height-trees.htm
 """
 
 
@@ -11,30 +13,49 @@ class Solution:
     def findMinHeightTrees(self, node_count, edges):
         # Convert edges into an adjacency list.
         adj = [[] for _ in range(node_count)]
-        degree = [0 for _ in adj]
-        dist = [0 for _ in adj]
         for u, v in edges:
             adj[u].append(v)
             adj[v].append(u)
-            degree[u] += 1
-            degree[v] += 1
 
-        queue = collections.deque()
-        for leaf, deg in enumerate(degree):
-            if deg <= 1:
-                queue.append((None, leaf, 0))
+        def bfs(root, dist, parent):
+            "BFS to get distance from root."
+            queue = collections.deque()
+            queue.append((root, 0))
+            while queue:
+                node, d = queue.popleft()
+                for neighbor in adj[node]:
+                    if neighbor != parent[node]:
+                        dist[neighbor] = max(dist[neighbor], d + 1)
+                        parent[neighbor] = node
+                        queue.append((neighbor, d + 1))
 
-        while queue:
-            parent, node, d = queue.popleft()
-            for neighbor in adj[node]:
-                if neighbor != parent:
-                    queue.append((node, neighbor, d + 1))
-                    dist[neighbor] = d + 1
+        # Find first root (the farthest from an arbitrary node).
+        dist = [0 for _ in adj]
+        parent = [None for _ in adj]
+        bfs(0, dist, parent)
+        _, root1 = max((d, n) for n, d in enumerate(dist))
 
-        # The middle of the tree are the nodes with the smallest maximum
-        # distance from each root node.
-        k = min(dist)
-        return [node for node, d in enumerate(dist) if d == k]
+        dist = [0 for _ in adj]
+        parent = [None for _ in adj]
+        bfs(root1, dist, parent)
+        _, root2 = max((d, n) for n, d in enumerate(dist))
+
+        dist = [0 for _ in adj]
+        parent = [None for _ in adj]
+        bfs(root1, dist, parent)
+
+        path = []
+        curr = root2
+        while curr is not None:
+            path.append(curr)
+            curr = parent[curr]
+
+        mid = len(path) // 2
+        if len(path) % 2:
+            return [path[mid]]
+        else:
+            return [path[mid-1], path[mid]]
+
 
 def test_1():
     n = 4
