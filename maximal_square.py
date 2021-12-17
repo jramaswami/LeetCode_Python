@@ -22,14 +22,15 @@ class Solution:
                     soln = 1
 
         for r, row in enumerate(matrix[1:], start=1):
-            for c, _ in enumerate(row[1:], start=1):
-                t = min(
-                    dp[r-1][c-1],
-                    dp[r-1][c],
-                    dp[r][c-1]
-                )
-                dp[r][c] = matrix[r][c] + t
-                soln = max(soln, dp[r][c])
+            for c, k in enumerate(row[1:], start=1):
+                if k:
+                    t = min(
+                        dp[r-1][c-1],
+                        dp[r-1][c],
+                        dp[r][c-1]
+                    )
+                    dp[r][c] = matrix[r][c] + t
+                    soln = max(soln, dp[r][c])
 
         return soln * soln
 
@@ -47,3 +48,9 @@ def test_2():
 def test_3():
     matrix = [["0"]]
     assert Solution().maximalSquare(matrix) == 0
+
+
+def test_4():
+    "WA"
+    matrix = [["1","0","1","1","0","1"],["1","1","1","1","1","1"],["0","1","1","0","1","1"],["1","1","1","0","1","0"],["0","1","1","1","1","1"],["1","1","0","1","1","1"]]
+    assert Solution().maximalSquare(matrix) == 4
