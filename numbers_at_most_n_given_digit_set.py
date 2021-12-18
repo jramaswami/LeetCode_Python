@@ -31,6 +31,10 @@ class Solution:
             equal_to = k in digits
             if not equal_to:
                 break
+            # If we are have reached the last place of our limit, we have
+            # built the a number equal to the limit.
+            if equal_to and i == 1:
+                soln += 1
         return soln
 
 
