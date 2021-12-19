@@ -15,7 +15,7 @@ class TType(enum.Enum):
     close_p = enum.auto()
 
 
-Token = collections.namedtuple('Token', ['token', 'type'])
+Token = collections.namedtuple('Token', ['value', 'type'])
 
 
 class Solution:
@@ -51,16 +51,60 @@ class Solution:
                     tokens.append(Token(c, TType.open_p))
 
                 if c == ']':
-                    tokens.append(Token(c, TType.open_p))
+                    tokens.append(Token(c, TType.close_p))
+
+            if parsing_string:
+                tokens.append(Token("".join(string), TType.string))
+                string = []
+                parsing_string = False
 
             return tokens
 
-        print(tokenize(s))
+        def decode(tokens, start_index):
+            print(f"decode(... {start_index=})")
+            result = []
+            i = start_index
+            multiplier = 1
+            while i < len(tokens):
+                token = tokens[i]
+                if token.type == TType.string:
+                    result.append(multiplier * token.value)
+                    i += 1
+                    multiplier = 1
+                elif token.type == TType.number:
+                    multiplier = token.value
+                    i += 1
+                elif token.type == TType.open_p:
+                    i, T = decode(tokens, i + 1)
+                    result.append(multiplier * T)
+                    multiplier = 1
+                elif token.type == TType.close_p:
+                    i += 1
+                    break
+            return i, "".join(result)
 
+        tokens = tokenize(s)
+        _, soln = decode(tokens, 0)
+        return soln
 
 
 def test_1():
     s = "3[a]2[bc]"
-    assert Solution().decodeString(s) == "aaabcbc"
+    expected = "aaabcbc"
+    assert Solution().decodeString(s) == expected
 
 
+def test_2():
+    s = "3[a2[c]]"
+    expected = "accaccacc"
+    assert Solution().decodeString(s) == expected
+
+def test_3():
+    s = "2[abc]3[cd]ef"
+    expected = "abcabccdcdcdef"
+    assert Solution().decodeString(s) == expected
+
+def test_4():
+    s = "abc3[cd]xyz"
+    expected = "abccdcdcdxyz"
+    assert Solution().decodeString(s) == expected
