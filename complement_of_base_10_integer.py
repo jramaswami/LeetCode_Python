@@ -6,6 +6,9 @@ jramaswami
 
 class Solution:
     def bitwiseComplement(self, num: int) -> int:
+        # Special case:
+        if num == 0:
+            return 1
         soln = 0
         bit = 0
         while num:
