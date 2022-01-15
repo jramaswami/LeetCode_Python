@@ -5,61 +5,46 @@ jramaswami
 
 
 import collections
-import heapq
 import math
 
 
 class Solution:
     def minJumps(self, arr):
 
-        long_jumps = collections.defaultdict(list)
-        short_jumps = collections.defaultdict(list)
-        for i, n in enumerate(arr):
-
-            short_jumps[n].append(i)
-
-            # Forward.
-            if i + 1 < len(arr) and arr[i+1] != n:
-                long_jumps[n].append(i+1)
-
-            # Backward
-            if i - 1 >= 0 and arr[i-1] != n:
-                long_jumps[n].append(i-1)
-
         dist = [math.inf for _ in arr]
-        queue = [(0, 0)]
+        long_jumps = collections.defaultdict(list)
+        for i, n in enumerate(arr):
+            long_jumps[n].append(i)
+
+        long_jumps_made = set()
+        queue = set()
+        new_queue = set()
         dist[0] = 0
+        queue.add(0)
         while queue:
-            d, u = heapq.heappop(queue)
+            for u in queue:
 
+                # Move back one.
+                if u + 1 < len(arr) and dist[u] + 1 < dist[u+1]:
+                    dist[u+1] = dist[u] + 1
+                    new_queue.add(u+1)
 
-            if dist[u] != d:
-                continue
+                # Move forward one.
+                if u - 1 >= 0 and dist[u] + 1 < dist[u-1]:
+                    dist[u-1] = dist[u] + 1
+                    new_queue.add(u-1)
 
-            # Can we jump directly there?
-            if arr[u] == arr[-1]:
-                dist[-1] = min(dist[-1], d + 1)
+                # Jump to index with same value.
+                if arr[u] not in long_jumps_made:
+                    long_jumps_made.add(arr[u])
+                    for v in long_jumps[arr[u]]:
+                        if u != v and dist[u] + 1 < dist[v]:
+                            dist[v] = dist[u] + 1
+                            new_queue.add(v)
 
-            # Forward
-            if u + 1 < len(arr) and d + 1 < dist[u + 1]:
-                heapq.heappush(queue, (d + 1, u + 1))
-                dist[u + 1] = d + 1
-
-            # Backward
-            if u - 1 >= 0 and d + 1 < dist[u - 1]:
-                heapq.heappush(queue, (d + 1, u - 1))
-                dist[u - 1] = d + 1
-
-            # Long jumps: i.e. jumps by way of equivalent.
-            for v in long_jumps[arr[u]]:
-                if v == u - 1 or v == u + 1:
-                    continue
-                if d + 2 < dist[v]:
-                    heapq.heappush(queue, (d + 2, v))
-                    dist[v] = d + 2
+            queue, new_queue = new_queue, set()
 
         return dist[-1]
-
 
 
 def test_1():
