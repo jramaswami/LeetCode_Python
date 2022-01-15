@@ -11,34 +11,40 @@ import math
 class Solution:
     def minJumps(self, arr):
 
-        dist = [math.inf for _ in arr]
         long_jumps = collections.defaultdict(list)
-        for i, n in enumerate(arr):
+        for off, n in enumerate(reversed(arr)):
+            i = len(arr) - off - 1
             long_jumps[n].append(i)
 
-        queue = set()
-        new_queue = set()
-        dist[0] = 0
-        queue.add(0)
+        visited = [False for _ in arr]
+        queue = collections.deque()
+        queue.append((0, 0))
+        visited[0] = True
         while queue:
-            for u in queue:
-                # Move back one.
-                if u + 1 < len(arr) and dist[u] + 1 < dist[u+1]:
-                    dist[u+1] = dist[u] + 1
-                    new_queue.add(u+1)
-                # Move forward one.
-                if u - 1 >= 0 and dist[u] + 1 < dist[u-1]:
-                    dist[u-1] = dist[u] + 1
-                    new_queue.add(u-1)
+            u, d = queue.popleft()
 
-                # Jump to index with same value.
-                for v in long_jumps[arr[u]]:
-                    if u != v and dist[u] + 1 < dist[v]:
-                        dist[v] = dist[u] + 1
-                        new_queue.add(v)
-            queue, new_queue = new_queue, set()
-        return dist[-1]
+            if u == len(arr) - 1:
+                return d
 
+            # Move forward one.
+            if u + 1 < len(arr) and not visited[u+1]:
+                if u + 1 == len(arr) - 1:
+                    return d + 1
+                queue.append((u+1, d+1))
+                visited[u+1] = True
+
+            # Move backward one.
+            if u - 1 >= 0 and not visited[u-1]:
+                queue.append((u-1, d+1))
+                visited[u-1] = True
+
+            # Jump to index with same value.
+            for v in long_jumps[arr[u]]:
+                if u != v and not visited[v]:
+                    if v == len(arr) - 1:
+                        return d + 1
+                    queue.append((v, d+1))
+                    visited[v] = True
 
 
 def test_1():
@@ -63,5 +69,5 @@ def test_4():
     "TLE"
     arr = [7] * (pow(10,5) - 1)
     arr.append(11)
-    expected = 1
+    expected = 2
     assert Solution().minJumps(arr) == expected
