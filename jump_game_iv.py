@@ -16,35 +16,36 @@ class Solution:
             i = len(arr) - off - 1
             long_jumps[n].append(i)
 
-        visited = [False for _ in arr]
+        dist = [math.inf for _ in arr]
         queue = collections.deque()
-        queue.append((0, 0))
-        visited[0] = True
+        queue.append(0)
+        dist[0] = 0
         while queue:
-            u, d = queue.popleft()
+            u = queue.popleft()
+            d = dist[u]
 
             if u == len(arr) - 1:
                 return d
 
             # Move forward one.
-            if u + 1 < len(arr) and not visited[u+1]:
+            if u + 1 < len(arr) and d + 1 < dist[u+1]:
                 if u + 1 == len(arr) - 1:
                     return d + 1
-                queue.append((u+1, d+1))
-                visited[u+1] = True
+                queue.append(u+1)
+                dist[u+1] = d + 1
 
             # Move backward one.
-            if u - 1 >= 0 and not visited[u-1]:
-                queue.append((u-1, d+1))
-                visited[u-1] = True
+            if u - 1 >= 0 and d + 1 < dist[u-1]:
+                queue.append(u-1)
+                dist[u-1] = d + 1
 
             # Jump to index with same value.
             for v in long_jumps[arr[u]]:
-                if u != v and not visited[v]:
+                if u != v and d + 1 < dist[v]:
                     if v == len(arr) - 1:
                         return d + 1
-                    queue.append((v, d+1))
-                    visited[v] = True
+                    queue.append(v)
+                    dist[v] = d + 1
 
 
 def test_1():
