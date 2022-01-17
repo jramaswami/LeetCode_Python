@@ -6,13 +6,15 @@ jramaswami
 
 class Solution:
     def wordPattern(self, pattern: str, s: str) -> bool:
-        visited = dict()
+        visited_pattern = dict()
+        visited_word = dict()
         for p, w in zip(pattern, s.strip().split()):
-            if p in visited:
-                if w != visited[p]:
-                    return False
-            else:
-                visited[p] = w
+            if p in visited_pattern and  w != visited_pattern[p]:
+                return False
+            if w in visited_word and visited_word[w] != p:
+                return False
+            visited_pattern[p] = w
+            visited_word[w] = p
         return True
 
 
@@ -40,3 +42,11 @@ def test_4():
     pattern = "abba"
     s = "dog dog dog dog"
     assert Solution().wordPattern(pattern, s) == False
+
+
+def test_5():
+    "WA"
+    pattern = "aaa"
+    s = "aa aa aa aa"
+    assert Solution().wordPattern(pattern, s) == False
+
