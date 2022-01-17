@@ -8,7 +8,10 @@ class Solution:
     def wordPattern(self, pattern: str, s: str) -> bool:
         visited_pattern = dict()
         visited_word = dict()
-        for p, w in zip(pattern, s.strip().split()):
+        tokens = s.strip().split()
+        if len(pattern) != len(tokens):
+            return False
+        for p, w in zip(pattern, tokens):
             if p in visited_pattern and  w != visited_pattern[p]:
                 return False
             if w in visited_word and visited_word[w] != p:
