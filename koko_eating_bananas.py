@@ -4,16 +4,16 @@ jramaswami
 """
 
 
+import math
+
+
 class Solution:
     def minEatingSpeed(self, piles, h):
 
         def can_eat(k):
             t = 0
             for b in piles:
-                q, r = divmod(b, k)
-                if r:
-                    q += 1
-                t += q
+                t += math.ceil(b / k)
             return t <= h
 
         # Binary search for the answer.
@@ -23,10 +23,10 @@ class Solution:
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
             if can_eat(mid):
-                hi -= 1
+                hi = mid - 1
                 soln = min(soln, mid)
             else:
-                lo += 1
+                lo = mid + 1
         return soln
 
 
@@ -55,5 +55,5 @@ def test_4():
     "TLE"
     piles = [312884470]
     h = 312884469
-    expected = 23
+    expected = 2
     assert Solution().minEatingSpeed(piles, h) == expected
