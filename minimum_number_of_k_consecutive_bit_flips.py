@@ -4,18 +4,21 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
 
     def minKBitFlips(self, bits, k):
-
-        def flip(i):
-            bits[i:i+k] = [not b for b in bits[i:i+k]]
-
         soln = 0
+        flips = collections.deque()
         for i, _ in enumerate(bits):
-            if bits[i] == 0:
+            if flips and flips[0] <= i:
+                flips.popleft()
+            b = (bits[i] + len(flips)) % 2
+            if b == 0:
                 if i + k <= len(bits):
-                    flip(i)
+                    flips.append(i+k)
                     soln += 1
                 else:
                     return -1
