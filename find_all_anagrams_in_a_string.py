@@ -28,10 +28,8 @@ class Solution:
             target[ord(c) - ord_a] += 1
 
         soln = []
-        prefix[0] = list(EMPTY)
-        prefix[0][ord(s[0]) - ord_a] += 1
-        for i, c in enumerate(s[1:], start=1):
-            prefix[i] = list(prefix[i-1])
+        for i, c in enumerate(s):
+            prefix[i] = list(get_prefix(i-1))
             prefix[i][ord(c) - ord_a] += 1
 
             if check(get_prefix(i-len(p)), prefix[i], target):
@@ -60,4 +58,3 @@ def test_3():
     p = "a"
     expected = [0, 4]
     assert Solution().findAnagrams(s, p) == expected
-
