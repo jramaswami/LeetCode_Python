@@ -18,11 +18,14 @@ class Solution:
         target_ctr.update(s1)
         window_ctr.update(s2[:len(s1)])
         # Use a sliding window to find if there is a permuation present.
+        # Check intial window.
+        if target_ctr == window_ctr:
+            return True
         for i, _ in enumerate(s2[len(s1):], start=len(s1)):
-            if target_ctr == window_ctr:
-                return True
             window_ctr[s2[i-len(s1)]] -= 1
             window_ctr[s2[i]] += 1
+            if target_ctr == window_ctr:
+                return True
         return False
 
 
