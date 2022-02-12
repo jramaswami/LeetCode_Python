@@ -1,51 +1,54 @@
 """
 LeetCode :: 127. Word Ladder
 """
-from typing import *
-from collections import defaultdict
 
-class Node:
-    def __init__(self, val = None):
-        self.val = val
-        self.children = [None for _ in range(26)]
 
-    def add(self, index, word):
-        if index >= len(word):
-            self.val = word
-            return
-
-        child_index = ord(word[index]) - ord('a')
-        if self.children[child_index] is None:
-            self.children[child_index] = Node(word[index])
-        self.children[child_index].add(index + 1, word)
-
-    def find(self, index, word, acc):
-        if acc > 1:
-            return []
-
-        if index >= len(word):
-            return [self.val]
-
-        found = []
-        for child in (c for c in self.children if c):
-            if child.val != word[index]:
-                found.extend(child.find(index + 1, word, acc + 1))
-            else:
-                found.extend(child.find(index + 1, word, acc))
-        return found
+import string
+import collections
 
 
 class Solution:
-    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
-        head = Node()
-        for word in wordList:
-            head.add(0, word, )
+    def ladderLength(self, beginWord, endWord, wordList):
+        visited = {w: False for w in wordList}
+        if endWord not in visited:
+            return 0
 
-        print(head.find(0, beginWord, 0))
+        def neighbors(word):
+            "Generator of the neighbors of the word."
+            for i, c in enumerate(word):
+                for q in string.ascii_lowercase:
+                    if c == q:
+                        continue
+                    yield word[:i] + q + word[i+1:]
+
+        # BFS
+        queue = collections.deque()
+        queue.append((beginWord, 1))
+        visited[beginWord] = True
+        while queue:
+            word, dist = queue.popleft()
+            if word == endWord:
+                return dist
+            for neighbor in neighbors(word):
+                if neighbor not in visited:
+                    continue
+                if  not visited[neighbor]:
+                    visited[neighbor] = True
+                    queue.append((neighbor, dist + 1))
+        return 0
 
 
 def test_1():
     beginWord = "hit"
     endWord = "cog"
     wordList = ["hot","dot","dog","lot","log","cog"]
-    assert Solution().ladderLength(beginWord, endWord, wordList) == 5
+    expected = 5
+    assert Solution().ladderLength(beginWord, endWord, wordList) == expected
+
+
+def test_2():
+    beginWord = "hit"
+    endWord = "cog"
+    wordList = ["hot","dot","dog","lot","log"]
+    expected = 0
+    assert Solution().ladderLength(beginWord, endWord, wordList) == expected
