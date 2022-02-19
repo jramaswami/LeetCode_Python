@@ -31,6 +31,10 @@ class Solution:
         min_n = min(top_n)
         max_n = max(top_n)
         heapq.heapify(heap)
+
+        if len(heap) == 1:
+            return 0
+
         while heap:
             n, n_limit = heapq.heappop(heap)
             if n * 2 > n_limit:
