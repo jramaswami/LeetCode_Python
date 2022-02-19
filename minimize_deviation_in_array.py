@@ -4,8 +4,12 @@ jramaswami
 """
 
 
+import collections
 import heapq
+import math
 
+
+Item = collections.namedtuple('Item', ['curr_n', 'top_n'])
 
 class Solution:
 
@@ -17,25 +21,35 @@ class Solution:
                 n //= 2
             return n
 
-        heap = list(set(reduce(n) for n in nums))
-        max_n = max(heap)
-        print(heap)
-        heapq.heapify(heap)
-        min_n = heap[0]
 
-
-        while heap:
-            n = heapq.heappop(heap)
-            n0 = 2 * n
-            min_n0 = min_n
-            if (min_n == n):
-                min_n0 = min(heap[0], n0)
-            max_n0 = max(max_n, n0)
-            print(f"{n} -> {n0} {min_n}->{min_n0} {max_n}->{max_n0} {max_n-min_n} {max_n0-min_n0}")
-            if abs(max_n0 - min_n0) <= abs(max_n - min_n):
-                min_n, max_n = min_n0, max_n0
+        # TODO: You only have to keep track of the smallest top_n for
+        #       a given reduction.
+        active = []
+        max_n = -math.inf
+        min_n = math.inf
+        for n in nums:
+            if n % 2:
+                active.append(Item(n, n * 2))
             else:
-                break
+                active.append(Item(reduce(n), n))
+            max_n = max(active[-1].curr_n, max_n)
+            min_n = min(active[-1].curr_n, min_n)
+
+        heapq.heapify(active)
+
+        while active:
+            print(f"{active=}")
+            item = heapq.heappop(active)
+            if item.curr_n != item.top_n:
+                n0 = 2 * item.curr_n
+                min_n0 = min_n
+                if (min_n == item.curr_n):
+                    min_n0 = min(active[0].curr_n if active else n0, n0)
+                max_n0 = max(max_n, n0)
+                if abs(max_n0 - min_n0) < abs(max_n - min_n):
+                    print(f"{item=} {item.curr_n}->{n0} {min_n}->{min_n0} {max_n}->{max_n0} {max_n-min_n} {max_n0-min_n0}")
+                    min_n, max_n = min_n0, max_n0
+                    heapq.heappush(active, Item(n0, item.top_n))
 
         return max_n - min_n
 
@@ -52,17 +66,17 @@ def test_2():
     assert Solution().minimumDeviation(nums) == expected
 
 
-def test_3():
-    nums = [2,10,8]
-    expected = 3
-    assert Solution().minimumDeviation(nums) == expected
+# def test_3():
+#     nums = [2,10,8]
+#     expected = 3
+#     assert Solution().minimumDeviation(nums) == expected
 
 
-def test_4():
-    "RTE"
-    nums = [3,5]
-    expected = 9
-    assert Solution().minimumDeviation(nums) == expected
+# def test_4():
+#     "RTE"
+#     nums = [3,5]
+#     expected = 1
+#     assert Solution().minimumDeviation(nums) == expected
 
 
 # def test_4():
