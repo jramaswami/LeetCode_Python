@@ -39,7 +39,11 @@ class Solution:
             n, n_limit = heapq.heappop(heap)
             if n * 2 > n_limit:
                 break
-            min_n0 = min(n * 2, heap[0][0])
+            if heap:
+                min_n0 = min(heap[0][0], 2 * n)
+            else:
+                if n == min_n:
+                    min_n0 = 2 * n
             max_n0 = max(n * 2, max_n)
             if (max_n - min_n) >= (max_n0 - min_n0):
                 heapq.heappush(heap, (n*2, n_limit))
@@ -81,5 +85,11 @@ def test_4():
 def test_5():
     "RTE"
     nums = [8,1,2,1]
-    expected = 99826983
+    expected = 0
+    assert Solution().minimumDeviation(nums) == expected
+
+
+def test_7():
+    nums = [200, 230]
+    expected = 15
     assert Solution().minimumDeviation(nums) == expected
