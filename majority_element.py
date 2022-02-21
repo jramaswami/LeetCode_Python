@@ -13,6 +13,8 @@ class Solution:
         for n in nums[1:]:
             if n != candidate:
                 count -= 1
+            else:
+                count += 1
             if count == 0:
                 candidate = n
                 count = 1
