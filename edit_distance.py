@@ -23,9 +23,9 @@ class Solution:
             dp[r][0] = r
 
         # Compute
-        for c in range(len(word1) + 1):
+        for c in range(1, len(word1) + 1):
             a = word1[c-1]
-            for r in range(len(word2) + 1):
+            for r in range(1, len(word2) + 1):
                 b = word2[r-1]
                 if a == b:
                     # Match
