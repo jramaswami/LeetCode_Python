@@ -1,47 +1,41 @@
 """
 LeetCode :: February 2022 Challenge :: 847. Shortest Path Visiting All Nodes
 jramaswami
-
-Thank You Larry!
 """
 
 
-import itertools
 import math
-import functools
+import collections
 
 
 class Solution:
 
     def shortestPathLength(self, graph):
+        "BFS Solution"
 
-        # Floyd-Warshall: shortest distance between all pairs.
-        dist = [[math.inf for _ in graph] for _ in graph]
-        for node, neighbors in enumerate(graph):
-            dist[node][node] = 0
-            for neighbor in neighbors:
-                dist[node][neighbor] = 1
+        ALL_NODES_VISITED = (1 << (len(graph))) - 1
 
-        for k in range(len(graph)):
-            for i in range(len(graph)):
-                for j in range(len(graph)):
-                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+        def bfs(root):
+            queue = collections.deque()
+            queue.append((root, 1 << root, 0))
+            visited_states = set()
+            visited_states.add((root, 1 << root))
+            while queue:
+                node, visited_nodes, edge_count = queue.popleft()
+                if visited_nodes == ALL_NODES_VISITED:
+                    return edge_count
 
-        @functools.cache
-        def visit(node, visited):
-            if visited == (1 << len(graph)) - 1:
-                return 0
-
-            result = math.inf
-            for i, _ in enumerate(graph):
-                mask = 1 << i
-                if not (visited & mask):
-                    result = min(result, visit(i, mask | visited) + dist[node][i])
-            return result
+                for neighbor in graph[node]:
+                    mask = 1 << neighbor
+                    visited_nodes0 = visited_nodes | mask
+                    if (neighbor, visited_nodes0) not in visited_states:
+                        visited_states.add((neighbor, visited_nodes0))
+                        queue.append((neighbor, visited_nodes0, edge_count+1))
+            return math.inf
 
         soln = math.inf
         for root, _ in enumerate(graph):
-            soln = min(soln, visit(root, 1 << root))
+            soln = min(soln, bfs(root))
         return soln
 
 
