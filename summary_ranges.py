@@ -7,6 +7,10 @@ jramaswami
 class Solution:
 
     def summaryRanges(self, nums):
+        # Boundary case: nums is empty
+        if not nums:
+            return []
+
         ranges = [[nums[0], nums[0]]]
         for n in nums[1:]:
             if n - 1 == ranges[-1][-1]:
