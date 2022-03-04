@@ -4,35 +4,23 @@ jramaswami
 """
 
 
-def S(n):
-    "Return sum of [1 .. n]."""
-    return (n * (n+1)) // 2
-
 class Solution:
 
     def champagneTower(self, poured, query_row, query_glass):
-        # Move indices to one based.
-        query_row += 1
-        query_glass += 1
-        # Given query_row there are 1+2+3+...+query_row-1 cups
-        # above it.
-        cups_above = S(query_row-1)
-        cups_including = cups_above + query_row
-        if poured <= cups_above:
-            # Did not pour enough to reach query row.
-            return 0.0
-        if poured >= cups_including:
-            # Pour enough to fill query row.
-            return 1.0
-        # There are n glasses.  All but the first and last glasses have two
-        # glasses from above pouring into them.  We can compute the ratio
-        # of how much of each pour the glasses in this row will get.
-        denominator = (2 * query_row) - 2
-        numerator = 2 * (poured - cups_above)
-        if query_glass == 1 or query_glass == query_row:
-            numerator = (poured - cups_above)
-        return numerator / denominator
+        limits = [1]
+        while len(limits) < 100:
+            limits.append(limits[-1] * 2)
 
+        dp = [[0 for _ in range(100)] for _ in range(100)]
+        dp[0][0] = poured
+        for r, row in enumerate(dp[:-1]):
+            for c, _ in enumerate(row):
+                if dp[r][c] > limits[r]:
+                    dp[r+1][c] += dp[r][c] - limits[r]
+                    dp[r+1][c+1] += dp[r][c] - limits[r]
+                    dp[r][c] = limits[r]
+
+        return dp[query_row][query_glass] / limits[query_row]
 
 
 def test_1():
