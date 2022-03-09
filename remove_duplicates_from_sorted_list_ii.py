@@ -24,6 +24,7 @@ class Solution:
                 tail.next = curr
                 tail = curr
                 curr = curr.next
+                tail.next = None
         return dummy.next
 
 
@@ -47,5 +48,3 @@ def test_3():
     expected = [1]
     result = Solution().deleteDuplicates(make_list(head))
     assert make_arr(result) == expected
-
-
