@@ -1,88 +1,42 @@
 """
-LeetCode :: Copy List with Random Pointer
-jramaswami
+LeetCode :: March 2022 Challenge :: 138. Copy List with Random Pointer
+jramaswmai
 """
-from typing import *
-
-
-null = None
-
-
-# Definition for a Node.
-class Node:
-    def __init__(self, x: int, next: 'Node' = None, random: 'Node' = None):
-        self.val = int(x)
-        self.next = next
-        self.random = random
-
-    def __repr__(self):
-        n = self.next.val if self.next is not None else 'None'
-        r = self.random.val if self.random is not None else 'None'
-        return f"Node(val={self.val}, next={n}, random={r})"
-
-
-def make_list(arr):
-    """Make a list from the array."""
-    if arr == []:
-        return None
-    # First make nodes
-    nodes = [Node(v[0]) for v in arr]
-    # Now link them up.
-    prev_node = None
-    for node, (_, rnd) in zip(nodes, arr):
-        # Link next
-        if prev_node:
-            prev_node.next = node
-        prev_node = node
-        # Link random
-        if rnd is not None:
-            node.random = nodes[rnd]
-    return nodes[0]
-
-
-def make_array(head):
-    """Make an array from the list."""
-    # Get the index of each node and put it in a dictionary for lookup later.
-    node_indices = dict()
-    node = head
-    index = 0
-    while node is not None:
-        node_indices[node] = index
-        index += 1
-        node = node.next
-
-    arr = []
-    node = head
-    while node is not None:
-        i = None
-        if node.random is not None:
-            i = node_indices[node.random]
-        arr.append([node.val, i])
-        node = node.next
-    return arr
 
 
 class Solution:
     def copyRandomList(self, head: 'Node') -> 'Node':
-        return make_list(make_array(head))
+        if head is None:
+            return None
 
+        nodes = []
+        curr = head
+        while curr:
+            # Append node into nodes.
+            nodes.append(curr)
+            # Append a copy
+            nodes.append(Node(curr.val))
+            curr = curr.next
 
-def test_1():
-    head_expected = make_list([[7,null],[13,0],[11,4],[10,2],[1,0]])
-    head_result = Solution().copyRandomList(head_expected)
-    assert make_array(head_result) == make_array(head_expected)
+        # Set all nodes/copies next so that they are in a linked
+        # list where all even indexes are nodes and odd indexes
+        # are copies.
+        for left, right in zip(nodes[:-1], nodes[1:]):
+            left.next = right
 
-def test_2():
-    head_expected = make_list([[1,1],[2,1]])
-    head_result = Solution().copyRandomList(head_expected)
-    assert make_array(head_result) == make_array(head_expected)
+        # Set the random nodes by following the link from the original.
+        # The original random will point to the copy random.  Use that
+        # to set the copy node's random.
+        for i in range(0, len(nodes), 2):
+            new_random = None
+            if nodes[i].random:
+                new_random = nodes[i].random.next
+            if i + 1 < len(nodes):
+                nodes[i+1].random = new_random
 
-def test_3():
-    head_expected = make_list([[3,null],[3,0],[3,null]])
-    head_result = Solution().copyRandomList(head_expected)
-    assert make_array(head_result) == make_array(head_expected)
+        # Fix all the next pointers to separate the two lists.
+        for i in range(0, len(nodes)):
+            if i + 2 < len(nodes):
+                nodes[i].next = nodes[i+2]
 
-def test_4():
-    head_expected = make_list([])
-    head_result = Solution().copyRandomList(head_expected)
-    assert make_array(head_result) == make_array(head_expected)
+        return nodes[1]
