@@ -12,15 +12,15 @@ class Solution:
             if c in ['(', '[', '{']:
                 stack.append(c)
             elif c == ')':
-                if stack[-1] != '(':
+                if not stack or stack[-1] != '(':
                     return False
                 stack.pop()
             elif c == ']':
-                if stack[-1] != '[':
+                if not stack or stack[-1] != '[':
                     return False
                 stack.pop()
             elif c == '}':
-                if stack[-1] != '{':
+                if not stack or stack[-1] != '{':
                     return False
                 stack.pop()
         return not stack
@@ -52,5 +52,12 @@ def test_5():
 
 def test_6():
     s = "(()({[]()})"
+    expected = False
+    assert Solution().isValid(s) == expected
+
+
+def test_7():
+    "RTE"
+    s = "]"
     expected = False
     assert Solution().isValid(s) == expected
