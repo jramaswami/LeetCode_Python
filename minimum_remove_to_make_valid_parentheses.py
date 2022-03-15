@@ -1,49 +1,44 @@
 """
-LeetCode :: Minimum Remove to Make Valid Parentheses
+LeetCode :: March 2022 Challenge :: Minimum Remove to Make Valid Parentheses
 jramaswami
 """
-from typing import *
 
 
 class Solution:
-    def minRemoveToMakeValid(self, s: str) -> str:
-        parentheses = [(c, i) for i, c in enumerate(s) if c == ')' or c == '(']
-        
-        # Left to right
+    def minRemoveToMakeValid(self, s):
         stack = []
-        removed_left = []
-        for c, i in parentheses:
+        l2r = []
+        for i, c in enumerate(s):
             if c == '(':
-                stack.append((c, i))
+                stack.append(i)
             elif c == ')':
                 if stack:
                     stack.pop()
                 else:
-                    removed_left.append(i)
-        while stack:
-            c, i = stack.pop()
-            removed_left.append(i)
+                    l2r.append(i)
+        l2r.extend(stack)
 
-        # Right to left
         stack = []
-        removed_right = []
-        for c, i in reversed(parentheses):
+        r2l = []
+        for i in range(len(s)-1, -1, -1):
+            c = s[i]
             if c == ')':
-                stack.append((c, i))
+                stack.append(i)
             elif c == '(':
                 if stack:
                     stack.pop()
                 else:
-                    removed_right.append(i)
-        while stack:
-            c, i = stack.pop()
-            removed_right.append(i)
+                    r2l.append(i)
+        r2l.extend(stack)
 
-        # Form longest string
-        s0 = list(s)
-        for i in min(removed_left, removed_right, key=len):
-            s0[i] = ""
-        return "".join(s0)
+        removals = l2r
+        if len(r2l) < len(l2r):
+           removals = r2l
+
+        letters = list(s)
+        for i in removals:
+            letters[i] = ""
+        return "".join(letters)
 
 
 def test_1():
@@ -70,4 +65,3 @@ def test_5():
     s = "a(b(c)(d)e)f"
     expected = "a(b(c)(d)e)f"
     assert Solution().minRemoveToMakeValid(s) == expected
-
