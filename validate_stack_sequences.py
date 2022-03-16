@@ -1,22 +1,20 @@
 """
-LeetCode :: Validate Stack Sequences
+LeetCode :: March 2022 Challenge :: Validate Stack Sequences
 jramaswami
 """
-from typing import *
-from collections import deque
 
 
 class Solution:
-    def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool:
-        pop_p = 0
+    def validateStackSequences(self, pushed, popped):
+        i = 0
         stack = []
         for p in pushed:
             stack.append(p)
-            while stack and pop_p < len(popped) and stack[-1] == popped[pop_p]:
+            while stack and stack[-1] == popped[i]:
                 stack.pop()
-                pop_p += 1
+                i += 1
 
-        return not stack and pop_p == len(popped)
+        return not stack and i >= len(popped)
 
 
 def test_1():
@@ -24,10 +22,12 @@ def test_1():
     popped = [4,5,3,2,1]
     assert Solution().validateStackSequences(pushed, popped) == True
 
+
 def test_2():
     pushed = [1,2,3,4,5]
     popped = [4,3,5,1,2]
     assert Solution().validateStackSequences(pushed, popped) == False
+
 
 def test_3():
     pushed = [1,0,2]
