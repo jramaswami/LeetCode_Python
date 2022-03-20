@@ -5,10 +5,6 @@ jramaswami
 
 
 import math
-import collections
-
-
-QItem = collections.namedtuple('QItem', ['index', 'is_flipped', 'side'])
 
 
 TOP = 0
@@ -24,50 +20,25 @@ class Solution:
         def unflipped(i):
             return (tops[i], bottoms[i])
 
-        queue = collections.deque()
-        queue.append(QItem(0, False, TOP))
-        queue.append(QItem(0, False, BOTTOM))
-        queue.append(QItem(0, True, TOP))
-        queue.append(QItem(0, True, BOTTOM))
+        def cost_to_match(i, side, value_to_match):
+            if unflipped(i)[side] == value_to_match:
+                return 0
+            if flipped(i)[side] == value_to_match:
+                return 1
+            return math.inf
 
-        cost = collections.defaultdict(lambda: math.inf)
-        for item in queue:
-            if item.is_flipped:
-                cost[item] = 1
-            else:
-                cost[item] = 0
+        def solve(side):
+            value_to_match = unflipped(0)[side]
+            cost = 0
+            for i, _ in enumerate(tops[1:], start=1):
+                cost += cost_to_match(i, side, value_to_match)
+            return cost
 
-        soln = math.inf
-        while queue:
-            item = queue.popleft()
-            if item.index == len(tops) - 1:
-                soln = min(soln, cost[item])
-                continue
-
-            if item.is_flipped:
-                if flipped(item.index)[item.side] == unflipped(item.index+1)[item.side]:
-                    item0 = QItem(item.index+1, False, item.side)
-                    if cost[item] < cost[item0]:
-                        cost[item0] = cost[item]
-                        queue.append(item0)
-                if flipped(item.index)[item.side] == flipped(item.index+1)[item.side]:
-                    item0 = QItem(item.index+1, True, item.side)
-                    if cost[item] + 1 < cost[item0]:
-                        cost[item0] = cost[item] + 1
-                        queue.append(item0)
-            else:
-                if unflipped(item.index)[item.side] == unflipped(item.index+1)[item.side]:
-                    item0 = QItem(item.index+1, False, item.side)
-                    if cost[item] < cost[item0]:
-                        cost[item0] = cost[item]
-                        queue.append(item0)
-                if unflipped(item.index)[item.side] == flipped(item.index+1)[item.side]:
-                    item0 = QItem(item.index+1, True, item.side)
-                    if cost[item] + 1 < cost[item0]:
-                        cost[item0] = cost[item] + 1
-                        queue.append(item0)
-
-        return -1 if soln == math.inf else soln
+        soln = min(solve(TOP), solve(BOTTOM))
+        tops[0], bottoms[0] = bottoms[0], tops[0]
+        soln = min(soln, 1 + solve(TOP), 1 + solve(BOTTOM))
+        tops[0], bottoms[0] = bottoms[0], tops[0]
+        return (-1 if soln == math.inf else soln)
 
 
 def test_1():
