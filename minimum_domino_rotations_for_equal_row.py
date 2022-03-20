@@ -5,9 +5,18 @@ jramaswami
 
 
 import math
+import collections
+
+
+QItem = collections.namedtuple('QItem', ['index', 'is_flipped', 'side'])
+
+
+TOP = 0
+BOTTOM = 1
 
 
 class Solution:
+
     def minDominoRotations(self, tops, bottoms):
         def flipped(i):
             return (bottoms[i], tops[i])
@@ -15,26 +24,49 @@ class Solution:
         def unflipped(i):
             return (tops[i], bottoms[i])
 
-        def solve(side):
-            dp_unflipped = [math.inf for _ in tops]
-            dp_flipped = [math.inf for _ in tops]
-            dp_unflipped[0] = 0
-            dp_flipped[0] = 1
+        queue = collections.deque()
+        queue.append(QItem(0, False, TOP))
+        queue.append(QItem(0, False, BOTTOM))
+        queue.append(QItem(0, True, TOP))
+        queue.append(QItem(0, True, BOTTOM))
 
+        cost = collections.defaultdict(lambda: math.inf)
+        for item in queue:
+            if item.is_flipped:
+                cost[item] = 1
+            else:
+                cost[item] = 0
 
-            for i in range(1, len(tops)):
-                if unflipped(i)[side] == unflipped(i-1)[side]:
-                    dp_unflipped[i] = min(dp_unflipped[i], dp_unflipped[i-1])
-                if unflipped(i)[side] == flipped(i-1)[side]:
-                    dp_unflipped[i] = min(dp_unflipped[i], dp_flipped[i-1])
-                if flipped(i)[side] == unflipped(i-1)[side]:
-                    dp_flipped[i] = min(dp_flipped[i], 1 + dp_unflipped[i-1])
-                if flipped(i)[side] == flipped(i-1)[side]:
-                    dp_flipped[i] = min(dp_flipped[i], 1 + dp_flipped[i-1])
+        soln = math.inf
+        while queue:
+            item = queue.popleft()
+            if item.index == len(tops) - 1:
+                soln = min(soln, cost[item])
+                continue
 
-            return min(dp_flipped[i], dp_unflipped[i])
+            if item.is_flipped:
+                if flipped(item.index)[item.side] == unflipped(item.index+1)[item.side]:
+                    item0 = QItem(item.index+1, False, item.side)
+                    if cost[item] < cost[item0]:
+                        cost[item0] = cost[item]
+                        queue.append(item0)
+                if flipped(item.index)[item.side] == flipped(item.index+1)[item.side]:
+                    item0 = QItem(item.index+1, True, item.side)
+                    if cost[item] + 1 < cost[item0]:
+                        cost[item0] = cost[item] + 1
+                        queue.append(item0)
+            else:
+                if unflipped(item.index)[item.side] == unflipped(item.index+1)[item.side]:
+                    item0 = QItem(item.index+1, False, item.side)
+                    if cost[item] < cost[item0]:
+                        cost[item0] = cost[item]
+                        queue.append(item0)
+                if unflipped(item.index)[item.side] == flipped(item.index+1)[item.side]:
+                    item0 = QItem(item.index+1, True, item.side)
+                    if cost[item] + 1 < cost[item0]:
+                        cost[item0] = cost[item] + 1
+                        queue.append(item0)
 
-        soln = min(solve(0), solve(1))
         return -1 if soln == math.inf else soln
 
 
