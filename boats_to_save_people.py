@@ -12,7 +12,7 @@ class Solution:
         people0 = collections.deque(sorted(people))
         soln = 0
         while people0:
-            if people0[0] + people0[-1] <= limit:
+            if len(people0) > 1 and people0[0] + people0[-1] <= limit:
                 people0.popleft()
             people0.pop()
             soln += 1
@@ -44,6 +44,5 @@ def test_4():
     "RTE"
     people = [2,4]
     limit = 5
-    expected = 1
+    expected = 2
     assert Solution().numRescueBoats(people, limit) == expected
-
