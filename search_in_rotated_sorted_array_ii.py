@@ -1,40 +1,37 @@
 """
 LeetCode :: March 2022 Challenge :: 81. Search in Rotated Sorted Array II
 jramaswami
-
-xxxxx|yyyyyy
-y <= x
-
-m is nums[mid]
-if m < x then m is to the right of pivot (yyyy)
-if m > x then m is to the left of the pivot (xxxx)
-if m == x then all x == y or ??? size is one?
 """
 
 
 class Solution:
     def search(self, nums, target):
-        lo = 0
-        hi = len(nums) - 1
-        while lo <= hi:
+        def search0(lo, hi, target):
+            # Base case:
+            if lo > hi:
+                return False
+
             mid = lo + ((hi - lo) // 2)
-            a = nums[lo]
-            b = nums[mid]
-            c = nums[hi]
-            print(f"{lo=} {mid=} {hi=} {a=} {b=} {c=}")
-            if target == b:
+            if nums[mid] == target:
                 return True
-            elif a <= target <= b:
-                hi = mid - 1
-            elif b <= target <= c:
-                lo = mid + 1
-            elif target < a:
-                lo = mid + 1
-            elif target > b and target > a:
-                hi = mid - 1
-            elif target > b and target < a:
-                lo = mid + 1
-        return False
+
+            # Is the pivot between lo and hi?
+            if nums[lo] < nums[hi]:
+                # Pivot is not between lo and hi.  Treat as a normal
+                # binary search.
+                if nums[mid] < target:
+                    return search0(mid + 1, hi, target)
+                elif nums[mid] > target:
+                    return search0(lo, mid - 1, target)
+            else:
+                # Pivot is between lo and hi.  We cannot tell which side
+                # target will be on, so we must search both sides.
+                return (
+                    search0(lo, mid - 1, target) or
+                    search0(mid + 1, hi, target)
+                )
+
+        return search0(0, len(nums) - 1, target)
 
 
 def test_1():
@@ -51,10 +48,10 @@ def test_2():
     assert Solution().search(nums, target) == expected
 
 
-def xtest_random():
+def test_random():
     import random
     import collections
-    for _ in range(100):
+    for _ in range(1000):
         N = 5000
         K = pow(10,4)
         A = collections.deque(sorted(random.randint(-K, K) for _ in range(N)))
@@ -63,9 +60,6 @@ def xtest_random():
         target = random.randint(-K, K)
         expected = (target in A)
         result = Solution().search(A, target)
-        if result != expected:
-            print(A)
-            print(target)
         assert result == expected
 
 
@@ -81,5 +75,12 @@ def test_4():
     target = 1608
     expected = (target in nums)
     index = nums.index(target)
-    print(f"{index=} {nums[index-5:index+5]=}")
+    assert Solution().search(nums, target) == expected
+
+
+def test_5():
+    nums = [5828, 6809, 7114, 8757, 9984, -9549, -9423, -7673, -6127, -6008, -4570, -4052, -3451, -1697, -1173, -906, 1655, 1809, 3084, 3143]
+    target = -1173
+    expected = (target in nums)
+    index = nums.index(target)
     assert Solution().search(nums, target) == expected
