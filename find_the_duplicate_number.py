@@ -1,15 +1,29 @@
 """
 LeetCode :: March 2022 Challenge :: 287. Find the Duplicate Number
 jramaswami
+
+REF: https://www.youtube.com/watch?v=wjYnzkAhcNk
 """
 
 
 class Solution:
     def findDuplicate(self, nums):
-        N = len(nums) - 1
-        S = (N * (N+1)) // 2
-        T = sum(nums)
-        return T - S
+        def succ(i):
+            return nums[i]
+
+        slow = fast = 0
+        while True:
+            slow = succ(slow)
+            fast = succ(succ(fast))
+            if slow == fast:
+                break
+
+        slow2 = 0
+        while True:
+            slow = succ(slow)
+            slow2 = succ(slow2)
+            if slow == slow2:
+                return slow
 
 
 def test_1():
