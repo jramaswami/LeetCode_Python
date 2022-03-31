@@ -10,26 +10,23 @@ class Solution:
         def count_subarrays(target):
             endpoints = []
             curr_sum = 0
-            max_sum = 0
             for i, n in enumerate(nums):
                 if n + curr_sum > target:
                     endpoints.append(i-1)
-                    max_sum = max(max_sum, curr_sum)
                     curr_sum = 0
                 curr_sum += n
             if not endpoints or endpoints[-1] != len(nums)-1:
                 endpoints.append(len(nums)-1)
-                max_sum = max(max_sum, curr_sum)
-            return len(endpoints), max_sum
+            return len(endpoints)
 
-        lo = 1
+        lo = max(nums)
         hi = sum(nums)
         soln = sum(nums)
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
-            k, mx = count_subarrays(mid)
+            k = count_subarrays(mid)
             if k <= m:
-                soln = min(mx, soln)
+                soln = min(mid, soln)
                 hi = mid - 1
             else:
                 lo = mid + 1
