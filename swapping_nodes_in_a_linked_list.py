@@ -6,11 +6,11 @@ jramaswami
 
 class Solution:
     def swapNodes(self, head, k):
-        k -= 1
         curr = head
-        for _ in range(k):
-            curr = head.next
+        for _ in range(1, k):
+            curr = curr.next
         a = curr
+
         b = head
         while curr.next is not None:
             curr = curr.next
@@ -23,6 +23,7 @@ class Solution:
 #
 # Testing
 #
+
 
 from leetcode_linked_lists import *
 
@@ -61,5 +62,4 @@ def test_6():
     "WA"
     head = make_list([7,9,6,6,7,8,3,0,9,5])
     k = 5
-    assert make_arr(Solution().swapNodes(head, k)) == [90, 100]
-
+    assert make_arr(Solution().swapNodes(head, k)) == [7,9,6,6,8,7,3,0,9,5]
