@@ -4,15 +4,20 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
     def maxArea(self, height):
         soln = 0
-        left = [(0, height[0])]
-        for i, h in enumerate(height[1:], start=1):
-            for j, k in left:
-                soln = max(soln, min(h, k) * (i - j))
-            if h > left[0][1]:
-                left.append((i, h))
+        H = collections.deque(height)
+        while len(H) > 1:
+            if H[0] < H[-1]:
+                soln = max(soln, (len(H)-1) * H[0])
+                H.popleft()
+            else:
+                soln = max(soln, (len(H)-1) * H[-1])
+                H.pop()
         return soln
 
 
