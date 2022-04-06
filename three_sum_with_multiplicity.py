@@ -1,45 +1,29 @@
 """
-LeetCode :: 3Sum With Multiplicity
+LeetCode :: April 2022 Challenge :: 3Sum With Multiplicity
 jramaswami
 """
-from typing import *
-from collections import Counter
-from math import factorial
 
 
-MOD = pow(10, 9) + 7
-
-
-def nCk(n, k):
-    """Return n choose k."""
-    if n < k:
-        return 0
-    return factorial(n) // (factorial(k) * factorial(n - k))
+import collections
+import bisect
 
 
 class Solution:
-    def threeSumMulti(self, arr: List[int], target: int) -> int:
-        ctr = Counter(arr)
-        keys = sorted(ctr)
+    def threeSumMulti(self, arr, target):
+        MOD = pow(10, 9) + 7
+        locs = collections.defaultdict(list)
+        for i, n in enumerate(arr):
+            locs[n].append(i)
+
         soln = 0
-        for i, a in enumerate(keys):
-            for j, b in enumerate(keys[i:], start=i):
-                c = target - (a + b)
-                if c in ctr and c >= b:
-                    # Cases
-                    if a == b == c:
-                        t = (nCk(ctr[a], 3)) % MOD
-                        soln = (soln + t) % MOD
-                    elif a == b:
-                        t = (nCk(ctr[a], 2) * ctr[c]) % MOD
-                        soln = (soln + t) % MOD
-                    elif b == c:
-                        t = (ctr[a] * nCk(ctr[b], 2)) % MOD
-                        soln = (soln + t) % MOD
-                    else:
-                        t = (ctr[a] * ctr[b] * ctr[c]) % MOD
-                        soln = (soln + t) % MOD
+        for i, n in enumerate(arr):
+            for j, m in enumerate(arr[i+1:], start=i+1):
+                d = target - n - m
+                if d in locs:
+                    k = len(locs[d]) - bisect.bisect_right(locs[d], j)
+                    soln = (soln + k) % MOD
         return soln
+
 
 
 def test_1():
