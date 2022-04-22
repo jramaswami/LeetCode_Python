@@ -12,7 +12,7 @@ class Entry:
 class MyHashMap:
 
     def __init__(self):
-        self.M = 7919
+        self.M = 99991
         self.buckets = [[] for _ in range(self.M)]
 
     def _find(self, key: int) -> tuple[int, int]:
