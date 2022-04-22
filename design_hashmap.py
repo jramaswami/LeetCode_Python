@@ -1,5 +1,6 @@
 """
 LeetCode :: April 2022 Challenge :: 706. Design Hash Map
+jramaswami
 """
 
 
@@ -12,7 +13,7 @@ class Entry:
 class MyHashMap:
 
     def __init__(self):
-        self.M = 99991
+        self.M = 1163
         self.buckets = [[] for _ in range(self.M)]
 
     def _find(self, key: int) -> tuple[int, int]:
@@ -22,6 +23,7 @@ class MyHashMap:
         while i < len(bucket):
             if bucket[i].key == key:
                 return bid, i
+            i += 1
         return bid, i
 
     def put(self, key: int, value: int) -> None:
