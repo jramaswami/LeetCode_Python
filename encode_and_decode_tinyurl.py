@@ -1,58 +1,62 @@
 """
-LeetCode :: March 2021 Challenge :: Encode and Decode TinyURL
+LeetCode :: April 2022 Challenge :: Encode and Decode TinyURL
 jramaswami
 """
+
+
 import string
+
 
 class Codec:
 
     def __init__(self):
         self.urls = []
-        self.digits = string.digits + string.ascii_letters
+        self.alpha = string.ascii_uppercase
 
     def encode(self, longUrl: str) -> str:
         """Encodes a URL to a shortened URL."""
-        index = len(self.urls)
+        i = len(self.urls)
         self.urls.append(longUrl)
-        
-        S = []
-        q = index
+        shortUrl = []
         for _ in range(7):
-            q, r = divmod(q, len(self.digits))
-            S.append(r)
-        return "http//tinyurl.com/" + "".join(self.digits[r] for r in reversed(S))
+            i, r = divmod(i, len(self.alpha))
+            shortUrl.append(self.alpha[r])
+        return "".join(reversed(shortUrl))
 
     def decode(self, shortUrl: str) -> str:
         """Decodes a shortened URL to its original URL."""
-        _, encoded = shortUrl.rsplit('/', 1)
-        b = 1
-        index = 0
-        for c in reversed(encoded):
-            index += (b * self.digits.find(c))
-            b *= len(self.digits)
-        return self.urls[index]
+        i = 0
+        m = 1
+        for c in reversed(shortUrl):
+            i += m * (ord(c) - ord(self.alpha[0]))
+            m *= len(self.alpha)
+        return self.urls[i]
 
-        
+
 #
 # Testing
 #
-import random 
+
+
+import random
+
 
 # Your Codec object will be instantiated and called as such:
 # codec = Codec()
 # codec.decode(codec.encode(url))
+
 
 def test_1():
     url = "https://www.google.com/"
     codec = Codec()
     assert codec.decode(codec.encode(url))
 
+
 def test_2():
-    url = "https://www.google.com/"
     codec = Codec()
-    assert codec.decode(codec.encode(url))
     url = "https://www.leetcode.com/"
     assert codec.decode(codec.encode(url))
+
 
 def test_3():
     codec = Codec()
