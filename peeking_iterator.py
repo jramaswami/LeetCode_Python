@@ -1,7 +1,9 @@
 """
-LeetCode :: Peeking Iterator
+LeetCode :: April 2022 Challenge :: Peeking Iterator
 jramaswami
 """
+
+
 class PeekingIterator:
     def __init__(self, iterator):
         """
@@ -19,12 +21,12 @@ class PeekingIterator:
         return self.peeked
 
     def next(self):
-        if self.peeked:
-            v = self.peeked
-            self.peeked = None
-            return v
-        else:
+        if self.peeked is None:
             return self.iterator.next()
+        else:
+            x = self.peeked
+            self.peeked = None
+            return x
 
     def hasNext(self):
-        return self.iterator.hasNext() or self.peeked is not None
+        return self.peeked is not None or self.iterator.hasNext()
