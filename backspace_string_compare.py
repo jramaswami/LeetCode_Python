@@ -10,8 +10,9 @@ class Solution:
         def process(X):
             stack = []
             for c in X:
-                if c == '#' and stack:
-                    stack.pop()
+                if c == '#':
+                    if stack:
+                        stack.pop()
                 else:
                     stack.append(c)
             return stack
