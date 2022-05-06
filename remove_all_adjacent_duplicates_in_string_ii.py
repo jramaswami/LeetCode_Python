@@ -31,6 +31,9 @@ class Solution:
             else:
                 stack.append(Item(c))
         
+        if stack and stack[-1].freq == k:
+            stack.pop()
+            
         return "".join(str(t) for t in stack)
             
 
