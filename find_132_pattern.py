@@ -12,8 +12,12 @@ class Solution:
     def find132pattern(self, nums):
         min_left = list(itertools.accumulate(nums, min))
         min_right = list(reversed(list(itertools.accumulate(reversed(nums), min))))
+        print(min_left)
+        print(min_right)
+        print(nums)
         for n, ml, mr in zip(nums, min_left, min_right):
-            if n != ml and n != mr:
+            if n != ml and n != mr and ml < mr:
+                print(n, ml, mr)
                 return True
         return False
 
@@ -34,4 +38,11 @@ def test_3():
     "WA"
     nums = [1,0,1,-4,-3]
     expected = False
+    assert Solution().find132pattern(nums) == expected
+
+
+def test_4():
+    "WA"
+    nums = [3,5,0,3,4]
+    expected = True
     assert Solution().find132pattern(nums) == expected
