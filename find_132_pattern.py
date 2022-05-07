@@ -1,6 +1,8 @@
 """
 LeetCode :: May 2022 Challenge :: 456. 132 Pattern
 jramaswami
+
+REF: https://www.youtube.com/watch?v=XstAJdzJmVo
 """
 
 
@@ -10,12 +12,22 @@ import math
 class Solution:
 
     def find132pattern(self, nums):
-        curr_min = math.inf
-        for i, n in enumerate(nums):
-            if n > curr_min:
-                if any(curr_min < m < n for m in nums[i+1:]):
-                    return True
-            curr_min = min(curr_min, n)
+        stack = []
+        curr_second_max = -math.inf
+        for i in range(len(nums) - 1, -1, -1):
+
+            # If nums[i] < curr_second_max this implies
+            # nums[i] < curr_second_max < unrecorded first max
+            if nums[i] < curr_second_max:
+                return True
+
+            # Find the highest number less than
+            # nums[i].
+            while stack and nums[i] > stack[-1]:
+                curr_second_max = max(curr_second_max, stack[-1])
+                stack.pop()
+            stack.append(nums[i])
+
         return False
 
 
