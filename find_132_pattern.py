@@ -4,21 +4,18 @@ jramaswami
 """
 
 
-import itertools
+import math
 
 
 class Solution:
 
     def find132pattern(self, nums):
-        min_left = list(itertools.accumulate(nums, min))
-        min_right = list(reversed(list(itertools.accumulate(reversed(nums), min))))
-        print(min_left)
-        print(min_right)
-        print(nums)
-        for n, ml, mr in zip(nums, min_left, min_right):
-            if n != ml and n != mr and ml < mr:
-                print(n, ml, mr)
-                return True
+        curr_min = math.inf
+        for i, n in enumerate(nums):
+            if n > curr_min:
+                if any(curr_min < m < n for m in nums[i+1:]):
+                    return True
+            curr_min = min(curr_min, n)
         return False
 
 
