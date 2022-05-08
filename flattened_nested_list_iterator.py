@@ -1,52 +1,71 @@
 """
-LeetCode :: April 2021 Challenge :: Flatten Nested List Iterator
+LeetCode :: May 2022 Challenge :: Flatten Nested List Iterator
 jramaswami
 """
-# This is the interface that allows for creating nested lists.
-# You should not implement it, or speculate about its implementation
-#class NestedInteger:
-#    def isInteger(self) -> bool:
-#        """
-#        @return True if this NestedInteger holds a single integer, rather than a nested list.
-#        """
-#
-#    def getInteger(self) -> int:
-#        """
-#        @return the single integer that this NestedInteger holds, if it holds a single integer
-#        Return None if this NestedInteger holds a nested list
-#        """
-#
-#    def getList(self) -> [NestedInteger]:
-#        """
-#        @return the nested list that this NestedInteger holds, if it holds a nested list
-#        Return None if this NestedInteger holds a single integer
-#        """
 
-def nested_iterator_to_list(nested_iterator, acc):
-    if isinstance(nested_iterator, list):
-        for item in nested_iterator:
-            nested_iterator_to_list(item, acc)
-    elif nested_iterator.isInteger():
-        acc.append(nested_iterator.getInteger())
-    else:
-        nested_iterator_to_list(nested_iterator.getList(), acc)
-        
-        
+
 class NestedIterator:
-    def __init__(self, nestedList: [NestedInteger]):
-        self.items = []
-        nested_iterator_to_list(nestedList, self.items)
-        self.index = 0
-            
-    def next(self) -> int:
-        ret_val = self.items[self.index]
-        self.index += 1
-        return ret_val
-        
-    def hasNext(self) -> bool:
-        return self.index < len(self.items)
-         
+    def __init__(self, nested_list):
+        self.stack = []
+        if nested_list:
+            self.stack = [(nested_list, 0)]
 
-# Your NestedIterator object will be instantiated and called as such:
-# i, v = NestedIterator(nestedList), []
-# while i.hasNext(): v.append(i.next())
+    def _shouldpop(self):
+        if self.stack:
+            if self.stack[-1][1] >= len(self.stack[-1][0]):
+                return True
+
+    def _fixstack(self):
+        while self.stack and self.stack[-1][1] >= len(self.stack[-1][0]):
+            self.stack.pop()
+
+    def next(self):
+        L, i = self.stack[-1]
+        if isinstance(L[i], list):
+            self.stack[-1] = (L, i+1)
+            self.stack.append((L[i], 0))
+            x = self.next()
+        else:
+            x = L[i]
+            self.stack[-1] = (L, i+1)
+        return x
+
+    def hasNext(self):
+        self._fixstack()
+        return len(self.stack) > 0
+
+
+def test_1():
+    nested_list = [[1,1],2,[1,1]]
+    expected = [1,1,2,1,1]
+    iterator, result = NestedIterator(nested_list), []
+    while iterator.hasNext():
+        result.append(iterator.next())
+    assert result == expected
+
+
+def test_2():
+    nested_list = [1,[4,[6]]]
+    expected = [1,4,6]
+    iterator, result = NestedIterator(nested_list), []
+    while iterator.hasNext():
+        result.append(iterator.next())
+    assert result == expected
+
+
+def test_3():
+    nested_list = []
+    expected = []
+    iterator, result = NestedIterator(nested_list), []
+    while iterator.hasNext():
+        result.append(iterator.next())
+    assert result == expected
+
+
+def test_4():
+    nested_list = [[]]
+    expected = []
+    iterator, result = NestedIterator(nested_list), []
+    while iterator.hasNext():
+        result.append(iterator.next())
+    assert result == expected
