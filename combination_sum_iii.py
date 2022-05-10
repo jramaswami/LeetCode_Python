@@ -18,7 +18,7 @@ class Solution:
             if i > 9:
                 return
 
-            if sum_acc > 9:
+            if sum_acc > target:
                 return
 
             # With i
