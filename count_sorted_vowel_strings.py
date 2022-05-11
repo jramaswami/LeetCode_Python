@@ -6,17 +6,16 @@ jramaswami
 
 class Solution:
     def countVowelStrings(self, n: int) -> int:
+        dp = [[0 for _ in range(n)] for _ in range(5)]
+        for r in range(5):
+            dp[r][0] = 1
 
-            vowels = "aeiou"
+        for c in range(n-1):
+            for r in range(5):
+                for r0 in range(r, 5):
+                    dp[r0][c+1] += dp[r][c]
 
-            def solve(i, p):
-                if i >= n:
-                    return 1
-
-                # With each letter >= prev
-                return sum(solve(i+1, v) for v, _ in enumerate(vowels[p:], start=p))
-
-            return solve(0, 0)
+        return sum(dp[r][-1] for r in range(5))
 
 
 def test_1():
