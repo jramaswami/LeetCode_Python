@@ -1,42 +1,39 @@
 """
-LeetCode :: April 2021 Challenge :: Longest Increasing Path in a Matrix
+LeetCode :: May 2022 Challenge :: Longest Increasing Path in a Matrix
 jramaswami
 """
-from typing import *
-
-
-def vn_neighborhood(row_index, col_index, matrix):
-    """Return list of neighbors in von Neumann (4) neighborhood."""
-    neighbors = []
-    offsets =[(1, 0), (-1, 0), (0, 1), (0, -1)]
-    for row_off, col_off in offsets:
-        row_index0 = row_index + row_off
-        col_index0 = col_index + col_off
-        if (col_index0 >= 0 and col_index0 < len(matrix[0]) and row_index0 >= 0 and row_index0 < len(matrix)):
-            neighbors.append((row_index0, col_index0))
-    return neighbors
 
 
 class Solution:
-    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
-        dist_cache = [[-1 for _ in row] for row in matrix]
-        has_cache = [[False for _ in row] for row in matrix]
 
-        def longest_path(r, c):
-            """Inner function to compute longest distance to r, c."""
-            if has_cache[r][c]:
-                return dist_cache[r][c]
+    OFFSETS = ((0, 1), (0, -1), (1, 0), (-1, 0))
 
-            longest = 0
-            for r0, c0 in vn_neighborhood(r, c, matrix):
+    def longestIncreasingPath(self, matrix):
+
+        def inbounds(r, c):
+            return r >= 0 and c >= 0 and r < len(matrix) and c < len(matrix[r])
+
+        def neighbors(r, c):
+            for dr, dc in Solution.OFFSETS:
+                r0, c0 = r + dr, c + dc
+                if inbounds(r0, c0):
+                    yield r0, c0
+
+        cells = []
+        for r, row in enumerate(matrix):
+            for c, val in enumerate(row):
+                cells.append((val, r, c))
+        cells.sort()
+
+        dist = [[1 for _ in row] for row in matrix]
+
+        soln = 1
+        for _, r, c in cells:
+            for r0, c0 in neighbors(r, c):
                 if matrix[r0][c0] > matrix[r][c]:
-                    longest = max(longest, 1 + longest_path(r0, c0))
-
-            has_cache[r][c] = True
-            dist_cache[r][c] = longest
-            return longest
-
-        return max(1 + longest_path(r1, c1) for r1, row in enumerate(matrix) for c1, _ in enumerate(row))
+                    dist[r0][c0] = max(dist[r0][c0], dist[r][c] + 1)
+                    soln = max(soln, dist[r0][c0])
+        return soln
 
 
 def test_1():
