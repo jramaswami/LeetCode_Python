@@ -1,61 +1,27 @@
 """
-Leet Code :: April 2021 Challenge :: Unique Paths II
+Leet Code :: May 2022 Challenge :: Unique Paths II
 jramaswami
 """
-from typing import *
-from math import factorial
-
-
-def nCk(n, k):
-    """Return binomial coefficient for n choose k."""
-    return factorial(n) // (factorial(k) * factorial(n - k))
-
-
-def find_obstacle(obstacleGrid):
-    """Return coordinates of obstacle."""
-    for r, row in enumerate(obstacleGrid):
-        for c, val in enumerate(row):
-            if val == 1:
-                return (r, c)
-    return None, None
 
 
 class Solution:
-    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
-        # Find the number of paths from the start to the end.
-        H = len(obstacleGrid)
-        W = len(obstacleGrid[0])
-        n = H + W - 2
-        k = W - 1
-        soln = nCk(n, k)
+    def uniquePathsWithObstacles(self, obstacleGrid):
+        dp = [[0 for _ in row] for row in obstacleGrid]
 
-        # Find the obstacle
-        obstacle_r, obstacle_c = find_obstacle(obstacleGrid)
+        def get(r, c):
+            if r < 0 or c < 0:
+                return 0
+            return dp[r][c]
 
-        # If there is an obstacle find the number of paths that go through
-        # the cell occupied by the obstacle.
-        if obstacle_r is not None:
-            # Find the number of paths to the cell occupied by obstacle.
-            H0 = obstacle_r + 1
-            W0 = obstacle_c + 1
-            n = H0 + W0 - 2
-            k = W0 - 1
-            d_to = nCk(n, k)
+        for r, row in enumerate(obstacleGrid):
+            for c, val in enumerate(row):
+                if val == 0:
+                    if r == 0 and c == 0:
+                        dp[r][c] = 1
+                    else:
+                        dp[r][c] = get(r - 1, c) + get(r, c - 1)
 
-            # Find the number of paths from the cell occupied by obstacle.
-            H0 = H - obstacle_r
-            W0 = W - obstacle_c
-            n = H0 + W0 - 2
-            k = W0 - 1
-            d_from = nCk(n, k)
-
-            # Compute the number of paths through the obstacle.
-            d = d_to * d_from
-
-            # Subtract those paths from the total paths.
-            soln -= d
-
-        return soln
+        return dp[-1][-1]
 
 
 def test_1():
