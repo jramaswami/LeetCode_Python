@@ -1,20 +1,31 @@
 """
-LeetCode :: March 2021 Challenge :: Coin Change
+LeetCode :: May 2022 Challenge :: Coin Change
 jramaswami
 """
-from typing import *
-from math import inf
+
+
+import math
+import functools
+
 
 class Solution:
-    def coinChange(self, coins: List[int], amount: int) -> int:
-        dp = [inf for _ in range(amount + 1)]
-        dp[0] = 0
-        for i, _ in enumerate(dp):
+    def coinChange(self, coins, amount):
+
+        @functools.cache
+        def solve(acc):
+            if acc == 0:
+                return 0
+
+            result = math.inf
             for coin in coins:
-                if i + coin <= amount:
-                    dp[i + coin] = min(dp[i + coin], dp[i] + 1)
-        return (-1 if dp[amount] == inf else dp[amount])
-        
+                if acc - coin >= 0:
+                    result = min(result, 1 + solve(acc - coin))
+            return result
+
+
+        soln = solve(amount)
+        return (soln if soln < math.inf else -1)
+
 
 def test_1():
     assert Solution().coinChange([1,2,5], 11) == 3
