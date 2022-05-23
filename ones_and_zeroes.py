@@ -1,34 +1,33 @@
 """
-LeetCode :: April 2021 Challenge :: Ones and Zeroes
+LeetCode :: May 2022 Challenge :: Ones and Zeroes
 jramaswami
 """
-from typing import *
-from collections import Counter, defaultdict
+
+
+import collections
+
 
 class Solution:
-    def findMaxForm(self, strs: List[str], max_zeros: int, max_ones: int) -> int:
-        curr_dp = defaultdict(int)
-        next_dp = defaultdict(int)
-
+    def findMaxForm(self, strs, max_zeros, max_ones):
+        curr_dp = collections.defaultdict(int)
+        next_dp = collections.defaultdict(int)
+        curr_dp[(0, 0)] = 0
+        soln = 0
         for s in strs:
-            ctr = Counter(s)
-            z_ = ctr["0"]
-            o_ = ctr["1"]
-            # You can always go from (0, 0).
-            if z_ <= max_zeros and o_ <= max_ones:
-                next_dp[(z_, o_)] = max(next_dp[(z_, o_)], 1)
-            for (z, o) in curr_dp:
-                next_key = (z + z_, o + o_)
-                curr_key = (z, o)
-                # You can skip this one.
-                next_dp[curr_key] = max(next_dp[curr_key], curr_dp[curr_key])
-                # Or include it.
-                if z + z_ <= max_zeros and o + o_ <= max_ones:
-                    next_dp[next_key] = max(next_dp[next_key], curr_dp[curr_key] + 1)
+            ones = s.count('1')
+            zeros = len(s) - ones
+            for prev_key, prev_val in curr_dp.items():
+                # Without current s
+                next_dp[prev_key] = max(next_dp[prev_key], prev_val)
+                # With current s
+                ones0, zeros0 = prev_key
+                if ones0 + ones <= max_ones and zeros0 + zeros <= max_zeros:
+                    next_key = (ones0 + ones, zeros0 + zeros)
+                    next_dp[next_key] = max(next_dp[next_key], prev_val + 1)
+                    soln = max(soln, prev_val + 1)
+            curr_dp, next_dp = next_dp, collections.defaultdict(int)
 
-            curr_dp, next_dp = next_dp, defaultdict(int)
-
-        return (max(curr_dp.values()) if curr_dp.values() else 0)
+        return soln
 
 
 def test_1():
@@ -37,11 +36,13 @@ def test_1():
     n = 3
     assert Solution().findMaxForm(strs, m, n) == 4
 
+
 def test_2():
     strs = ["10","0","1"]
     m = 1
     n = 1
     assert Solution().findMaxForm(strs, m, n) == 2
+
 
 def test_3():
     """TLE"""
@@ -49,6 +50,7 @@ def test_3():
     m = 9
     n = 80
     assert Solution().findMaxForm(strs, m, n) == 17
+
 
 def test_4():
     """RTE"""
