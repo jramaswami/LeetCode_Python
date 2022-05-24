@@ -1,27 +1,34 @@
 """
-LeetCode :: Longest Valid Parentheses
+LeetCode :: May 2022 Challenge :: Longest Valid Parentheses
 jramaswami
 """
-from typing import *
 
 
 class Solution:
     def longestValidParentheses(self, s: str) -> int:
+        match = [False for _ in s]
         stack = []
-        soln = 0
-        last_good_start = -1
         for i, c in enumerate(s):
             if c == '(':
-                stack.append(i)
+                stack.append((c, i))
             else:
                 if stack:
+                    match[stack[-1][1]] = True
+                    match[i] = True
                     stack.pop()
-                    if stack:
-                        soln = max(soln, i - stack[-1])
-                    else:
-                        soln = max(soln, i - last_good_start)
                 else:
-                    last_good_start = i
+                    # Invalid
+                    stack = []
+
+        curr = 0
+        soln = 0
+        for t in match:
+            if t:
+                curr += 1
+            else:
+                soln = max(soln, curr)
+                curr = 0
+        soln = max(soln, curr)
         return soln
 
 
@@ -35,7 +42,10 @@ def test_3():
     assert Solution().longestValidParentheses("") == 0
 
 def test_4():
-    assert Solution().longestValidParentheses("(((()()((()((()()()()(((()()()()()()()()()()((((()()()(()()()()()()") == 20
+    s = "(((()()((()((()()()()(((()()()()()()()()()()((((()()()(()()()()()()"
+    print(s)
+    print(len(s))
+    assert Solution().longestValidParentheses(s) == 20
 
 def test_5():
     """WA"""
