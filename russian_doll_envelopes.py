@@ -1,24 +1,26 @@
 """
-LeetCode :: March 2021 Challenge :: Russian Doll Envelopes
+LeetCode :: May 2022 Challenge :: Russian Doll Envelopes
 jramaswami
 
-Thank you Larry!
+Still Thank Your Larry!
 """
-from typing import *
-from bisect import bisect_left
+
+
+import math
+import bisect
 
 
 class Solution:
-    def maxEnvelopes(self, envelopes: List[List[int]]) -> int:
-        envelopes0 = sorted(envelopes, key=lambda t: (t[0], -t[1]))
-        dp = [0]
-        for _, ht in envelopes0:
-            i = bisect_left(dp, ht)
-            if i == len(dp):
-                dp.append(ht)
+    def maxEnvelopes(self, envelopes):
+        envelopes.sort(key=lambda t: (t[0], -t[1]))
+        lis = [-math.inf]
+        for _, t in envelopes:
+            i = bisect.bisect_left(lis, t)
+            if i >= len(lis):
+                lis.append(t)
             else:
-                dp[i] = ht
-        return len(dp) - 1
+                lis[i] = t
+        return len(lis) - 1
 
 
 def test_1():
