@@ -1,18 +1,14 @@
 """
-LeetCode :: March 2021 Challenge :: Missing Number
+LeetCode :: May 2022 Challenge :: Missing Number
 jramaswami
 """
-from typing import *
 
 
 class Solution:
-    def missingNumber(self, nums: List[int]) -> int:
-        # The sum of nums [1 .. N] should be N(N+1) // 2.
-        # expected sum = actual sum + missing number
-        # expected sum - actual sum = missing number
+    def missingNumber(self, nums):
         N = len(nums)
-        print((N * (N + 1)) // 2, sum(nums))
-        return ((N * (N + 1)) // 2) - sum(nums)
+        S = (N * (N + 1)) // 2
+        return S - sum(nums)
 
 
 def test_1():
