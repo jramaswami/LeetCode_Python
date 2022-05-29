@@ -1,26 +1,17 @@
 """
-LeetCode :: May 2021 Challenge :: Maximum Product of Word Lengths
+LeetCode :: May 2022 Challenge :: Maximum Product of Word Lengths
 jramaswami
 """
 
 
-from typing import *
-from itertools import combinations
-from collections import namedtuple
-
-
-Word = namedtuple('Word', ['letters', 'length'])
-
-
 class Solution:
-    def maxProduct(self, words: List[str]) -> int:
+    def maxProduct(self, words):
         soln = 0
-        # O(N * word length)
-        words0 = [Word(set(w), len(w)) for w in words]
-        # O(N^2)
-        for a, b in combinations(words0, 2):
-            if a.letters.isdisjoint(b.letters):
-                soln = max(soln, a.length * b.length)
+        words0 = [set(w) for w in words]
+        for i in range(len(words)):
+            for j in range(i+1, len(words)):
+                if not (words0[i] & words0[j]):
+                    soln = max(soln, len(words[i]) * len(words[j]))
         return soln
 
 
