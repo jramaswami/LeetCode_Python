@@ -2,61 +2,42 @@
 Divide Two Integers
 jramaswami
 """
-BIT_LIMIT = 32
-
-
-def most_significant_bit(n):
-    """Return the index of the most significat bit."""
-    msb = 0
-    for b in range(BIT_LIMIT):
-        mask = (1 << b)
-        if mask & n:
-            msb = b
-    return msb
-
-
-def is_bit_set(n, bit):
-    """Return true if bit is set."""
-    mask = (1 << bit)
-    return (mask & n)
-
-
-def set_bit(n, bit):
-    """Set bit at given position on."""
-    mask = (1 << bit)
-    return (n | mask)
 
 
 class Solution:
-    def divide(self, dividend: int, divisor: int) -> int:
-        if dividend == 0:
-            return 0
+    def divide(self, dividend, divisor):
 
-        signs = (dividend < 0) + (divisor < 0)
+        def bit_is_set(num, bit):
+            mask = (1 << bit)
+            return (num & mask)
+
+        BIT_LIMIT = 31
+        LOWER_LIMIT = -pow(2, 31)
+        UPPER_LIMIT = pow(2, 31) - 1
+
+        result_is_negative = False
+        if dividend < 0 and divisor >= 0:
+            result_is_negative = True
+        elif dividend >= 0 and divisor < 0:
+            result_is_negative = True
         dividend, divisor = abs(dividend), abs(divisor)
 
-        # Find the most significant bit in dividend.
-        msb = most_significant_bit(dividend)
-        
-        quotient = 0
-        working = 0
-        for b in range(msb, -1, -1):
-            # Shift working 1 place left
-            working = working << 1
-            # Put in the bit from dividend
-            if is_bit_set(dividend, b):
-                working |= 1
+        x = 0
+        result = 0
+        for b in range(BIT_LIMIT, -1, -1):
+            result = result << 1
+            x = x << 1
 
-            # If our working number is more than the divsor, subtract divsor
-            # from quotient and set the bit at this position.
-            if working >= divisor:
-                working -= divisor
-                quotient = set_bit(quotient, b)
+            if bit_is_set(dividend, b):
+                x |= 1
 
-        max_quotient = (1 << 31) - 1
-        if signs == 1:
-            quotient = -quotient
-        return min(max_quotient, quotient)
+            if x >= divisor:
+                result |= 1
+                x -= divisor
+
+        if result_is_negative:
+            return max(-result, LOWER_LIMIT)
+        return min(result, UPPER_LIMIT)
 
 
 def test_1():
