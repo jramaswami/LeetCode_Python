@@ -6,6 +6,10 @@ jramaswami
 
 class Solution:
     def hasAllCodes(self, s, k):
+        # Boundary case: s isn't long enough.
+        if len(s) < k:
+            return False
+
         has_code = [False for _ in range(pow(2, k))]
 
         # Initialize first window. Note: codes are backwards but that
