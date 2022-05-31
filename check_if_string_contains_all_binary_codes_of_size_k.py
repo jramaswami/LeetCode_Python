@@ -1,39 +1,49 @@
 """
-LeetCode :: March 2021 Challenge :: Check If a String Contains All Binary Codes of Size K
+LeetCode :: May 2022 Challenge :: Check If a String Contains All Binary Codes of Size K
 jramaswami
 """
-class Solution:
-    def hasAllCodes(self, s: str, k: int) -> bool:
-        limit = pow(2, k)
-        has_code = [False for _ in range(limit)]
-        # Initialize number to digit length k - 1
-        n = 0
-        if k > 1:
-            n = int(s[:k-1], 2)
 
-        for end, val in enumerate(s):
-            if end >= k-1:
-                # Shift binary digits one place to the left.
-                n <<= 1
-                # Add the the last digit.
-                n += int(val)
-                # Drop the right most bit, if it is set.
-                n %= limit
-                print(bin(n), end)
-                # Remember this number.
-                has_code[n] = True
+
+class Solution:
+    def hasAllCodes(self, s, k):
+        has_code = [False for _ in range(pow(2, k))]
+
+        # Initialize first window. Note: codes are backwards but that
+        # does not make any difference to problem.
+        window_code = 0
+        mask = 1 << (k - 1)
+        for i in range(k):
+            window_code >>= 1
+            if s[i] == '1':
+                window_code |= mask
+        has_code[window_code] = True
+
+        # Sliding window.
+        for i in range(k, len(s)):
+            window_code >>= 1
+            if s[i] == '1':
+                window_code |= mask
+            has_code[window_code] = True
 
         return all(has_code)
 
 
 def test_1():
     assert Solution().hasAllCodes("00110", 2) == True
-    
+
+
 def test_2():
     assert Solution().hasAllCodes("0110", 1) == True
+
 
 def test_3():
     assert Solution().hasAllCodes("0110", 2) == False
 
+
 def test_4():
     assert Solution().hasAllCodes("0000000001011100", 4) == False
+
+
+def test_5():
+    "RTE"
+    assert Solution().hasAllCodes("0", 20) == False
