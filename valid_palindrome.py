@@ -7,7 +7,7 @@ jramaswami
 class Solution:
 
     def isPalindrome(self, S):
-        T = [c.lower() for c in S if c.isalpha()]
+        T = [c.lower() for c in S if c.isalnum()]
         left = 0
         right = len(T) - 1
         while left <= right:
