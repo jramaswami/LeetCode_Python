@@ -15,6 +15,7 @@ class Solution:
     def floodFill(self, image: List[List[int]], sr: int, sc: int, newColor: int) -> List[List[int]]:
         # Do not mutate original
         image0 = [list(row) for row in image]
+        visited = [[False for _ in row] for row in image0]
 
         def inbounds(r, c):
             return r >= 0 and r < len(image0) and c >= 0 and c < len(image0[r])
@@ -27,11 +28,13 @@ class Solution:
 
         fromColor = image0[sr][sc]
         image0[sr][sc] = newColor
+        visited[sr][sc] = True
         queue = collections.deque([(sr, sc)])
         while queue:
             r, c = queue.popleft()
             for r0, c0 in neighbors(r, c):
-                if image0[r0][c0] == fromColor:
+                if not visited[r0][c0] and image0[r0][c0] == fromColor:
+                    visited[r0][c0] = True
                     image0[r0][c0] = newColor
                     queue.append((r0, c0))
         return image0
