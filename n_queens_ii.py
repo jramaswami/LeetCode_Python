@@ -1,56 +1,47 @@
 """
-Leet Code :: May 2021 Challenge :: N-Queens II
+Leet Code :: June 2022 Challenge :: N-Queens II
 jramaswami
 """
 
 
-from typing import *
-from collections import namedtuple
-from itertools import combinations
-
-
-Queen = namedtuple('Queen', ['rank', 'file'])
-
-
-def make_board(queens, n):
-    """Return a string representation of the board."""
-    board = [['.' for _ in range(n)] for _ in range(n)]
-    for queen in queens:
-        board[queen.rank][queen.file] = 'Q'
-    return ["".join(row) for row in board]
-
-
-def peaceful(queens):
-    """Return True if no queen is under threat."""
-    # Base case: only 1 queen is always safe.
-    if len(queens) <= 1:
-        return True
-    for q1, q2 in combinations(queens, 2):
-        # Make sure there are no more than 1 queen rank and file.
-        if q1.rank == q2.rank or q1.file == q2.file:
-            return False
-        # Check diagonal attacks
-        if abs(q1.rank - q2.rank) == abs(q1.file - q2.file):
-            return False
-    return True
-
-
-def solve(queens, n):
-    if len(queens) == n:
-        return 1
-
-    soln = 0
-    for chess_rank in range(n):
-        queens.append(Queen(chess_rank, len(queens)))
-        if peaceful(queens):
-            soln += solve(queens, n)
-        queens.pop()
-    return soln
+import collections
 
 
 class Solution:
-    def totalNQueens(self, n: int) -> List[List[str]]:
-        return solve([], n)
+    def totalNQueens(self, n):
+        row_taken = [False for _ in range(n)]
+        neg_diag = collections.defaultdict(bool)
+        pos_diag = collections.defaultdict(bool)
+        soln = 0
+
+        def peaceful(row, col):
+            if row_taken[row]:
+                return False
+            if neg_diag[row - col]:
+                return False
+            if pos_diag[row + col]:
+                return False
+            return True
+
+        def solve(col):
+            if col >= n:
+                return 1
+
+            result = 0
+            for row in range(n):
+                if peaceful(row, col):
+                    row_taken[row] = True
+                    neg_diag[row - col] = True
+                    pos_diag[row + col] = True
+                    result += solve(col + 1)
+                    row_taken[row] = False
+                    neg_diag[row - col] = False
+                    pos_diag[row + col] = False
+
+            return result
+
+        return solve(0)
+
 
 
 def test_1():
