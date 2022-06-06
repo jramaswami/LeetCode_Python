@@ -1,49 +1,35 @@
 """
-LeetCode :: March 2021 Challenge :: Intersection of Two Linked Lists
+LeetCode :: May 2022 Challenge :: Intersection of Two Linked Lists
 jramaswami
 """
-from typing import *
-from leetcode_linked_lists import *
-
-
-def list_len(head):
-    """Return length of list."""
-    length = 0
-    node = head
-    while node:
-        length += 1
-        node = node.next
-    return length
 
 
 class Solution:
-    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
-        # Get list lengths
-        lenA = list_len(headA)
-        lenB = list_len(headB)
+    def getIntersectionNode(self, headA, headB):
+        # Important observations:
+        # Linked list must retain their structures *after* function returns.
+        # 1 <= Node.val <= 105
 
-        # Swap so that headA is the longer list.
-        if lenA < lenB:
-            headA, headB = headB, headA
-            lenA, lenB = lenB, lenA
+        def flipSign(head):
+            curr = head
+            while curr:
+                curr.val *= -1
+                curr = curr.next
 
-        nodeA = headA
-        nodeB = headB
+        flipSign(headA)
+        soln = headB
+        while soln and soln.val > 0:
+            soln = soln.next
+        flipSign(headA)
+        return soln
 
-        # Advance A until it is even with B.
-        for _ in range(lenA - lenB):
-            nodeA = nodeA.next
 
-        # Now move together until the lists meet.
-        while nodeA:
-            if nodeA == nodeB:
-                return nodeA
-            nodeA = nodeA.next
-            nodeB = nodeB.next
+#
+# TESTING
+#
 
-        # They do not meet.
-        return None
 
+from leetcode_linked_lists import *
 
 
 def test_1():
@@ -52,7 +38,7 @@ def test_1():
     listB = [5,6,1,8,4,5]
     skipA = 2
     skipB = 3
-    
+
     nodesA = [ListNode(a) for a in listA]
     nodesB = [ListNode(b) for b in listB]
     nodesB[2] = nodesA[2]
