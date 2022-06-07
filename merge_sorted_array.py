@@ -1,37 +1,35 @@
 """
-LeetCode :: Array Module :: Merge Sorted Array
+LeetCode :: June 2022 Challenge :: Merge Sorted Array
 jramaswami
 """
 
 
 class Solution:
     def merge(self, A, m, B, n):
-        """
-        A different solution.  In place, O(m + n).
-        """
-        # Go in reverse.
-        i = m - 1
-        j = n - 1
-        k = len(A) - 1
-        while i >= 0 and j >= 0:
-            if A[i] > B[j]:
-                A[k] = A[i]
+        m -= 1
+        n -= 1
+        i = len(A) - 1
+        while m >= 0 and n >= 0:
+            if A[m] > B[n]:
+                A[i] = A[m]
+                m -= 1
                 i -= 1
-                k -= 1
             else:
-                A[k] = B[j]
-                j -= 1
-                k -= 1
+                A[i] = B[n]
+                n -= 1
+                i -= 1
 
-        while i >= 0:
-            A[k] = A[i]
+        while m >= 0:
+            A[i] = A[m]
+            m -= 1
             i -= 1
-            k -= 1
 
-        while j >= 0:
-            A[k] = B[j]
-            j -= 1
-            k -= 1
+        while n >= 0:
+            A[i] = B[n]
+            n -= 1
+            i -= 1
+
+        return A
 
 
 def test_1():
