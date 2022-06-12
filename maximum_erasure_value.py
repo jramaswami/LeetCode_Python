@@ -1,33 +1,29 @@
 """
-LeetCode :: May 2021 Challenge :: Maximum Erasure Value
+LeetCode :: June 2022 Challenge :: Maximum Erasure Value
 jramaswami
 """
 
 
-from typing import *
-from collections import deque, defaultdict
+import collections
+import math
 
 
 class Solution:
-    def maximumUniqueSubarray(self, nums: List[int]) -> int:
-        frequency = defaultdict(int)
-        subarray = deque()
-        curr_sum = 0
-        best_sum = 0
+    def maximumUniqueSubarray(self, nums):
+        window = collections.deque()
+        curr_score = 0
+        max_score = -math.inf
+        freqs = collections.defaultdict(int)
         for n in nums:
-            # Add n to the subarray
-            subarray.append(n)
-            frequency[n] += 1
-            curr_sum += n
-            # If the frequency of n > 1, then remove items until it is.
-            while frequency[n] > 1:
-                k = subarray.popleft()
-                frequency[k] -= 1
-                curr_sum -= k
-            # Remember best sum
-            best_sum = max(curr_sum, best_sum)
-        return best_sum
-
+            window.append(n)
+            freqs[n] += 1
+            curr_score += n
+            while freqs[n] > 1:
+                freqs[window[0]] -= 1
+                curr_score -= window[0]
+                window.popleft()
+            max_score = max(max_score, curr_score)
+        return max_score
 
 
 def test_1():
