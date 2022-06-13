@@ -1,18 +1,20 @@
 """
-Leet Code :: April 2021 Challenge :: Triangle
+Leet Code :: June 2022 Challenge :: Triangle
 jramaswami
 """
-from typing import *
-from math import inf
+
+
+import math
+
 
 class Solution:
-    def minimumTotal(self, triangle: List[List[int]]) -> int:
-        dp = [[inf for _ in row] for row in triangle]
+    def minimumTotal(self, triangle):
+        dp = [[math.inf for _ in row] for row in triangle]
         dp[0][0] = triangle[0][0]
-        for r, row in enumerate(triangle[:-1]):
+        for r, row in enumerate(dp[:-1]):
             for c, val in enumerate(row):
-                dp[r+1][c] = min(triangle[r+1][c] + dp[r][c], dp[r+1][c])
-                dp[r+1][c+1] = min(triangle[r+1][c+1] + dp[r][c], dp[r+1][c+1])
+                dp[r+1][c] = min(dp[r+1][c], val + triangle[r+1][c])
+                dp[r+1][c+1] = min(dp[r+1][c+1], val + triangle[r+1][c+1])
         return min(dp[-1])
 
 
