@@ -2,47 +2,30 @@
 Leet Code :: May 2021 Challenge :: Delete Operation for Two Strings
 jramaswami
 """
-from typing import *
-from math import inf
-from functools import lru_cache
+
+
+import functools
 
 
 class Solution:
     def minDistance(self, word1: str, word2: str) -> int:
-        """
-        Memoized recursive solution.
-        """
-        @lru_cache(maxsize=None)
-        def min_dist(index1, index2):
-            """
-            Return the minimum distance between word1[index:] and word2[index:]
-            """
-            if index1 == len(word1) and index2 == len(word2):
-                # We have reached the end
-                return 0
 
-            if index1 == len(word1):
-                # We can only delete from word2
-                return 1 + min_dist(index1, index2 + 1)
+        @functools.cache
+        def solve(i, j):
+            if i >= len(word1):
+                return len(word2) - j
+            if j >= len(word2):
+                return len(word1) - i
 
-            if index2 == len(word2):
-                # We can only delete from word1
-                return 1 + min_dist(index1 + 1, index2)
+            if word1[i] == word2[j]:
+                return solve(i+1, j+1)
+            return min(
+                1 + solve(i+1, j),
+                1 + solve(i, j+1)
+            )
 
-            if word1[index1] == word2[index2]:
-                # We do not have to delete from either word.
-                return min_dist(index1 + 1, index2 + 1)
+        return solve(0, 0)
 
-            result = inf
-            # Delete from word 1
-            result = min(result, 1 + min_dist(index1 + 1, index2))
-            # Delete from word2
-            result = min(result, 1 + min_dist(index1, index2+1))
-            return result
-
-
-        # Call memoized top-down function.
-        return min_dist(0, 0)
 
 
 def test_1():
