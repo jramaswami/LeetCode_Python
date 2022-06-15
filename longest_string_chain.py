@@ -1,52 +1,38 @@
 """
-LeetCode :: May 2021 Challenge :: Longest String Chain
+LeetCode :: June 2022 Challenge :: Longest String Chain
 jramaswami
 """
-from typing import *
-from collections import namedtuple, defaultdict
 
 
-WordData = namedtuple('WordData', ['word', 'index'])
-
-
-def can_chain(word_left, word_right):
-    """
-    Return True if word_left can become word_right with the addition of one
-    letter.  
-    """
-    delta = 0
-    left_index = 0
-    right_index = 0
-    while left_index < len(word_left.word):
-        if word_left.word[left_index] != word_right.word[right_index]:
-            if delta:
-                return False
-            right_index += 1
-            delta = 1
-        else:
-            left_index += 1
-            right_index += 1
-
-    return True
+import collections
+import itertools
 
 
 class Solution:
-    def longestStrChain(self, words: List[str]) -> int:
-        words0 = defaultdict(list)
-        dp = [1 for _ in words]
-        word_lengths = set()
-        for w in (WordData(w, i) for i, w in enumerate(words)):
-            word_lengths.add(len(w.word))
-            words0[len(w.word)].append(w)
+    def longestStrChain(self, words):
 
-        for length in sorted(word_lengths):
-            if length + 1 in word_lengths:
-                for word_left in words0[length]:
-                    for word_right in words0[length + 1]:
-                        if can_chain(word_left, word_right):
-                            dp[word_right.index] = max(dp[word_right.index], 
-                                    dp[word_left.index] + 1)
-        return max(dp)
+        def is_predecessor(u, v):
+            if len(words[u]) + 1 == len(words[v]):
+                for i, (a, b) in enumerate(itertools.zip_longest(words[u], words[v], fillvalue=' ')):
+                    if a != b:
+                        return words[u][i:] == words[v][i+1:]
+            return False
+
+
+        words_by_length = collections.defaultdict(list)
+        for i, word in enumerate(words):
+            words_by_length[len(word)].append(i)
+
+        predecessors = [1 for _ in words]
+
+        for length in sorted(words_by_length.keys()):
+            if length + 1 in words_by_length:
+                for u in words_by_length[length]:
+                    for v in words_by_length[length+1]:
+                        if is_predecessor(u, v):
+                            predecessors[v] = max(predecessors[v], 1 + predecessors[u])
+        return max(predecessors)
+
 
 
 def test_1():
@@ -62,4 +48,14 @@ def test_2():
 def test_3():
     """WA"""
     words = ["a","b","ab","bac"]
+    assert Solution().longestStrChain(words) == 2
+
+
+def test_4():
+    words = ["abcd","dbqca"]
+    assert Solution().longestStrChain(words) == 1
+
+
+def test_5():
+    words = ["a","b","bx","bac"]
     assert Solution().longestStrChain(words) == 2
