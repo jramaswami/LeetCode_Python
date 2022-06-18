@@ -1,19 +1,21 @@
 """
 Leet Code :: June 2022 Challenge :: Prefix and Suffix Search
 jramaswami
+
+Clever solution by StefanPochmann.
 """
 
 
 class WordFilter:
 
     def __init__(self, words):
-        self.words = [(t + "*" + t, i) for i, t in enumerate(words)]
+        self.T = "$".join(t + "*" + t for t in words)
 
     def f(self, prefix, suffix):
         key = suffix + "*" + prefix
-        for wd, i in reversed(self.words):
-            if wd.find(key) >= 0:
-                return i
+        x = self.T.rfind(key)
+        if x >= 0:
+            return self.T.count('$', 0, x)
         return -1
 
 
@@ -37,7 +39,9 @@ def test_2():
     wf = WordFilter(*arguments[0])
     expected = [None, 0, 3, -1]
     for meth, args, exp in zip(methods[1:], arguments[1:], expected[1:]):
-        assert getattr(wf, meth)(*args) == exp
+        result = getattr(wf, meth)(*args)
+        print(f"{meth=} {args=} {exp=} {result=}")
+        assert result == exp
 
 
 
