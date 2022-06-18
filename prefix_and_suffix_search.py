@@ -1,32 +1,19 @@
 """
-Leet Code :: May 2021 Challenge :: Prefix and Suffix Search
+Leet Code :: June 2022 Challenge :: Prefix and Suffix Search
 jramaswami
-
-Thank you Larry!
 """
-from typing import *
-from collections import defaultdict
-from functools import lru_cache
 
 
 class WordFilter:
 
-    def __init__(self, words: List[str]):
-        self.words = words
-        self.prefixes = defaultdict(set)
-        self.suffixes = defaultdict(set)
+    def __init__(self, words):
+        self.words = [(t + "*" + t, i) for i, t in enumerate(words)]
 
-        for index, word in enumerate(words):
-            rword = word[::-1]
-            for i in range(1, len(word) + 1):
-                self.prefixes[word[:i]].add(index)
-                self.suffixes[rword[:i]].add(index)
-
-    @lru_cache(maxsize=None)
-    def f(self, prefix: str, suffix: str) -> int:
-        possibles = self.prefixes[prefix] & self.suffixes[suffix[::-1]]
-        if possibles:
-            return (max((len(self.words[i]), i) for i in possibles))[1]
+    def f(self, prefix, suffix):
+        key = suffix + "*" + prefix
+        for wd, i in reversed(self.words):
+            if wd.find(key) >= 0:
+                return i
         return -1
 
 
