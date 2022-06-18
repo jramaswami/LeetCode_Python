@@ -6,11 +6,15 @@ Clever solution by StefanPochmann.
 """
 
 
+import functools
+
+
 class WordFilter:
 
     def __init__(self, words):
         self.T = "$".join(t + "*" + t for t in words)
 
+    @functools.lru_cache
     def f(self, prefix, suffix):
         key = suffix + "*" + prefix
         x = self.T.rfind(key)
