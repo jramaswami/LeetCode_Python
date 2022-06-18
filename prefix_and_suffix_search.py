@@ -1,26 +1,24 @@
 """
 Leet Code :: June 2022 Challenge :: Prefix and Suffix Search
 jramaswami
-
-Clever solution by StefanPochmann.
 """
-
-
-import functools
 
 
 class WordFilter:
 
     def __init__(self, words):
-        self.T = "$".join(t + "*" + t for t in words)
+        self.lookup = dict()
+        for i, word in enumerate(words):
+            prefixes = [word[:r] for r in range(1, len(word)+1)]
+            suffixes = [word[l:] for l in range(len(word))]
+            for prefix in prefixes:
+                for suffix in suffixes:
+                    key = "*".join([prefix, suffix])
+                    self.lookup[key] = i
 
-    @functools.lru_cache
     def f(self, prefix, suffix):
-        key = suffix + "*" + prefix
-        x = self.T.rfind(key)
-        if x >= 0:
-            return self.T.count('$', 0, x)
-        return -1
+        key = "*".join([prefix, suffix])
+        return self.lookup.get(key, -1)
 
 
 # Your WordFilter object will be instantiated and called as such:
