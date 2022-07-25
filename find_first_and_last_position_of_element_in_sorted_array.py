@@ -1,49 +1,46 @@
 """
-Leet Code :: April 2021 Challenge ::  Find First and Last Position of Element in Sorted Array
+Leet Code :: July 2022 Challenge ::  Find First and Last Position of Element in Sorted Array
 jramaswami
 """
+
+
 from typing import *
-
-
-def lower_bound(nums, target):
-    """Return rightmost element less than target."""
-    lb = -1
-    low = 0
-    high = len(nums) - 1
-    while low <= high:
-        mid = (high + low) // 2
-        if nums[mid] < target:
-            lb = max(lb, mid)
-            low = mid + 1
-        else:
-            high = mid - 1
-    return lb
-
-
-def upper_bound(nums, target):
-    """Return the leftmost element greater than target."""
-    ub = len(nums)
-    low = 0
-    high = len(nums) - 1
-    while low <= high:
-        mid = (high + low) // 2
-        if nums[mid] > target:
-            ub = min(ub, mid)
-            high = mid - 1
-        else:
-            low = mid + 1
-
-    return ub
 
 
 class Solution:
     def searchRange(self, nums: List[int], target: int) -> List[int]:
-        lb = lower_bound(nums, target)
-        ub = upper_bound(nums, target)
-        print(f"{lb=} {ub=}")
-        if lb + 1 == ub:
+
+        lo = 0
+        hi = len(nums) - 1
+        left = len(nums)
+        while lo <= hi:
+            mid = lo + ((hi - lo) // 2)
+            if nums[mid] == target:
+                left = min(left, mid)
+                # Try to find one lower.
+                hi = mid - 1
+            elif nums[mid] < target:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        # We did not find target if i is len(nums).
+        if left == len(nums):
             return [-1, -1]
-        return [lb+1, ub-1]
+
+        # Target was found, find the x such that x is > than target.
+        lo = left
+        hi = len(nums) - 1
+        right = left
+        while lo <= hi:
+            mid = lo + ((hi - lo) // 2)
+            if nums[mid] == target:
+                right = max(right, mid)
+                lo = mid + 1
+            elif nums[mid] > target:
+                # Try to the left.
+                hi = mid - 1
+        return [left, right]
 
 
 def test_1():
