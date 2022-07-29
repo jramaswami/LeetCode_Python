@@ -1,32 +1,32 @@
 """
-LeetCode :: May 2021 Challenge :: Find and Replace Pattern
+LeetCode :: July 2022 Challenge :: Find and Replace Pattern
 jramaswami
 """
+
+
 from typing import *
-
-
-def transform(word):
-    """Transform word into pattern."""
-    code = dict()
-    T = []
-    for i, c in enumerate(word):
-        if c in code:
-            T.append(code[c])
-        else:
-            code[c] = i
-            T.append(i)
-    return T
 
 
 class Solution:
     def findAndReplacePattern(self, words: List[str], pattern: str) -> List[str]:
-        soln = []
-        pattern_t = transform(pattern)
-        for word in words:
-            if pattern_t == transform(word):
-                soln.append(word)
-        return soln
 
+        def matches(word, pattern):
+            if len(pattern) != len(word):
+                return False
+            pattern_to_word = dict()
+            word_to_pattern = dict()
+            for p, w in zip(pattern, word):
+                # If this is the first time for both, then place edge
+                # between two letters.
+                if p not in pattern_to_word and w not in word_to_pattern:
+                    pattern_to_word[p] = w
+                    word_to_pattern[w] = p
+                else:
+                    if pattern_to_word.get(p, '?') != w or word_to_pattern.get(w, '?') != p:
+                        return False
+            return True
+
+        return [wd for wd in words if matches(wd, pattern)]
 
 
 def test_1():
