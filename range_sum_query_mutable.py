@@ -1,7 +1,10 @@
 """
-LeetCode :: June 2021 Challenge :: Range Sum Query - Mutable
+LeetCode :: July 2022 Challenge :: Range Sum Query - Mutable
 jramaswami
 """
+
+
+from sympy import arg
 
 
 class NumArray:
@@ -19,63 +22,52 @@ class NumArray:
 
     def __init__(self, nums):
         """Initializes the object with the integer array nums."""
+        self.st = [0] * (len(nums) * 4)
         self.nums = nums
-        self.tree = [0] * (4 * len(nums))
-        self._build(1, 0, len(nums)-1)
+        self._build(1, 0, len(self.nums) - 1)
 
-
-    def _build(self, node, start_index, end_index):
-        """Recursive function to build segement tree."""
-        if start_index == end_index:
-            self.tree[node] = self.nums[start_index]
-            return
-
-        mid_index = (start_index + end_index) // 2
-        left_child = 2 * node
-        right_child = left_child + 1
-
-        self._build(left_child, start_index, mid_index)
-        self._build(right_child, mid_index + 1, end_index)
-
-        self.tree[node] = self.tree[left_child] + self.tree[right_child]
-
-    def _update(self, node, start_index, end_index, upd_index, upd_value):
-        """Recursive function to update segment tree."""
-        if start_index == end_index:
-            self.tree[node] = upd_value
-            self.nums[upd_index] = upd_value
-            return
-
-        mid_index = (start_index + end_index) // 2
-        left_child = 2 * node
-        right_child = left_child + 1
-
-        if upd_index <= mid_index:
-            self._update(left_child, start_index, mid_index, upd_index, upd_value)
+    def _build(self, tree_node, seg_left, seg_right):
+        if seg_left == seg_right:
+            self.st[tree_node] = self.nums[seg_left]
         else:
-            self._update(right_child, mid_index + 1, end_index, upd_index, upd_value)
+            seg_mid = seg_left + ((seg_right - seg_left) // 2)
+            left_child = tree_node * 2
+            right_child = left_child + 1
+            self._build(left_child, seg_left, seg_mid)
+            self._build(right_child, seg_mid + 1, seg_right)
+            self.st[tree_node] = self.st[left_child] + self.st[right_child]
 
-        self.tree[node] = self.tree[left_child] + self.tree[right_child]
-
-    def _query(self, node, start_index, end_index, query_left, query_right):
-        """Recursive function to query segment tree."""
-        if (query_left <= start_index and end_index <= query_right):
-            return self.tree[node]
-
-        if (start_index > query_right or end_index < query_left):
-            return 0
-
-        mid_index = (start_index + end_index) // 2
-        left_child = 2 * node
-        right_child = left_child + 1
-
-        left_sum = self._query(left_child, start_index, mid_index, query_left, query_right)
-        right_sum = self._query(right_child, mid_index + 1, end_index, query_left, query_right)
-        return left_sum + right_sum
+    def _update(self, tree_node, seg_left, seg_right, index, val):
+        if seg_left == seg_right:
+            self.st[tree_node] = val
+        else:
+            seg_mid = seg_left + ((seg_right - seg_left) // 2)
+            left_child = tree_node * 2
+            right_child = left_child + 1
+            if index <= seg_mid:
+                self._update(left_child, seg_left, seg_mid, index, val)
+            else:
+                self._update(right_child, seg_mid + 1, seg_right, index, val)
+            self.st[tree_node] = self.st[left_child] + self.st[right_child]
 
     def update(self, index, val):
         """Updates the value of nums[index] to be val."""
         self._update(1, 0, len(self.nums) - 1, index, val)
+
+    def _query(self, tree_node, seg_left, seg_right, qry_left, qry_right):
+        if qry_left <= seg_left and seg_right <= qry_right:
+            return self.st[tree_node]
+        if qry_right < seg_left:
+            return 0
+        if seg_right < qry_right:
+            return 0
+        seg_mid = seg_left + ((seg_right - seg_left) // 2)
+        left_child = tree_node * 2
+        right_child = left_child + 1
+        return (
+            self._query(left_child, seg_left, seg_mid, qry_left, qry_right) +
+            self._query(right_child, seg_mid + 1, seg_right, qry_left, qry_right)
+        )
 
     def sumRange(self, left, right):
         """
@@ -84,8 +76,26 @@ class NumArray:
         return self._query(1, 0, len(self.nums) - 1, left, right)
 
 
+#
+# Testing
+#
+
+
+null = None
+
+
 def test_1():
     A = NumArray([1, 3, 5])
     assert A.sumRange(0, 2) == 9
     A.update(1, 2)
     assert A.sumRange(0, 2) == 8
+
+
+def test_2():
+    "WA"
+    methods = ["NumArray","sumRange","sumRange","sumRange","update","update","update","sumRange","update","sumRange","update"]
+    arguments = [[[0,9,5,7,3]],[4,4],[2,4],[3,3],[4,5],[1,7],[0,8],[1,2],[1,9],[4,4],[3,4]]
+    expected = [null,3,15,7,null,null,null,12,null,5,null]
+    na = NumArray(*arguments[0])
+    for m, a, e in zip(methods[1:], arguments[1:], expected[1:]):
+        assert getattr(na, m)(*a) == e
