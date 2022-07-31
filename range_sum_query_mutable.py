@@ -4,9 +4,6 @@ jramaswami
 """
 
 
-from sympy import arg
-
-
 class NumArray:
     """
     Given an integer array nums, handle multiple queries of the following
@@ -55,18 +52,18 @@ class NumArray:
         self._update(1, 0, len(self.nums) - 1, index, val)
 
     def _query(self, tree_node, seg_left, seg_right, qry_left, qry_right):
-        if qry_left <= seg_left and seg_right <= qry_right:
+        if qry_left > qry_right:
+            return 0
+
+        if qry_left == seg_left and qry_right == seg_right:
             return self.st[tree_node]
-        if qry_right < seg_left:
-            return 0
-        if seg_right < qry_right:
-            return 0
+
         seg_mid = seg_left + ((seg_right - seg_left) // 2)
         left_child = tree_node * 2
         right_child = left_child + 1
         return (
-            self._query(left_child, seg_left, seg_mid, qry_left, qry_right) +
-            self._query(right_child, seg_mid + 1, seg_right, qry_left, qry_right)
+            self._query(left_child, seg_left, seg_mid, qry_left, min(qry_right, seg_mid)) +
+            self._query(right_child, seg_mid + 1, seg_right, max(qry_left, seg_mid + 1), qry_right)
         )
 
     def sumRange(self, left, right):
