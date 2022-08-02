@@ -12,13 +12,16 @@ class Solution:
         i = 0
         H = [(matrix[0][0], 0, 0)]
         curr = None
+        matrix[0][0] = None
         while i < k:
             i += 1
             curr, r, c = heapq.heappop(H)
-            if r + 1 < len(matrix):
+            if r + 1 < len(matrix) and matrix[r+1][c] is not None:
                 heapq.heappush(H, (matrix[r+1][c], r+1, c))
-            if c + 1 < len(matrix[r]):
+                matrix[r+1][c] = None
+            if c + 1 < len(matrix[r]) and matrix[r][c+1] is not None:
                 heapq.heappush(H, (matrix[r][c+1], r, c+1))
+                matrix[r][c+1] = None
         return curr
 
 
