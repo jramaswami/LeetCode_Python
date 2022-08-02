@@ -4,19 +4,22 @@ jramaswami
 """
 
 
+import heapq
+
+
 class Solution:
     def kthSmallest(self, matrix, k):
-        r = 0
-        c = len(matrix[0]) - 1
-        n = len(matrix[0])
-        while n != k:
-            if n > k:
-                c -= 1
-                n -= 1
-            elif n < k:
-                r += 1
-                n += (c + 1)
-        return matrix[r][c]
+        i = 0
+        H = [(matrix[0][0], 0, 0)]
+        curr = None
+        while i < k:
+            i += 1
+            curr, r, c = heapq.heappop(H)
+            if r + 1 < len(matrix):
+                heapq.heappush(H, (matrix[r+1][c], r+1, c))
+            if c + 1 < len(matrix[r]):
+                heapq.heappush(H, (matrix[r][c+1], r, c+1))
+        return curr
 
 
 def test_1():
@@ -38,4 +41,11 @@ def test_3():
     matrix = [[1, 2], [1, 3]]
     k = 2
     expected = 1
+    assert Solution().kthSmallest(matrix, k) == expected
+
+
+def test_4():
+    matrix = [[1,3,5],[6,7,12],[11,14,14]]
+    k = 6
+    expected = 11
     assert Solution().kthSmallest(matrix, k) == expected
