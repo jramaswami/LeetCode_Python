@@ -1,23 +1,22 @@
 """
-LeetCode :: July 2021 Challenge :: Kth Smallest Element in a Sorted Matrix
+LeetCode :: August 2022 Challenge :: Kth Smallest Element in a Sorted Matrix
+jramaswami
 """
-
-from math import inf
 
 
 class Solution:
     def kthSmallest(self, matrix, k):
-        # Traverse by rows.
-        curr_val = 0
-        indexes = [(r, 0, row[0]) for r, row in enumerate(matrix)]
-        for _ in range(k):
-            # Pick row with smallest value
-            r, c, curr_val = min(indexes, key=lambda t: t[2])
-            if c + 1 >= len(matrix[r]):
-                indexes[r] = (r, c + 1, inf)
-            else:
-                indexes[r] = (r, c + 1, matrix[r][c+1])
-        return curr_val
+        r = 0
+        c = len(matrix[0]) - 1
+        n = len(matrix[0])
+        while n != k:
+            if n > k:
+                c -= 1
+                n -= 1
+            elif n < k:
+                r += 1
+                n += (c + 1)
+        return matrix[r][c]
 
 
 def test_1():
@@ -33,3 +32,10 @@ def test_2():
     expected = -5
     assert Solution().kthSmallest(matrix, k) == expected
 
+
+def test_3():
+    "WA"
+    matrix = [[1, 2], [1, 3]]
+    k = 2
+    expected = 1
+    assert Solution().kthSmallest(matrix, k) == expected
