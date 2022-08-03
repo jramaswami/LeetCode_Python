@@ -3,6 +3,24 @@ LeetCode :: June 2021 Challenge :: My Calendar I
 jramaswami
 """
 
+def overlaps(a, b, x, y):
+    # a------b
+    #     x------y
+    #
+    # a--------------b
+    #      x-----y
+    if a <= x < b:
+        return True
+
+    #     a-------b
+    # x------y
+    #
+    #      a-----b
+    # x--------------y
+    if x <= a < y:
+        return True
+
+    return False
 
 class MyCalendar:
 
@@ -11,10 +29,24 @@ class MyCalendar:
 
     def book(self, start: int, end: int) -> bool:
         """Return True if booking is accepted."""
+        before = []
+        after = []
         for start0, end0 in self.bookings:
-            if max(start, start0) < min(end, end0):
+            # Overlapping bookings!
+            if overlaps(start0, end0, start, end):
                 return False
-        self.bookings.append((start, end))
+
+            # Booking that ends before new booking.
+            if end0 <= start:
+                before.append((start0, end0))
+
+            # Booking that starts after new booking.
+            if end <= start0:
+                after.append((start0, end0))
+
+        before.append((start, end))
+        before.extend(after)
+        self.bookings = before
         return True
 
 
