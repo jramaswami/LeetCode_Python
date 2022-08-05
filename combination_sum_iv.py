@@ -1,25 +1,24 @@
 """
-LeetCode :: April Challenge 2021 :: Combination Sum IV
+LeetCode :: August 2022 Challenge :: Combination Sum IV
 jramaswami
 """
+
+
 from typing import *
 
 
 class Solution:
     def combinationSum4(self, nums: List[int], target: int) -> int:
-        dp = [0 for _ in range(target+1)]
-        for n in nums:
-            if n <= target:
-                dp[n] = 1
+        # dp[sum][count of numbers] = count of ways
+        dp = [[0 for _ in range(target+1)] for _ in range(target+1)]
+        dp[0][0] = 1  # You can make the sum 0 one way.
+        for count in range(target):
+            for summ in range(target+1):
+                for n in nums:
+                    if dp[summ][count] > 0 and summ + n <= target:
+                        dp[summ+n][count+1] += dp[summ][count]
+        return sum(dp[-1])
 
-        nums0 = sorted(nums)
-        for i, _ in enumerate(dp):
-            if i:
-                for n in nums0:
-                    if i + n > target:
-                        break
-                    dp[i+n] += dp[i]
-        return dp[target]
 
 
 def test_1():
