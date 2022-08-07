@@ -1,43 +1,34 @@
 """
-LeetCode :: July 2021 Challenge :: Count Vowels Permutation
+LeetCode :: August 2022 Challenge :: Count Vowels Permutation
 jramaswami
 """
 
 
 class Solution:
     def countVowelPermutation(self, n):
+        A, E, I, O, U = range(5)
         MOD = pow(10, 9) + 7
-        curr_a = curr_e = curr_i = curr_o = curr_u = 1
-        next_a = next_e = next_i = next_o = next_u = 0
-        for _ in range(1, n):
-            # a my only be followed by e
-            next_e = (next_e + curr_a) % MOD
-            # e may only be followed by an a or an i
-            next_a = (next_a + curr_e) % MOD
-            next_i = (next_i + curr_e) % MOD
-            # i may not be followed by another i
-            next_a = (next_a + curr_i) % MOD
-            next_e = (next_e + curr_i) % MOD
-            next_o = (next_o + curr_i) % MOD
-            next_u = (next_u + curr_i) % MOD
-            # o may only be followed by an i or a u
-            next_i = (next_i + curr_o) % MOD
-            next_u = (next_u + curr_o) % MOD
-            # u may only be followed by an a
-            next_a = (next_a + curr_u) % MOD
+        # dp[length][vowel]
+        dp = [[0 for _ in range(5)] for _ in range(n+1)]
+        dp[1] = [1 for _ in range(5)]
+        for i in range(2, n+1):
+            # a: Each vowel 'a' may only be followed by an 'e'.
+            dp[i][E] = (dp[i][E] + dp[i-1][A]) % MOD
+            # e: Each vowel 'e' may only be followed by an 'a' or an 'i'.
+            dp[i][A] = (dp[i][A] + dp[i-1][E]) % MOD
+            dp[i][I] = (dp[i][I] + dp[i-1][E]) % MOD
+            # i: Each vowel 'i' may not be followed by another 'i'.
+            dp[i][A] = (dp[i][A] + dp[i-1][I]) % MOD
+            dp[i][E] = (dp[i][E] + dp[i-1][I]) % MOD
+            dp[i][O] = (dp[i][O] + dp[i-1][I]) % MOD
+            dp[i][U] = (dp[i][U] + dp[i-1][I]) % MOD
+            # o: Each vowel 'o' may only be followed by an 'i' or a 'u'.
+            dp[i][I] = (dp[i][I] + dp[i-1][O]) % MOD
+            dp[i][U] = (dp[i][U] + dp[i-1][O]) % MOD
+            # u: Each vowel 'u' may only be followed by an 'a'.
+            dp[i][A] = (dp[i][A] + dp[i-1][U]) % MOD
 
-            curr_a = next_a
-            curr_e = next_e
-            curr_i = next_i
-            curr_o = next_o
-            curr_u = next_u
-            next_a = next_e = next_i = next_o = next_u = 0
-
-        soln = (curr_a + curr_e) % MOD
-        soln = (soln + curr_i) % MOD
-        soln = (soln + curr_o) % MOD
-        soln = (soln + curr_u) % MOD
-        return soln
+        return sum(dp[-1]) % MOD
 
 
 def test_1():
