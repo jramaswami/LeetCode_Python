@@ -1,40 +1,34 @@
 """
-LeetCode :: July 2021 Challenge :: Longest Increasing Subsequence
+LeetCode :: August 2022 Challenge :: Longest Increasing Subsequence
 jramaswami
 """
 
 
 class Solution:
     def lengthOfLIS(self, nums):
+
         def search(A, x):
-            """
-            Return index of x or the index of the first value more than x.
-            """
+            "Return the index of the leftmost item A[i] >= x."
             lo = 0
             hi = len(A) - 1
-            result_index = len(A)
+            result = len(A)
             while lo <= hi:
                 mid = lo + ((hi - lo) // 2)
-                if x == A[mid]:
-                    return mid
-                elif x < A[mid]:
-                    # A[mid] > x
-                    result_index = min(result_index, mid)
+                if A[mid] >= x:
+                    result = min(result, mid)
                     hi = mid - 1
                 else:
                     lo = mid + 1
-            return result_index
+            return result
 
-        A = []
-        soln = 0
-        for n in nums:
+        A = [nums[0]]
+        for n in nums[1:]:
             i = search(A, n)
-            if i >= len(A):
+            if i == len(A):
                 A.append(n)
             else:
                 A[i] = n
-            soln = max(soln, len(A))
-        return soln
+        return len(A)
 
 
 def test_1():
