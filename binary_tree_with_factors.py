@@ -1,40 +1,33 @@
 """
-LeetCode :: March 2021 Challenge :: Binary Tree With Factors
+LeetCode :: August 2022 Challenge :: Binary Tree With Factors
 jramaswami
 """
+
+
 from typing import *
-from itertools import product
-
-
-MOD = pow(10, 9) + 7
 
 
 class Solution:
     def numFactoredBinaryTrees(self, arr: List[int]) -> int:
-        # The factorization of n.
-        factors = dict()
-        # The number of trees ending at n.
-        trees = dict()
-        # Initialize so that there is one tree ending at n, which is n as
-        # a leaf node.  Also add n to the factors dictionary.
-        for n in arr:
-            trees[n] = 1
-            factors[n] = []
-        # For every combination a, b in arr, if (a * b) is in arr, add (a, b)
-        # as a factor of (a * b).
-        for a, b in product(arr, repeat=2):
-            p = a * b
-            if p in factors:
-                factors[p].append((a, b))
-        # In ascending order of the elements in the arr, see how many trees
-        # can be formed using two child nodes where each child node is a 
-        # smaller number in arr or a subtree that ends at the smaller number.
+        MOD = pow(10, 9) + 7
+        arr.sort()
+        factors = {n: [] for n in arr}
+        trees = {n: 1 for n in arr}
+
+        # Find the factors of each number.
+        # Handles both (a, b) and (b, a) where a <= b.
+        for a in arr:
+            for b in arr:
+                if a * b in factors:
+                    factors[a*b].append((a,b))
+
+        # Compute the number of trees for each number.
         soln = 0
-        for p in sorted(arr):
-            for a, b in factors[p]:
-                t = (trees[a] * trees[b]) % MOD
-                trees[p] = (trees[p] + t) % MOD
-            soln = (soln + trees[p]) % MOD
+        for n in arr:
+            for a, b in factors[n]:
+                k = (trees[a] * trees[b]) % MOD
+                trees[n] = (trees[n] + k) % MOD
+            soln = (soln + trees[n]) % MOD
         return soln
 
 
