@@ -5,30 +5,29 @@ jramaswami
 
 
 from typing import *
+import functools
 
 
 class Solution:
     def numFactoredBinaryTrees(self, arr: List[int]) -> int:
         MOD = pow(10, 9) + 7
-        arr.sort()
-        factors = {n: [] for n in arr}
-        trees = {n: 1 for n in arr}
+        arr0 = set(arr)
 
-        # Find the factors of each number.
-        # Handles both (a, b) and (b, a) where a <= b.
-        for a in arr:
-            for b in arr:
-                if a * b in factors:
-                    factors[a*b].append((a,b))
+        @functools.cache
+        def solve(n):
+            # You can always make a tree of just n.
+            result = 1
+            for x in arr:
+                if n % x == 0 and n // x in arr0:
+                    k = (solve(x) * solve(n // x)) % MOD
+                    result = (result + k) % MOD
+            return result
 
-        # Compute the number of trees for each number.
         soln = 0
         for n in arr:
-            for a, b in factors[n]:
-                k = (trees[a] * trees[b]) % MOD
-                trees[n] = (trees[n] + k) % MOD
-            soln = (soln + trees[n]) % MOD
-        return soln
+            soln = (soln + solve(n)) % MOD
+        return soln % MOD
+
 
 
 def test_1():
