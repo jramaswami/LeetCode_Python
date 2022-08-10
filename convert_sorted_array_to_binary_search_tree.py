@@ -1,5 +1,5 @@
 """
-LeetCode :: July 2021 Challenge :: Convert Sorted Array to Binary Search Tree
+LeetCode :: August 2022 Challenge :: Convert Sorted Array to Binary Search Tree
 jramaswami
 """
 
@@ -7,15 +7,17 @@ jramaswami
 class Solution:
     def sortedArrayToBST(self, nums):
 
-        def build_bst(lo, hi):
-            """Build the binary search tree."""
-            if lo > hi:
+        def build(A):
+            if len(A) == 0:
                 return None
+            if len(A) == 1:
+                return TreeNode(A[0])
 
-            mid = lo + ((hi - lo) // 2)
-            node = TreeNode(nums[mid])
-            node.left = bst(lo, mid - 1)
-            node.right = bst(mid + 1, hi)
-            return node
+            mid = 1 + (len(A) // 2)
+            return TreeNode(
+                A[mid],
+                build(A[:mid]),
+                build(A[mid+1:])
+            )
 
-        return build_bst(0, len(nums) - 1)
+        return build(nums)
