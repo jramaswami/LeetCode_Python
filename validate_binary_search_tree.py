@@ -16,6 +16,7 @@ class Solution:
             nmin, nmax, nvalid = node.val, node.val, True
             if node.left:
                 lmin, lmax, lvalid = traverse(node.left)
+                nvalid = nvalid and lvalid
                 if lmax >= node.val:
                     nvalid = False
                 nmin = min(nmin, lmin)
@@ -25,6 +26,7 @@ class Solution:
             # greater than the node's key.
             if node.right:
                 rmin, rmax, rvalid = traverse(node.right)
+                nvalid = nvalid and rvalid
                 if rmin <= node.val:
                     nvalid = False
                 nmin = min(nmin, rmin)
