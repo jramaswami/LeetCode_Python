@@ -6,29 +6,26 @@ jramaswami
 
 class Solution:
     def lowestCommonAncestor(self, root, p, q):
+        def find(node, target, path):
+            path.append(node)
+            if node.val == target.val:
+                return
+            elif target.val < node.val:
+                find(node.left, target, path)
+            else:
+                find(node.right, target, path)
 
-        prev_node = root
-        right_node = root
-        left_node = root
+        pathp = []
+        find(root, p, pathp)
+        pathq = []
+        find(root, q, pathq)
 
-        # Search for p and q simultaneously.  When they diverge, the last
-        # node where they were the same is the LCA.
-        while left_node == right_node:
-
-            prev_node = left_node
-
-            if p.val < left_node.val:
-                left_node = left_node.left
-            elif p.val == left_node.val:
-                pass
-            elif p.val > left_node.val:
-                left_node = left_node.right
-
-            if q.val < right_node.val:
-                right_node = right_node.left
-            elif q.val == right_node.val:
-                pass
-            elif q.val > right_node.val:
-                right_node = right_node.right
-
-        return prev_node
+        while pathp[-1] != pathq[-1]:
+            if len(pathp) > len(pathq):
+                pathp.pop()
+            elif len(pathp) < len(pathq):
+                pathq.pop()
+            else:
+                pathp.pop()
+                pathq.pop()
+        return pathp[-1]
