@@ -24,10 +24,9 @@ class Solution:
         for i, (a, b) in enumerate(intervals):
             print(f"{a=} {b=} {s[a:b]=}")
             curr = collections.defaultdict(int)
-            curr[s[a:b]] += 1
-            prev_stop = b
-            words_found = 1
-            for j, (x, y) in enumerate(intervals[i+1:]):
+            prev_stop = a
+            words_found = 0
+            for j, (x, y) in enumerate(intervals[i:]):
                 print(f"{x=} {y=} {s[x:y]=} {curr=}")
                 if prev_stop != x:
                     print('gap')
@@ -82,3 +81,10 @@ def test_5():
     expected = [0]
     assert Solution().findSubstring(s, words) == expected
 
+
+def test_6():
+    "WA"
+    s = "ababababab"
+    words = ["ababa","babab"]
+    expected = [0]
+    assert Solution().findSubstring(s, words) == expected
