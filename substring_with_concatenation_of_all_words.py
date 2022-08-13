@@ -11,39 +11,32 @@ import collections
 class Solution:
     def findSubstring(self, s: str, words: List[str]) -> List[int]:
         k = len(words[0])
+        m = len(words) * k
         words0 = collections.Counter(words)
-        intervals = []
+        intervals = set()
         for i, _ in enumerate(s):
             if i + k > len(s):
                 break
             if s[i:i+k] in words0:
-                intervals.append((i, i+k))
+                intervals.add((i, i+k))
 
-        print(intervals)
-        soln = []
-        for i, (a, b) in enumerate(intervals):
-            print(f"{a=} {b=} {s[a:b]=}")
+        def check(start_at):
             curr = collections.defaultdict(int)
-            prev_stop = a
-            words_found = 0
-            for j, (x, y) in enumerate(intervals[i:]):
-                print(f"{x=} {y=} {s[x:y]=} {curr=}")
-                if prev_stop != x:
-                    print('gap')
-                    break
-                t = s[x:y]
-                if curr[t] == words0[t]:
-                    print(f"too many {t}")
-                    break
-                curr[t] +=1
-                words_found += 1
-                print(f"{words_found=} {len(words)=}")
-                if words_found == len(words):
-                    soln.append(a)
-                    break
-                prev_stop = y
+            a = start_at
+            for _ in range(len(words)):
+                if a+k > len(s):
+                    return False
+                if (a, a+k) in intervals:
+                    t = s[a:a+k]
+                    curr[t] += 1
+                    if curr[t] > words0[t]:
+                        return False
+                else:
+                    return False
+                a += k
+            return True
 
-        return soln
+        return [i for i, _ in enumerate(s) if check(i)]
 
 
 def test_1():
