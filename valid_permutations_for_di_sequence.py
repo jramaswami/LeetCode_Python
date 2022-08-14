@@ -1,11 +1,12 @@
 """
 LeetCode :: 903. Valid Permutations for DI Sequence
 jramaswami
+
+Thank You Larry!
 """
 
 
 import functools
-
 
 
 class Solution:
@@ -13,35 +14,34 @@ class Solution:
         MOD = pow(10, 9) + 7
 
         @functools.cache
-        def solve(last_num, avail_nums):
-            if not avail_nums:
+        def solve(i, last_num):
+            if i >= len(s):
                 return 1
-            i = len(s) - len(avail_nums)
+
+            nums_left = len(s) - i
             result = 0
             if s[i] == 'D':
-                for k in avail_nums:
-                    if k < last_num:
-                        result = (
-                            result +
-                            solve(k, avail_nums - frozenset([k]))
-                        ) % MOD
+                for k in range(last_num):
+                    result = (result + solve(i+1, k)) % MOD
             else:
-                for k in avail_nums:
-                    if k > last_num:
-                        result = (
-                            result +
-                            solve(k, avail_nums - frozenset([k]))
-                        ) % MOD
+                for k in range(last_num, nums_left):
+                    result = (result + solve(i+1, k)) % MOD
             return result % MOD
 
         soln = 0
-        avail_nums = frozenset(range(len(s)+1))
-        for k in avail_nums:
-            soln = (soln + solve(k, avail_nums - frozenset([k]))) % MOD
+        for k in range(len(s)+1):
+            soln = (soln + solve(0, k)) % MOD
         return soln % MOD
 
 
 def test_1():
     s = "DID"
     expected = 5
+    assert Solution().numPermsDISequence(s) == expected
+
+
+def test_2():
+    "MLE"
+    s = "IDDDIIDIIIIIIIIDIDID"
+    expected = 853197538
     assert Solution().numPermsDISequence(s) == expected
