@@ -26,8 +26,11 @@ class Solution:
             return False
 
         # Initial two numbers.
+        if num[0] == '0':
+            return False
+
         a = 0
-        for i, x in enumerate(num):
+        for i, x in enumerate(num[:-1]):
             a *= 10
             a += int(x)
             if num[i+1] != '0':
@@ -55,5 +58,12 @@ def test_2():
 def test_3():
     "RTE"
     num = "0"
+    expected = False
+    assert Solution().isAdditiveNumber(num) == expected
+
+
+def test_4():
+    "WA"
+    num = "111"
     expected = False
     assert Solution().isAdditiveNumber(num) == expected
