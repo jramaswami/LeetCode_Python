@@ -7,45 +7,38 @@ jramaswami
 class Solution:
 
     def isAdditiveNumber(self, num: str) -> bool:
-
-        def solve(i, a, b):
-            if i >= len(num):
-                return True
-
-            if a + b == 0 and num[i] == '0':
-                # No leading zeros are allowed, but 0 itself is allowed.
-                return (i + 1, b, 0)
-
-            c = 0
-            for j, x in enumerate(num[i:], start=i):
-                c *= 10
-                c += int(x)
-                if a + b < c:
-                    return False
-                if a + b == c:
-                    if solve(j+1, b, c):
-                        return True
+        # Boundary case: not enough string.
+        if len(num) < 3:
             return False
+        # Boundary case: two leading zeros.
+        if num[:2] == '00':
+            return all(c == '0' for c in num)
 
-        a = 0
-        for i, x in enumerate(num[:-2]):
-            a *= 10
-            a += int(x)
-            b = 0
-            for j, y in enumerate(num[i+1:-1], start=i+1):
-                b *= 10
-                b += int(y)
-                if j+1 < len(num):
-                    if solve(j+1, a, b):
-                        return True
+        # Pick any two starting numbers.
+        for i, _ in enumerate(num):
+            a = int(num[:i+1])
+            for j, _ in enumerate(num[i+1:], start=i+1):
+                b = int(num[i+1:j+1])
+                stack = [a, b]
+                k = j+1
+                while k < len(num):
+                    t = str(sum(stack[-2:]))
+                    if num[k:].startswith(t):
+                        stack.append(sum(stack[-2:]))
+                        k += len(t)
+                    else:
+                        stack = []
+                        k = len(num)
+                if len(stack) > 2:
+                    # print(stack)
+                    return True
                 if b == 0:
-                    # No leading zeros.
+                    # If b is zero we cannot make a larger number.
                     break
             if a == 0:
-                # No leading zeros.
+                # If a is zero, then we cannot make a larger number.
                 break
         return False
-
 
 def test_1():
     num = "112358"
@@ -99,5 +92,5 @@ def test_8():
     assert Solution().isAdditiveNumber(num) == expected
 
 
-if __name__ == '__main__':
-    test_7()
+# if __name__ == '__main__':
+#     test_7()
