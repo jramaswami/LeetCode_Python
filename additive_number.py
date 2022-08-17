@@ -9,6 +9,7 @@ class Solution:
     def isAdditiveNumber(self, num: str) -> bool:
 
         def solve(i, a, b):
+            print(f"solve({i=} {a=} {b=}) {num[i:]}")
             if i >= len(num):
                 return True
 
@@ -17,9 +18,9 @@ class Solution:
                 return False
 
             c = 0
-            for j in range(len(num)-1):
+            for j, x in enumerate(num[i:], start=i):
                 c *= 10
-                c += int(num[j])
+                c += int(x)
                 if a + b == c:
                     if solve(j+1, b, c):
                         return True
@@ -30,16 +31,18 @@ class Solution:
             return False
 
         a = 0
-        for i, x in enumerate(num[:-1]):
+        for i, x in enumerate(num[:-2]):
             a *= 10
             a += int(x)
             if num[i+1] != '0':
                 b = 0
-                for j, y in enumerate(num[i+1:], start=i+1):
+                for j, y in enumerate(num[i+1:-1], start=i+1):
                     b *= 10
                     b += int(y)
-                    if solve(j+1, a, b):
-                        return True
+                    if j+1 < len(num):
+                        print(a, b)
+                        if solve(j+1, a, b):
+                            return True
         return False
 
 
@@ -66,4 +69,11 @@ def test_4():
     "WA"
     num = "111"
     expected = False
+    assert Solution().isAdditiveNumber(num) == expected
+
+
+def test_5():
+    "WA"
+    num = "101"
+    expected = True
     assert Solution().isAdditiveNumber(num) == expected
