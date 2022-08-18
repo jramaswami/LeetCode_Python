@@ -1,29 +1,26 @@
 """
-LeetCode :: July 2021 Challenge :: Reduce Array Size to The Half
+LeetCode :: August 2022 Challenge :: Reduce Array Size to The Half
 jramaswami
 """
 
 
-from collections import Counter
+import collections
 
 
 class Solution:
     def minSetSize(self, arr):
-        # Counter to compute frequency of each number in array.
-        ctr = Counter(arr)
-        N = len(arr)
-        soln = 0
-        # Sort the frequencies in ascending order, using as a stack.
-        freqs = sorted(ctr.values())
-        # While there are still more the N / 2 values left ...
-        while N * 2 > len(arr):
-            # ... remove the number with the highest frequency from the array.
-            soln += 1
-            # Subtract the frequency removed from the running count, N.
-            N -= freqs[-1]
-            # Remove the frequency from the list of frequencies.
-            freqs.pop()
-        return soln
+        if not arr:
+            return 0
+
+        freqs = collections.Counter(arr)
+        target = len(arr) // 2
+        curr = 0
+        for i, k, in enumerate(sorted(freqs.values(), reverse=True)):
+            curr += k
+            print(i, k, curr, target)
+            if curr >= target:
+                return i + 1
+        return -1
 
 
 def test_1():
