@@ -16,24 +16,10 @@ class Solution:
             adj[u].append(v)
             adj[v].append(u)
 
-        # Colors assigned to each node.
+        # Assigne colors using MEX.
         color = [-1 for _ in range(n+1)]
-
-        def mex(u):
-            "Return the minimum color not used by neighbors of v."
-            return min(x for x in [1,2,3,4] if x not in (color[v] for v in adj[u]))
-
-        # Use MEX to assign numbers.
-        for r in range(1, n+1):
-            if color[r] == -1:
-                color[r] = 1
-                Q = collections.deque([r])
-                while Q:
-                    u = Q.popleft()
-                    for v in adj[u]:
-                        if color[v] == -1:
-                            color[v] = mex(v)
-                            Q.append(v)
+        for u in range(1, n+1):
+            color[u] = min(x for x in [1,2,3,4] if x not in (color[v] for v in adj[u]))
         return color[1:]
 
 
