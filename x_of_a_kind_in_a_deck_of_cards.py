@@ -6,12 +6,15 @@ jramaswami
 
 from typing import *
 import collections
+import functools
+import math
 
 
 class Solution:
     def hasGroupsSizeX(self, deck: List[int]) -> bool:
         ctr = collections.Counter(deck)
-        return all(x == ctr[deck[0]] for x in ctr.values())
+        g = functools.reduce(math.gcd, ctr.values())
+        return g > 1
 
 
 def test_1():
