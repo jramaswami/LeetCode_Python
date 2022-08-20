@@ -59,8 +59,9 @@ class AllOne:
 
     def dec(self, key: str) -> None:
         self.freqs[key] -= 1
-        self.maxpq.push(self.freqs[key], key)
-        self.minpq.push(self.freqs[key], key)
+        if self.freqs[key] > 0:
+            self.maxpq.push(self.freqs[key], key)
+            self.minpq.push(self.freqs[key], key)
 
     def getMaxKey(self) -> str:
         while self.maxpq and self.maxpq.top()[0] != self.freqs[self.maxpq.top()[1]]:
