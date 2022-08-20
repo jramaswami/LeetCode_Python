@@ -4,35 +4,41 @@ jramaswami
 """
 
 
-import heapq
 from typing import *
+import functools
+import math
+
+
+POSN = 0
+FUEL = 1
 
 
 class Solution:
     def minRefuelStops(self, target: int, startFuel: int, stations: List[List[int]]) -> int:
-        # Add "dummy" station for target.
-        stations.append((target, 0))
-        stops = 0
-        auto_fuel = startFuel
-        prev_fuels = []
-        prev_location = 0
-        for curr_location, station_fuel in stations:
-            # Go to next station.
-            distance = curr_location - prev_location
-            auto_fuel = auto_fuel - distance
-            # If auto ran out of fuel, go back in time to fuel up using
-            # the largest fuel from previous stations.
-            while auto_fuel < 0 and prev_fuels:
-                refuel = -heapq.heappop(prev_fuels)
-                auto_fuel = auto_fuel + refuel
-                stops = stops + 1
-            # If auto still has negative fuel, auto could not reach station.
-            if auto_fuel < 0:
-                return -1
-            # "Remember" the fuel at current station.
-            heapq.heappush(prev_fuels, -station_fuel)
-            prev_location = curr_location
-        return stops
+
+        # Add target to stations.
+        stations.append([target, 0])
+
+        @functools.cache
+        def solve(i, f):
+            # have negative fuel, so I cannot have reached the next station.
+            if f < 0:
+                return math.inf
+
+            # I have reached the target station.
+            if i == len(stations) - 1:
+                return 0
+
+            d = stations[i+1][POSN] - stations[i][POSN]
+            return min(
+                # I can fuel here ...
+                1 + solve(i + 1, f + stations[i][FUEL] - d),
+                # Or not ...
+                solve(i + 1, f - d)
+            )
+
+        soln = solve(0, startFuel - stations[0][POSN])
+        return -1 if soln == math.inf else soln
 
 
 def test_1():
@@ -47,7 +53,7 @@ def test_2():
     target = 100
     startFuel = 1
     stations = [[10,100]]
-    expected = -1 
+    expected = -1
     assert Solution().minRefuelStops(target, startFuel, stations) == expected
 
 
