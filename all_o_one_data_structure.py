@@ -63,12 +63,12 @@ class AllOne:
         self.minpq.push(self.freqs[key], key)
 
     def getMaxKey(self) -> str:
-        while self.maxpq.top()[0] != self.freqs[self.maxpq.top()[1]]:
+        while self.maxpq and self.maxpq.top()[0] != self.freqs[self.maxpq.top()[1]]:
             self.maxpq.pop()
         return "" if not self.maxpq else self.maxpq.top()[1]
 
     def getMinKey(self) -> str:
-        while self.minpq.top()[0] != self.freqs[self.minpq.top()[1]]:
+        while self.minpq and self.minpq.top()[0] != self.freqs[self.minpq.top()[1]]:
             self.minpq.pop()
         return "" if not self.minpq else self.minpq.top()[1]
 
@@ -96,7 +96,19 @@ def test_2():
     "RTE"
     methods = ["AllOne","getMaxKey","getMinKey"]
     arguments = [[],[],[]]
-    expected = [None, None, None]
+    expected = [None, "", ""]
+    aoods = AllOne()
+    for m, a, e in zip(methods[1:], arguments[1:], expected[1:]):
+        r = getattr(aoods, m)(*a)
+        print(f"aaods.{m}({a}) = {r} ? {e}")
+        assert r == e
+
+
+def test_3():
+    "WA"
+    methods = ["AllOne","inc","inc","inc","inc","inc","inc","dec", "dec","getMinKey","dec","getMaxKey","getMinKey"]
+    arguments = [[],["a"],["b"],["b"],["c"],["c"],["c"],["b"],["b"],[],["a"],[],[]]
+    expected = [null,null,null,null,null,null,null,null,null,"a",null,"c","c"]
     aoods = AllOne()
     for m, a, e in zip(methods[1:], arguments[1:], expected[1:]):
         r = getattr(aoods, m)(*a)
