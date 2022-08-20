@@ -1,5 +1,5 @@
 """
-LeetCode :: June 2021 Challenge :: Minimum Number of Refueling Stop
+LeetCode :: August 2022 Challenge :: Minimum Number of Refueling Stop
 jramaswami
 """
 
@@ -22,6 +22,9 @@ class MaxPQ:
     def __len__(self):
         return len(self.heap)
 
+    def __repr__(self):
+        return f"MaxPQ(heap={[-1 * t for t in self.heap]})"
+
 
 class Solution:
 
@@ -37,7 +40,7 @@ class Solution:
             # and refuel to get here.
             distance = posn - prev_posn
             curr_fuel -= distance
-            if curr_fuel < 0 and prev_refuels:
+            while curr_fuel < 0 and prev_refuels:
                 curr_fuel += prev_refuels.pop()
                 total_refuelings += 1
             # If I still cannot make it to the station, then I cannot make it
@@ -89,4 +92,4 @@ def test_5():
     start_fuel = 299
     stations = [[13,21],[26,115],[100,47],[225,99],[299,141],[444,198],[608,190],[636,157],[647,255],[841,123]]
     expected = 4
-    assert Solution().minRefuelStops(target, startFuel, stations) == expected
+    assert Solution().minRefuelStops(target, start_fuel, stations) == expected
