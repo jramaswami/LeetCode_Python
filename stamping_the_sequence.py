@@ -18,21 +18,22 @@ class Solution:
             Exclude a match that is all "?"s
             """
             found_nonq = False
-            for j, b in enumerate(target[i:], start=i):
-                if j - i >= len(stamp):
-                    break
-                a = stamp[j-i]
-                if b != "?" and a != b:
+            j = 0
+            while j < len(stamp):
+                # Stamp cannot go outside target.
+                if i >= len(target):
                     return False
-                if b != "?":
+                if target[i] != '?' and target[i] != stamp[j]:
+                    return False
+                if target[i] != '?':
                     found_nonq = True
+                i += 1
+                j += 1
             return found_nonq
 
         def find_first_stamp():
             "Return the index of the first matching stamp."
-            print(f"find_first_stamp() {stamp=} {''.join(target)}")
-            for i, _ in enumerate(target[:-len(stamp)+1]):
-                print(i, "".join(target[i:]))
+            for i, _ in enumerate(target):
                 if matches(i):
                     return i
             return -1
@@ -49,7 +50,6 @@ class Solution:
         while any(t != "?" for t in target):
             # Find first match of stamp.
             i = find_first_stamp()
-            print("".join(target), i)
             if i < 0:
                 soln = []
                 break
@@ -59,7 +59,6 @@ class Solution:
             if x > 10 * len(target):
                 soln = []
                 break
-        print("".join(target), stamp)
         return soln[::-1]
 
 
