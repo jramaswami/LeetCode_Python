@@ -3,19 +3,16 @@ LeetCode :: August 2022 Challenge :: 342. Power of Four
 jramaswami
 """
 
+
+import math
+
+
 class Solution:
 
-    def __init__(self):
-        self.cache = set()
-        curr = 1
-        limit = pow(2, 32)
-        while curr < limit:
-            self.cache.add(curr)
-            curr *= 4
-
     def isPowerOfFour(self, n: int) -> bool:
-        print(self.cache)
-        return abs(n) in self.cache
+        if n <= 0:
+            return False
+        return math.log(abs(n), 4).is_integer()
 
 
 def test_1():
