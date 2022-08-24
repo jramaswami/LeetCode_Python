@@ -1,7 +1,13 @@
 """
 LeetCode :: 297. Serialize and Deserialize Binary Tree
 jramaswami
+
+REF: https://medium.com/coding-memo/leetcode-serialize-and-deserialize-binary-tree-c51af92e65ad
 """
+
+
+import collections
+
 
 class Codec:
 
@@ -11,21 +17,19 @@ class Codec:
         :type root: TreeNode
         :rtype: str
         """
-        NULL = "1111111111"
-        H = [NULL]
-        def traverse(node, i):
+        NULL = 1024
+        H = []
+        # Preorder traversal.
+        def preorder(node):
             if node is None:
-                return
-
-            while len(H) <= i:
                 H.append(NULL)
+            else:
+                H.append(node.val)
+                preorder(node.left)
+                preorder(node.right)
 
-            H[i] = f"{node.val:010b}")
-            traverse(node.left, i*2)
-            traverse(node.right, (i*2)+1)
-
-        traverse(root, 1)
-        return "".join(H)
+        preorder(root)
+        return ",".join(str(i) for i in H)
 
     def deserialize(self, data):
         """Decodes your encoded data to tree.
@@ -33,16 +37,17 @@ class Codec:
         :type data: str
         :rtype: TreeNode
         """
-        NULL = "1111111111"
-        if data == [NULL]:
+        NULL = 1024
+        if data == []:
             return None
-        def traverse(i):
-            if i >= len(H):
-                return None
-            if data[i*10:(i+1)*10] == NULL:
-                return None
-            left_child = traverse(i * 2)
-            right_child = traverse((i * 2) + 1)
-            return TreeNode(int(data[i*10:(i+1)*10], 2), left_child, right_child)
 
-        return traverse(1)
+        q = collections.deque(int(i) for i in data.split(','))
+
+        def traverse():
+            v = q.popleft()
+            if v == NULL:
+                return None
+            else:
+                return TreeNode(v, traverse(), traverse())
+
+        return traverse()
