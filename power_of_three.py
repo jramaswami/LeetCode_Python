@@ -1,7 +1,17 @@
 """
-Leet Code :: April 2021 Challenge :: Power of Three
+Leet Code :: August 2022 Challenge :: Power of Three
 jramaswami
 """
+
+
+import math
+
+
 class Solution:
     def isPowerOfThree(self, n: int) -> bool:
-        return 1162261467 % n == 0 if n > 0 else False
+        return n > 0 and math.log(n, 3).is_integer()
+
+
+def test_1():
+    "WA"
+    assert Solution().isPowerOfThree(243) == True
