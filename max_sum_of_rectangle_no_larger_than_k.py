@@ -7,7 +7,6 @@ Thank You Larry!
 
 
 from sortedcontainers import SortedList
-from itertools import accumulate
 from math import inf
 
 
@@ -29,15 +28,15 @@ class Solution:
 
         # Fix the top row and bottom row.
         soln = -inf
-        for top_row in range(len(matrix)):
-            for bottom_row in range(top_row, len(matrix)):
+        for top_row, _ in enumerate(matrix):
+            for bottom_row, _ in enumerate(matrix[top_row:], start=top_row):
                 # Keep track of our previous sums
                 previous_sums = SortedList()
                 # The subarray sum is the sum of no elements: 0.
                 previous_sums.add(0)
 
                 # Scan over the columns.
-                for col in range(len(matrix[0])):
+                for col, _ in enumerate(matrix[0]):
                     # Get the sum of the rectangle (top_row, 0) to (bottom_row, col).
                     current_sum = prefix[bottom_row][col]
                     if top_row > 0:
@@ -54,9 +53,7 @@ class Solution:
                     # see if it is the max solution.
                     if 0 <= index < len(previous_sums):
                         soln = max(soln, current_sum - previous_sums[index])
-
                     previous_sums.add(current_sum)
-
         return soln
 
 
