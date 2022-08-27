@@ -1,5 +1,5 @@
 """
-LeetCode :: June 2021 Challenge :: Max Sum of Rectangle No Larger Than K
+LeetCode :: August 2022 Challenge :: Max Sum of Rectangle No Larger Than K
 jramaswami
 
 Thank You Larry!
