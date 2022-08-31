@@ -25,8 +25,10 @@ class Solution:
         pacific = [[False for _ in row] for row in matrix]
         for r, _ in enumerate(matrix):
             queue.append((r, 0))
+            visited[r][0] = True
         for c, _ in enumerate(matrix[0][1:], start=1):
             queue.append((0, c))
+            visited[0][c] = True
         while queue:
             r, c = queue.popleft()
             pacific[r][c] = True
@@ -42,8 +44,10 @@ class Solution:
         atlantic = [[False for _ in row] for row in matrix]
         for r, _ in enumerate(matrix):
             queue.append((r, len(matrix[r])-1))
-        for c, _ in enumerate(matrix[0][1:], start=1):
+            visited[r][len(matrix[r])-1] = True
+        for c, _ in enumerate(matrix[0][:-1]):
             queue.append((len(matrix)-1, c))
+            visited[len(matrix)-1][c] = True
         while queue:
             r, c = queue.popleft()
             atlantic[r][c] = True
