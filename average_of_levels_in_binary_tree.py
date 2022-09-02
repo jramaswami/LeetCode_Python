@@ -1,26 +1,26 @@
 """
-LeetCode :: March 2021 Challenge :: Average of Levels in Binary Tree
+LeetCode :: September 2022 Challenge :: 637. Average of Levels in Binary Tree
 jramaswami
 """
-from collections import deque
 
 
 class Solution:
     def averageOfLevels(self, root: TreeNode) -> List[float]:
-        # Use BFS to get levels sums and count.
-        queue = deque()
-        queue.append((root, 0))
-        level_sums = []
+        level_total = []
         level_count = []
-        while queue:
-            node, level = queue.popleft()
-            if node:
-                if len(level_sums) - 1 < level:
-                    level_sums.append(0)
-                    level_count.append(0)
-                level_sums[level] += node.val
-                level_count[level] += 1
-                queue.append((node.left, level+1))
-                queue.append((node.right, level+1))
 
-        return [s / c for s, c in zip(level_sums, level_count)]
+        def traverse(node, level):
+            if node is None:
+                return
+
+            while len(level_total) <= level:
+                level_total.append(0)
+                level_count.append(0)
+
+            level_total[level] += node.val
+            level_count[level] += 1
+            traverse(node.left, level+1)
+            traverse(node.right, level+1)
+
+        traverse(root, 0)
+        return [t / c for t, c in zip(level_total, level_count)]
