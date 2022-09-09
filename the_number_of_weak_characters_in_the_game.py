@@ -24,11 +24,12 @@ class Solution:
             # For each character with this attack score, is there a previous
             # character with higher defense score too?
             for d in characters_by_attack[a]:
+                print(f"{a=} {d=} {max_defense=}")
                 if max_defense > d:
                     # If there is then (a,d) is a weak character.
                     soln += 1
             # Keep track of the highest attack and defense scores we have seen.
-            max_defense = max(d, max(characters_by_attack[a]))
+            max_defense = max(max_defense, max(characters_by_attack[a]))
         return soln
 
 
