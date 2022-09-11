@@ -1,34 +1,38 @@
 """
-LeetCode :: June 2021 Challenge :: Maximum Performance of a Team
+LeetCode :: September 2022 Challenge :: Maximum Performance of a Team
 jramaswami
 """
 
 
 from typing import *
-from collections import defaultdict
 import heapq
+import collections
+
 
 
 class Solution:
     def maxPerformance(self, n: int, speed: List[int], efficiency: List[int], k: int) -> int:
-        edict = defaultdict(list)
+        MOD = pow(10, 9) + 7
+
+        speeds_by_eff = collections.defaultdict(list)
         for e, s in zip(efficiency, speed):
-            edict[e].append(s)
+            speeds_by_eff[e].append(s)
 
+        # Determine for each efficiency the best team you can make.
         team = []
-        sum_speed = 0
+        speed_sum = 0
         soln = 0
-        for e in sorted(edict.keys(), reverse=True):
-            for s in edict[e]:
+        for e in sorted(speeds_by_eff, reverse=True):
+            # Add everyone to the team with the given efficiency.
+            for s in speeds_by_eff[e]:
                 heapq.heappush(team, s)
-                sum_speed += s
+                speed_sum += s
+            # Remove any extras, starting with the lowest speed team members.
             while len(team) > k:
-                removed = heapq.heappop(team)
-                sum_speed -= removed
-            soln = max(soln, sum_speed * e)
-        
-        return soln % (pow(10, 9) + 7)
-
+                t = heapq.heappop(team)
+                speed_sum -= t
+            soln = max(soln, speed_sum * e)
+        return soln % MOD
 
 
 def test_1():
