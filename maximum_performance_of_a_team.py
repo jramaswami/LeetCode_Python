@@ -9,7 +9,6 @@ import heapq
 import collections
 
 
-
 class Solution:
     def maxPerformance(self, n: int, speed: List[int], efficiency: List[int], k: int) -> int:
         MOD = pow(10, 9) + 7
