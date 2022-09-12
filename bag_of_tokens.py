@@ -11,22 +11,21 @@ from typing import *
 class Solution:
     def bagOfTokensScore(self, tokens: List[int], power: int) -> int:
         T = collections.deque(sorted(tokens))
-        soln = 0
-        score = 0
+        max_score = 0
+        curr_score = 0
         while T:
-            while T and power < T[0]:
-                power += T[-1]
-                print(T[-1], "to power up")
-                T.pop()
-                score -= 1
-            print(T, power)
-            if T:
-                score += 1
+            if T[0] <= power:
                 power -= T[0]
-                print(T[0], "for points")
+                curr_score += 1
                 T.popleft()
-            soln = max(soln, score)
-        return soln
+            elif curr_score > 0:
+                power += T[-1]
+                curr_score -= 1
+                T.pop()
+            else:
+                break
+            max_score = max(max_score, curr_score)
+        return max_score
 
 
 def test_1():
