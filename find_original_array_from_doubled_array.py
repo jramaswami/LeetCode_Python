@@ -13,7 +13,7 @@ class Solution:
         freqs = collections.Counter(changed)
         soln = []
         for val in sorted(freqs):
-            if freqs[val]:
+            while freqs[val]:
                 # Add val to solution.
                 soln.append(val)
                 # Remove the current value.
