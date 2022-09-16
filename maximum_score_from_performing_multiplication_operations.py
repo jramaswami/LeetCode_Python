@@ -11,8 +11,9 @@ import math
 class Solution:
     def maximumScore(self, nums: List[int], multipliers: List[int]) -> int:
         M = len(multipliers)
+        INF = pow(10, 20)
         # dp[multiplier index][left] = max score
-        dp = [[-math.inf for _ in range(M+1)] for _ in range(M+1)]
+        dp = [[-INF for _ in range(M+1)] for _ in range(M+1)]
         dp[0][0] = 0
         for taken in range(M):
             for left in range(taken+1):
@@ -21,15 +22,13 @@ class Solution:
                 # 0 = left + len(nums) - right - 1 - taken
                 right = left + len(nums) - 1 - taken
                 # I can take from left.
-                dp[taken+1][left+1] = max(
-                    dp[taken+1][left+1],
-                    dp[taken][left] + (multipliers[taken] * nums[left])
-                )
+                left_score = dp[taken][left] + (multipliers[taken] * nums[left])
+                if dp[taken+1][left+1] < left_score:
+                    dp[taken+1][left+1] = left_score
                 # I can take right.
-                dp[taken+1][left] = max(
-                    dp[taken+1][left],
-                    dp[taken][left] + (multipliers[taken] * nums[right])
-                )
+                right_score = dp[taken][left] + (multipliers[taken] * nums[right])
+                if dp[taken+1][left] < right_score:
+                    dp[taken+1][left] = right_score
         return max(dp[M])
 
 
