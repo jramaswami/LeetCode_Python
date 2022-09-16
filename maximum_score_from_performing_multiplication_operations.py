@@ -5,16 +5,16 @@ jramaswami
 
 
 from typing import *
-import math
+
 
 
 class Solution:
     def maximumScore(self, nums: List[int], multipliers: List[int]) -> int:
         M = len(multipliers)
         INF = pow(10, 20)
-        # dp[multiplier index][left] = max score
-        dp = [[-INF for _ in range(M+1)] for _ in range(M+1)]
-        dp[0][0] = 0
+        prev_dp = [-INF] * (M+1)
+        prev_dp[0] = 0
+        next_dp = [-INF] * (M+1)
         for taken in range(M):
             for left in range(taken+1):
                 # Compute the index of right given taken and left.
@@ -22,14 +22,15 @@ class Solution:
                 # 0 = left + len(nums) - right - 1 - taken
                 right = left + len(nums) - 1 - taken
                 # I can take from left.
-                left_score = dp[taken][left] + (multipliers[taken] * nums[left])
-                if dp[taken+1][left+1] < left_score:
-                    dp[taken+1][left+1] = left_score
+                left_score = prev_dp[left] + (multipliers[taken] * nums[left])
+                if next_dp[left+1] < left_score:
+                    next_dp[left+1] = left_score
                 # I can take right.
-                right_score = dp[taken][left] + (multipliers[taken] * nums[right])
-                if dp[taken+1][left] < right_score:
-                    dp[taken+1][left] = right_score
-        return max(dp[M])
+                right_score = prev_dp[left] + (multipliers[taken] * nums[right])
+                if next_dp[left] < right_score:
+                    next_dp[left] = right_score
+            prev_dp, next_dp = next_dp, [-INF] * (M+1)
+        return max(prev_dp)
 
 
 def test_1():
