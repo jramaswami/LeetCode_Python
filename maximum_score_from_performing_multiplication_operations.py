@@ -7,7 +7,6 @@ jramaswami
 from typing import *
 
 
-
 class Solution:
     def maximumScore(self, nums: List[int], multipliers: List[int]) -> int:
         M = len(multipliers)
