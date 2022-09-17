@@ -1,5 +1,5 @@
 """
-LeetCode :: June 2021 Challenge :: Palindrome Pairs
+LeetCode :: September 2022 Challenge :: Palindrome Pairs
 jramaswami
 """
 
@@ -17,7 +17,7 @@ class Solution:
         words_lookup = {w: i for i, w in enumerate(words)}
         soln = []
         for i, word in enumerate(words):
-            # Case 1: word == "": this will allow palindrome for 
+            # Case 1: word == "": this will allow palindrome for
             # all words that are already palindromes.
             if word == "":
                 for word0 in words:
@@ -39,7 +39,7 @@ class Solution:
                 right = word[cut:]
                 rev_left = left[::-1]
                 rev_right = right[::-1]
-                
+
                 # Case 3: if left is a palindrome and rev_right is in words,
                 # then rev_right + word is a palindrome.
                 if is_palindrome(left):
