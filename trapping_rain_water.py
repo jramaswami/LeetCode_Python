@@ -1,23 +1,17 @@
 """
-LeetCode :: July 2021 Challenge :: Trapping Rain Water
+LeetCode :: September 2022 Challenge :: Trapping Rain Water
 jramaswami
 """
 
 
+import itertools
+
+
 class Solution:
     def trap(self, heights):
-        prefix = [0 for _ in heights]
-        suffix = [0 for _ in heights]
-        curr_height = 0
-        for i, h in enumerate(heights):
-            prefix[i] = curr_height
-            curr_height = max(curr_height, h)
 
-        curr_height = 0
-        for off, h in enumerate(reversed(heights), start=1):
-            i = len(heights) - off
-            suffix[i] = curr_height
-            curr_height = max(curr_height, h)
+        prefix = list(itertools.accumulate(heights, max))
+        suffix = list(itertools.accumulate(reversed(heights), max))[::-1]
 
         soln = 0
         for h, left, right in zip(heights, prefix, suffix):
