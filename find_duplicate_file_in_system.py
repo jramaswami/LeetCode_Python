@@ -1,26 +1,24 @@
 """
-LeetCode :: May 2021 Challenge :: Find Duplicate File in System
+LeetCode :: September 2022 Challenge :: Find Duplicate File in System
 jramaswami
 """
+
+
 from typing import *
-from collections import defaultdict
+import collections
 
 
 class Solution:
     def findDuplicate(self, paths: List[str]) -> List[List[str]]:
-        dupes = defaultdict(list)
-        for T in paths:
-            folder, *files = T.split()
-            for f in files:
-                name, content = f.split('(')
-                path = folder + '/' + name
-                dupes[content].append(path)
-
-        soln = []
-        for paths in dupes.values():
-            if len(paths) > 1:
-                soln.append(paths)
-        return soln
+        files_by_content = collections.defaultdict(list)
+        for path in paths:
+            folder, *files = path.split()
+            for file in files:
+                paren = file.find('(')
+                filepath = f"{folder}/{file[:paren]}"
+                content = file[paren+1:-1]
+                files_by_content[content].append(filepath)
+        return [f for f in files_by_content.values() if len(f) > 1]
 
 
 
