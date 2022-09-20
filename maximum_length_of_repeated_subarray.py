@@ -1,26 +1,24 @@
 """
-LeetCode :: July 2021 Challenge :: Maximum Length of Repeated Subarray
+LeetCode :: September 2022 Challenge :: Maximum Length of Repeated Subarray
 jramaswami
 """
 
 
 class Solution:
     def findLength(self, nums1, nums2):
-        # Make dp matrix
+
         dp = [[0 for _ in nums2] for _ in nums1]
 
-        def get(r, c):
-            """Convenience function."""
-            if r < 0 or c < 0:
-               return 0
-            return dp[r][c]
+        def get(i, j):
+            if i < 0 or j < 0:
+                return 0
+            return dp[i][j]
 
-        # Populate dp matrix
         soln = 0
-        for i, a in enumerate(nums1):
-            for j, b in enumerate(nums2):
-                if a == b:
-                    dp[i][j] = get(i-1, j-1) + 1
+        for i, x in enumerate(nums1):
+            for j, y in enumerate(nums2):
+                if x == y:
+                    dp[i][j] = get(i-1,j-1) + 1
                     soln = max(soln, dp[i][j])
         return soln
 
