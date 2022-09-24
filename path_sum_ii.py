@@ -1,33 +1,31 @@
 """
-LeetCode :: August 2021 Challenge :: Path Sum II
+LeetCode :: September 2022 Challenge :: Path Sum II
 jramaswami
 """
 
 
 class Solution:
     def pathSum(self, root, target_sum):
-
+        soln = []
 
         def is_leaf(node):
             return node.left is None and node.right is None
 
-
-        def traverse(node, curr_sum, curr_path, soln, target_sum):
+        def dfs(node, acc, curr_sum):
             if node is None:
                 return
 
+            acc.append(node.val)
             curr_sum += node.val
-            curr_path.append(node.val)
 
-            if is_leaf(node) and target_sum == curr_sum:
-                soln.append(list(curr_path))
+            if is_leaf(node):
+                if curr_sum == target_sum:
+                    soln.append(list(acc))
+            else:
+                dfs(node.left, acc, curr_sum)
+                dfs(node.right, acc, curr_sum)
 
-            traverse(node.left, curr_sum, curr_path, soln, target_sum)
-            traverse(node.right, curr_sum, curr_path, soln, target_sum)
+            acc.pop()
 
-            curr_path.pop()
-
-
-        soln = []
-        traverse(root, 0, [], soln, target_sum)
+        dfs(root, [], 0)
         return soln
