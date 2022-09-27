@@ -1,50 +1,46 @@
 """
-LeetCode :: July 2021 Challenge :: Push Dominoes
+LeetCode :: September 2022 Challenge :: Push Dominoes
 jramaswami
 """
 
 
-from math import inf
+import math
 
 
 class Solution:
     def pushDominoes(self, dominoes):
-        falling_left = [0 for _ in dominoes]
-        falling_right = [0 for _ in dominoes]
-
-        # Falling to the right.  O(N)
-        curr = inf
+        # Compute distance to right push. math.inf means no right push.
+        curr = math.inf
+        falling_right = [math.inf for _ in dominoes]
         for i in range(len(dominoes)):
-            if curr < inf and dominoes[i] == '.':
+            if dominoes[i] == 'R':
+                curr = 0
+            elif dominoes[i] == '.':
                 curr += 1
-            elif dominoes[i] == 'R':
-                curr = 1
-            elif dominoes[i] == 'L':
-                curr = inf
+            else:
+                curr = math.inf
             falling_right[i] = curr
 
-        # Falling to the left.  O(N)
-        curr = inf
-        for i in range(len(dominoes)-1, -1, -1):
-            if curr < inf and dominoes[i] == '.':
+        # Compute distance to left push. math.inf means no left push.
+        curr = math.inf
+        falling_left = [math.inf for _ in dominoes]
+        for i in range(len(dominoes) - 1, -1, -1):
+            if dominoes[i] == 'L':
+                curr = 0
+            elif dominoes[i] == '.':
                 curr += 1
-            elif dominoes[i] == 'L':
-                curr = 1
-            elif dominoes[i] == 'R':
-                curr = inf
+            else:
+                curr = math.inf
             falling_left[i] = curr
 
-        # The kind of push that arrives first is the push that goes in the
-        # solution.  If the two pushes arrive at the same time, then they
-        # will (or both don't arrive at all) then they cancel.
-        soln = []
-        for l, r in zip(falling_left, falling_right):
-            if l < r:
-                soln.append('L')
-            elif l > r:
-                soln.append('R')
-            else:
-                soln.append('.')
+        # Nearest push wins.  A tie means domino remains standing.
+        soln = list(dominoes)
+        for i, _ in enumerate(dominoes):
+            if dominoes[i] == '.':
+                if falling_left[i] < falling_right[i]:
+                    soln[i] = 'L'
+                elif falling_left[i] > falling_right[i]:
+                    soln[i] = 'R'
         return "".join(soln)
 
 
