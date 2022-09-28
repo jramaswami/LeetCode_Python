@@ -1,26 +1,29 @@
 """
-LeetCode :: April 2021 Challenge :: Remove Nth Node From End of List
+LeetCode :: September 2022 Challenge :: 19. Remove Nth Node From End of List
 jramaswami
 """
-from leetcode_linked_lists import *
+
+
 from typing import *
+from leetcode_linked_lists import *
 
-
-def solve0(node, n):
-    """Recursive solution."""
-    if node is None:
-        return node, 1
-
-    prev, i = solve0(node.next, n)
-    if i == n:
-        return prev, i + 1
-    else:
-        node.next = prev
-        return node, i + 1
 
 class Solution:
     def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
-        return solve0(head, n)[0]
+        curr = head
+        nodes = []
+        while curr:
+            nodes.append(curr)
+            curr = curr.next
+            nodes[-1].next = None
+        nodes[-n] = None
+        dummy = ListNode(0)
+        curr = dummy
+        for node in nodes:
+            if node is not None:
+                curr.next = node
+                curr = node
+        return dummy.next
 
 
 def test_1():
@@ -30,7 +33,8 @@ def test_1():
     result = Solution().removeNthFromEnd(make_list(head), n)
     print(result)
     assert make_arr(result) == expected
-    
+
+
 def test_2():
     head = [1]
     n = 1
@@ -38,6 +42,7 @@ def test_2():
     expected = []
     print(result)
     assert make_arr(result) == expected
+
 
 def test_3():
     head = [1,2]
