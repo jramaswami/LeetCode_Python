@@ -25,7 +25,7 @@ class HeapItem:
     def __lt__(self, other):
         "For heap, we put larger heights as less and first start less in a tie."
         if self.height == other.height:
-            return self.end < other.end
+            return self.stop < other.stop
         return self.height > other.height
 
     def __repr__(self):
@@ -97,5 +97,5 @@ def test_2():
 def test_3():
     "RTE"
     buildings = [[0,3,3],[1,5,3],[2,4,3],[3,7,3]]
-    expected = [[0,3],[5,0]]
+    expected = [[0,3],[7,0]]
     assert Solution().getSkyline(buildings) == expected
