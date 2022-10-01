@@ -25,7 +25,7 @@ class Solution:
             # Compute.
             single = rec(i+1)
             double = 0
-            if i + 1 < len(t) and 0 < (t[i] * 10) + t[i] <= 26:
+            if i + 1 < len(t) and 0 < (t[i] * 10) + t[i+1] <= 26:
                 double = rec(i+2)
             return single + double
 
