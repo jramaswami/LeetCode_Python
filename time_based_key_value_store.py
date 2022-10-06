@@ -22,7 +22,7 @@ class TimeMap:
 
     def get(self, key: str, timestamp: int) -> str:
         # Binary search
-        result = None
+        result = ""
         if key in self.data:
             lo = 0
             hi = len(self.data[key]) - 1
