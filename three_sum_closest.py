@@ -6,20 +6,18 @@ Thank You Larry!
 """
 
 
-import math
-
-
 class Solution:
     def threeSumClosest(self, nums, target):
         nums.sort()
-        soln = math.inf
+        soln = pow(10, 20)
         for i, _ in enumerate(nums):
             left, right = i+1, len(nums)-1
+            x = target - nums[i]
             while left < right:
                 t = nums[i] + nums[left] + nums[right]
                 if abs(target - t) < abs(target - soln):
                     soln = t
-                if t > target:
+                if t - nums[i] > x:
                     right -= 1
                 else:
                     left += 1
