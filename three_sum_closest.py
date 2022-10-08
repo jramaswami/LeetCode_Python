@@ -1,29 +1,28 @@
 """
 LeetCode :: October 2022 Challenge :: 3Sum Closest
 jramaswami
+
+Thank You Larry!
 """
 
 
 import math
-import bisect
 
 
 class Solution:
     def threeSumClosest(self, nums, target):
         nums.sort()
         soln = math.inf
-        for i, a in enumerate(nums):
-            for j, b in enumerate(nums[i+1:], start=i+1):
-                d = target - a - b
-                k = bisect.bisect_right(nums, d)
-                if k > 0 and k - 1 != i and k - 1 != j:
-                    t = a + b + nums[k-1]
-                    if abs(target - t) < abs(target - soln):
-                        soln = t
-                if k < len(nums) and k != i and k != j:
-                    t = a + b + nums[k]
-                    if abs(target - t) < abs(target - soln):
-                        soln = t
+        for i, _ in enumerate(nums):
+            left, right = i+1, len(nums)-1
+            while left < right:
+                t = nums[i] + nums[left] + nums[right]
+                if abs(target - t) < abs(target - soln):
+                    soln = t
+                if t > target:
+                    right -= 1
+                else:
+                    left += 1
         return soln
 
 
