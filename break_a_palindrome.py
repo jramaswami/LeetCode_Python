@@ -1,5 +1,5 @@
 """
-LeetCode :: September 2021 Challenge :: Break a Palindrome
+LeetCode :: October 2022 Challenge :: Break a Palindrome
 jramaswami
 """
 
@@ -7,25 +7,23 @@ jramaswami
 class Solution:
 
     def breakPalindrome(self, palindrome):
-        # Corner case: you cannot alter a palindrome of a single letter to make
-        # it lexicographically smaller non-palindrome.
-        if len(palindrome) <= 1:
+        # Corner case: you cannot make a 1 letter word /not/ a palindrome.
+        if len(palindrome) < 2:
             return ""
-        P = list(palindrome)
-        mid = len(P) // 2
-        if len(P) % 2 == 0:
-            mid += 1
-        # Find the first letter you can reduce.
-        for i, char in enumerate(P[:mid]):
-            if char != 'a':
-                P[i] = 'a'
-                return "".join(P)
-        # If you didn't find a reducible letter, find the last
-        # letter you can increase by one.  This should be the
-        # last letter in the palindrome.
-        P[-1] = chr(ord(P[-1]) + 1)
-        return "".join(P)
 
+        # We want to lower the first letter that we can but this excludes
+        # the middle letter of an odd length palindrome because that won't
+        # actually break the palindrome.
+        mid = -1
+        if len(palindrome) % 2:
+            mid = len(palindrome) // 2
+        print(palindrome, len(palindrome), mid)
+        for i, c in enumerate(palindrome):
+            if i != mid and palindrome[i] != 'a':
+                return palindrome[:i] + 'a' + palindrome[i+1:]
+        # If we have reached this point then all the changeable letters are
+        # 'a', so we must change the last to b.
+        return palindrome[:-1] + 'b'
 
 
 def test_1():
