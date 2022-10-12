@@ -8,16 +8,17 @@ from typing import *
 
 
 class Solution:
-
     def largestPerimeter(self, nums: List[int]) -> int:
-        a, b, c = nums
-        if b + c <= a:
-            return 0
-        elif a + c <= b:
-            return 0
-        elif a + b <= c:
-            return 0
-        return a + b + c
+        soln = 0
+        nums.sort()
+        for i, a in enumerate(nums):
+            for j, b in enumerate(nums[i+1:], start=i+1):
+                for k, c in enumerate(nums[j+1:], start=j+1):
+                    print(a, b, c)
+                    if abs(a - b) < c < a + b:
+                        soln = max(soln, a + b + c)
+        return soln
+
 
 
 def test_1():
@@ -35,5 +36,5 @@ def test_2():
 def test_3():
     "RTE. Made assumption there were three sides only, but there can be more."
     nums = [3,2,3,4]
-    expected = -1
-    assert Solution.largestPerimeter(nums) == expected
+    expected = 10
+    assert Solution().largestPerimeter(nums) == expected
