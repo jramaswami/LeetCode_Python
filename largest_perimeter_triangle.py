@@ -11,12 +11,10 @@ class Solution:
     def largestPerimeter(self, nums: List[int]) -> int:
         soln = 0
         nums.sort()
-        for i, a in enumerate(nums):
-            for j, b in enumerate(nums[i+1:], start=i+1):
-                for k, c in enumerate(nums[j+1:], start=j+1):
-                    print(a, b, c)
-                    if abs(a - b) < c < a + b:
-                        soln = max(soln, a + b + c)
+        for i, _ in enumerate(nums[:-2]):
+            a, b, c = nums[i:i+3]
+            if abs(a - b) < c < a + b:
+                soln = max(soln, a + b + c)
         return soln
 
 
