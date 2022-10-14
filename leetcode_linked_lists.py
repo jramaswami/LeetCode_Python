@@ -1,6 +1,8 @@
 """
 Functions for testing linked list problems on LeetCode.
 """
+
+
 class ListNode:
     def __init__(self, x):
         self.val = x
@@ -43,6 +45,3 @@ def reverse_linked_list(node):
         current = following
 
     return previous
-
-
-
