@@ -12,8 +12,8 @@ import itertools
 
 class Solution:
     def minMutation(self, start: str, end: str, bank: List[str]) -> int:
+        # Start gene should be assumed as valid (so add it to the bank).
         bank.append(start)
-        bank.append(end)
         bank0 = set(bank)
 
         adj = collections.defaultdict(list)
