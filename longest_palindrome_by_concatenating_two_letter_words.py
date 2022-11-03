@@ -10,20 +10,45 @@ from typing import *
 
 class Solution:
     def longestPalindrome(self, words: List[str]) -> int:
-        same_letter_pair = 0
-        two_letter_pairs = 0
+        # Count number of pairs: O(26^2)
         ord_a = ord('a')
-        pair_matrix = [[False for _ in range(26)] for _ in range(26)]
+        pair_matrix = [[0 for _ in range(26)] for _ in range(26)]
         for x, y in words:
             i = ord(x) - ord_a
             j = ord(y) - ord_a
-            if i == j:
-                same_letter_pair = 1
-            else:
-                if pair_matrix[i][j] == False and pair_matrix[j][i] == True:
-                    two_letter_pairs += 1
-            pair_matrix[i][j] = True
-        return 2 * ((2 * two_letter_pairs) + same_letter_pair)
+            pair_matrix[i][j] += True
+
+        # Count the number of left/right pairs and if there is *any* middle pair.
+        # O(26^2)
+        lr_prs = 0
+        md_pr = 0
+        for i in range(26):
+            for j in range(i, 26):
+                # Select the smallest number from ij and ji.  If the letters
+                # are the same we will get the total number of pairs. If they
+                # aren't the same we will get number of matching pairs.
+                k = min(pair_matrix[i][j], pair_matrix[j][i])
+                if k > 0:
+                    if i == j:
+                        # For two letter pairs, take matching two letter pairs
+                        # as left/right.  We got total number of pairs so
+                        # we must divide by 2.  Any odd two letter pair can go
+                        # in the middle.  But only one middle pair is allowed.
+                        lr, md = divmod(k, 2)
+                    else:
+                        # For different letter pairs, we take them as
+                        # left/right.  We got the half the pairs, so that
+                        # is the right number.
+                        lr, md = k, 0
+                    lr_prs += lr
+                    md_pr = max(md_pr, md)
+
+        # We now have the number of left/right pairs and if there is a middle
+        # pair.  We must double the left/right pairs because they each have
+        # a corresponding pair.  We then multiply by 2 because we need the
+        # number of letters.
+        return 2 * ((2 * lr_prs) + md_pr)
+
 
 
 def test_1():
