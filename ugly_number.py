@@ -8,13 +8,15 @@ jramaswami
 class Solution:
 
     def isUgly(self, n: int) -> bool:
+        if n < 1:
+            return False
+
         for p in [2, 3, 5]:
             while n % p == 0:
                 n //= p
         if n == 1:
             return True
         return False
-
 
 
 def test_1():
