@@ -3,30 +3,30 @@ LeetCode :: October 2021 Challenge :: 279. Perfect Squares
 jramaswami
 """
 
-import math
-
 
 class Solution:
     def numSquares(self, n):
-        # DP[sum] = minimum number of squares required
-        perfect_sums = [math.inf for _ in range(n+1)]
-
-        # Generate perfect squares
         k = 1
         perfect_squares = []
         while k * k <= n:
             perfect_squares.append(k * k)
-            perfect_sums[k * k] = 1
             k += 1
 
-        # Perform dp
-        for i in range(1, n+1):
-            if perfect_sums[i] < math.inf:
-                for k in perfect_squares:
-                    if k + i > n:
+
+        queue = set(perfect_squares)
+        new_queue = set()
+        soln = 1
+        while queue:
+            for k in queue:
+                if k == n:
+                    return soln
+                for p in perfect_squares:
+                    if p + k > n:
                         break
-                    perfect_sums[i + k] = min(perfect_sums[i + k], perfect_sums[i] + 1)
-        return perfect_sums[n]
+                    new_queue.add(p + k)
+
+            queue, new_queue = new_queue, set()
+            soln += 1
 
 
 def test_1():
