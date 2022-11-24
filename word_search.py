@@ -5,11 +5,18 @@ jramaswami
 """
 
 
+import collections
+import itertools
+import string
+
+
 class Solution:
 
     OFFSETS = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
     def exist(self, board, word):
+
+        visited = [[False for _ in row] for row in board]
 
         def inbounds(r, c):
             "Return True if (r, c) is inside the board."
@@ -22,22 +29,27 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
-        def dfs(r, c, i, visited):
-            visited[r][c] = True
+        def dfs(r, c, i):
             if board[r][c] == word[i]:
+                visited[r][c] = True
                 if i == len(word) - 1:
                     return True
                 for r0, c0 in neighbors(r, c):
-                    if not visited[r0][c0]:
-                        if dfs(r0, c0, i+1, visited):
-                            return True
-            visited[r][c] = False
+                    if not visited[r0][c0] and dfs(r0, c0, i+1):
+                        return True
+                visited[r][c] = False
             return False
 
-        visited = [[False for _ in row] for row in board]
+        # Make sure there are enough of each letter on the baord to make the word.
+        word_freqs = collections.Counter(word)
+        board_freqs = collections.Counter(itertools.chain(*board))
+        for c in string.ascii_letters:
+            if word_freqs[c] > board_freqs[c]:
+                return False
+
         for r, row in enumerate(board):
             for c, _ in enumerate(row):
-                if dfs(r, c, 0, visited):
+                if dfs(r, c, 0):
                     return True
         return False
 
