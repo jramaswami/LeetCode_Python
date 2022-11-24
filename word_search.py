@@ -1,44 +1,46 @@
 """
-LeetCode :: October 2021 Challenge :: 79. Word Search
+LeetCode :: 79. Word Search
+November 2022 Challenge
 jramaswami
 """
 
 
 class Solution:
 
+    OFFSETS = ((1, 0), (-1, 0), (0, 1), (0, -1))
+
     def exist(self, board, word):
 
         def inbounds(r, c):
-            """Return True if (r, c) is inside the board."""
-            return r >= 0 and c >= 0 and r < len(board) and c < len(board[0])
+            "Return True if (r, c) is inside the board."
+            return r >= 0 and r < len(board) and c >= 0 and c < len(board[r])
 
         def neighbors(r, c):
-            """Return the neighbors of (r, c)."""
-            offsets = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-            for dr, dc in offsets:
+            "Return the neighbors of (r, c)"
+            for dr, dc in Solution.OFFSETS:
                 r0, c0 = r + dr, c + dc
                 if inbounds(r0, c0):
                     yield r0, c0
 
         def dfs(r, c, i, visited):
-            """DFS to see if the word is present."""
+            visited[r][c] = True
             if board[r][c] == word[i]:
-
                 if i == len(word) - 1:
                     return True
-
-                visited.add((r, c))
                 for r0, c0 in neighbors(r, c):
-                    if (r0, c0) not in visited and dfs(r0, c0, i+1, visited):
-                        return True
-                visited.remove((r, c))
+                    if not visited[r0][c0]:
+                        if dfs(r0, c0, i+1, visited):
+                            return True
+            visited[r][c] = False
             return False
 
+        visited = [[False for _ in row] for row in board]
         for r, row in enumerate(board):
             for c, _ in enumerate(row):
-                if dfs(r, c, 0, set()):
+                if dfs(r, c, 0, visited):
                     return True
         return False
+
 
 
 def test_1():
@@ -67,4 +69,12 @@ def test_4():
     board = [["a"]]
     word = "a"
     expected = True
+    assert Solution().exist(board, word) == expected
+
+
+def test_5():
+    "TLE"
+    board = [["A","A","A","A","A","A"],["A","A","A","A","A","A"],["A","A","A","A","A","A"],["A","A","A","A","A","A"],["A","A","A","A", "A","A"],["A","A","A","A","A","A"]]
+    word = "AAAAAAAAAAAAAAB"
+    expected = False
     assert Solution().exist(board, word) == expected
