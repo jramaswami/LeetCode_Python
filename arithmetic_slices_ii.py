@@ -12,18 +12,25 @@ class Solution:
 
     def numberOfArithmeticSlices(self, nums):
         N = len(nums)
-        soln = 0
-        # dp[index][length of arithmetic sequence][delta] = frequency
-        dp = [[collections.defaultdict(int) for _ in range(N+1)] for _ in nums]
+
+        # Dynamic programming.
+        # dp[index][delta][length] = frequency
+        dp = [collections.defaultdict(lambda: collections.defaultdict(int)) for _ in nums]
         for j, right in enumerate(nums[1:], start=1):
             for i, left in enumerate(nums[:j]):
-                k = right - left
-                # At minimum create sequence of length 2.
-                dp[j][2][k] = 1
-                for length in range(2, N):
-                    # Extend each sequence by 1.
-                    dp[j][length+1][k] += dp[i][length][k]
-                    soln += dp[j][length + 1][k]
+                delta = right - left
+                # Make sequence of 2 numbers.
+                dp[j][delta][2] += 1
+                for length, k in dp[i][delta].items():
+                    dp[j][delta][length+1] += k
+
+        # Count solutions.
+        soln = 0
+        for i, _ in enumerate(nums):
+            for delta in dp[i]:
+                for length, freq in dp[i][delta].items():
+                    if length >= 3:
+                        soln += freq
         return soln
 
 
