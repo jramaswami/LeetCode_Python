@@ -1,14 +1,17 @@
 """
 LeetCode :: 1207. Unique Number of Occurrences
+November 2022 Challenge
 jramaswami
 """
+
+
 from typing import *
-from collections import Counter
+import collections
 
 
 class Solution:
     def uniqueOccurrences(self, arr: List[int]) -> bool:
-        ctr = Counter(arr)
+        ctr = collections.Counter(arr)
         freqs = set(ctr.values())
         return len(ctr) == len(freqs)
 
