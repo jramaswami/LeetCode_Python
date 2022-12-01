@@ -1,24 +1,20 @@
 """
-LeetCode :: April 2021 Challenge :: Determine if String Halves Are Alike
+LeetCode :: Determine if String Halves Are Alike
+November 2022 Challenge
 jramaswami
 """
+
+
 from typing import *
 
 
 class Solution:
     def halvesAreAlike(self, s: str) -> bool:
-        vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
-        left = 0
-        right = 0
+        vowels = 'aeiouAEIOU'
         mid = len(s) // 2
-        for i, c in enumerate(s):
-            if c in vowels:
-                if i < mid:
-                    left += 1
-                else:
-                    right += 1
-
-        return left == right
+        left_vowels = sum(c in vowels for c in s[:mid])
+        right_vowels = sum(c in vowels for c in s[mid:])
+        return left_vowels == right_vowels
 
 
 def test_1():
