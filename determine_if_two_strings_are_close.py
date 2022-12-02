@@ -10,6 +10,10 @@ import collections
 
 class Solution:
     def closeStrings(self, word1: str, word2: str) -> bool:
+        # You can swap letters any way you want, so the order does not matter.
+        # You can swap the group frequencies as well, so the order of frequency
+        # does not matter either.  You must have the same frequencies and the
+        # same letters in both words.
         freqs1 = collections.Counter(word1)
         freqs2 = collections.Counter(word2)
         return (
