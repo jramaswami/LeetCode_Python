@@ -13,8 +13,8 @@ class Solution:
         freqs1 = collections.Counter(word1)
         freqs2 = collections.Counter(word2)
         return (
-            set(freqs1.values()) == set(freqs2.values()) and
-            set(freqs1.keys()) == set(freqs2.keys())
+            sorted(freqs1.values()) == sorted(freqs2.values()) and
+            set(word1) == set(word2)
         )
 
 
