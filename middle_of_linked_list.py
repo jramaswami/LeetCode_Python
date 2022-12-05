@@ -1,5 +1,7 @@
 """
-LeetCode :: December 2021 Challenge :: 876. Middle of the Linked List
+LeetCode
+876. Middle of the Linked List
+December 2022 Challenge
 jramaswami
 """
 
