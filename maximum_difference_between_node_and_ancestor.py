@@ -1,5 +1,7 @@
 """
-LeetCode :: December 2021 Challenge :: 1026. Maximum Difference Between Node and Ancestor
+LeetCode
+1026. Maximum Difference Between Node and Ancestor
+December 2022 Challenge
 jramaswami
 """
 
@@ -7,23 +9,21 @@ jramaswami
 class Solution:
     def maxAncestorDiff(self, root: Optional[TreeNode]) -> int:
 
-        def traverse(node, max_val, min_val):
+        def traverse(node):
+            "Return min_child, max_child, max_result"
             if node is None:
-                return max_val - min_val
+                return math.inf, -math.inf, 0
 
-            left_val = traverse(
-                node.left,
-                max(node.val, max_val),
-                min(node.val, min_val)
+            left_min, left_max, left_result = traverse(node.left)
+            right_min, right_max, right_result = traverse(node.right)
+
+            my_min = min(left_min, right_min, node.val)
+            my_max = max(left_max, right_max, node.val)
+            my_result = max(
+                left_result, right_result,
+                abs(node.val - my_min), abs(node.val - my_max)
             )
 
-            right_val = traverse(
-                node.right,
-                max(node.val, max_val),
-                min(node.val, min_val)
-            )
+            return my_min, my_max, my_result
 
-            return max(left_val, right_val)
-
-        return traverse(root, root.val, root.val)
-
+        return traverse(root)[2]
