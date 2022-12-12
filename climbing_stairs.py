@@ -1,20 +1,26 @@
 """
-LeetCode :: October 2021 Challenge :: 70. Climbing Stairs
+LeetCode
+70. Climbing Stairs
+December 2022 Challenge
 jramaswami
 """
+
+
+import functools
 
 
 class Solution:
 
     def climbStairs(self, steps):
-        dp = [0 for _ in range(steps+1)]
-        dp[0] = 1
-        for i, k in enumerate(dp):
-            if i + 1 < len(dp):
-                dp[i+1] += k
-            if i + 2 < len(dp):
-                dp[i+2] += k
-        return dp[-1]
+        @functools.cache
+        def solve(step):
+            if step < 0:
+                return 0
+            if step == 0:
+                return 1
+            return solve(step-2) + solve(step-1)
+
+        return solve(steps)
 
 
 def test_1():
