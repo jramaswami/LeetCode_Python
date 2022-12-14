@@ -1,5 +1,7 @@
 """
-LeetCode :: December 2021 Challenge :: 198. House Robber
+LeetCode
+198. House Robber
+December 2022 Challenge
 jramaswami
 """
 
@@ -12,22 +14,18 @@ class Solution:
     def rob(self, nums):
 
         @functools.cache
-        def can_rob(i):
-            # Base case:
+        def rec(i):
             if i >= len(nums):
                 return 0
 
-            # You can rob this house, but you will have to skip the next
-            # in order to avoid alerting the police.
-            max_rob = nums[i] + can_rob(i + 2)
+            return max(
+                # Rob this house.
+                nums[i] + rec(i+2),
+                # Don't rob this house.
+                rec(i+1)
+            )
 
-            # You can skip this house and rob the next one.
-            max_skip = can_rob(i + 1)
-
-            return max(max_rob, max_skip)
-
-        return can_rob(0)
-
+        return rec(0)
 
 def test_1():
     nums = [1,2,3,1]
