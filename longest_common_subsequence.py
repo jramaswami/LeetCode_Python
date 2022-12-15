@@ -1,26 +1,27 @@
 """
-LeetCode :: October 2021 Challenge :: 1143. Longest Common Subsequence
+LeetCode
+1143. Longest Common Subsequence
+December 2022 Challenge
 jramaswami
 """
 
 
-from functools import lru_cache
+import functools
 
 
 class Solution:
     def longestCommonSubsequence(self, text1, text2):
-        @lru_cache(maxsize=None)
-        def lcs(i, j):
-            # Base case.
-            if i < 0 or j < 0:
+        @functools.cache
+        def rec(i, j):
+            if i >= len(text1):
                 return 0
-            # Case 1: equals letters
+            if j >= len(text2):
+                return 0
             if text1[i] == text2[j]:
-                return lcs(i - 1, j - 1) + 1
-            # Case 2: non-equal letters
-            return max(lcs(i, j - 1), lcs(i - 1, j))
+                return 1 + rec(i+1, j+1)
+            return max(rec(i+1, j), rec(i, j+1))
 
-        return lcs(len(text1) - 1, len(text2) - 1)
+        return rec(0, 0)
 
 
 def test_1():
