@@ -1,8 +1,13 @@
 """
-LeetCode :: 232. Implement Queue using Stacks
+LeetCode
+232. Implement Queue using Stacks
+December 2022 Challenge
 jramaswami
 """
+
+
 from typing import *
+
 
 class MyQueue:
 
@@ -12,14 +17,15 @@ class MyQueue:
         """
         self.stack_in = []
         self.stack_out = []
-        
+
 
     def push(self, x: int) -> None:
         """
         Push element x to the back of queue.
         """
         self.stack_in.append(x)
-        
+
+
 
     def pop(self) -> int:
         """
@@ -29,7 +35,7 @@ class MyQueue:
             while self.stack_in:
                 self.stack_out.append(self.stack_in.pop())
         return self.stack_out.pop()
-        
+
 
     def peek(self) -> int:
         """
@@ -39,13 +45,14 @@ class MyQueue:
             while self.stack_in:
                 self.stack_out.append(self.stack_in.pop())
         return self.stack_out[-1]
-        
+
 
     def empty(self) -> bool:
         """
         Returns whether the queue is empty.
         """
-        return not self.stack_in and not self.stack_out
+        return (not self.stack_out) and (not self.stack_in)
+
 
 def test_1():
     myQueue = MyQueue()
