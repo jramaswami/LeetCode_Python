@@ -1,5 +1,7 @@
 """
-LeetCode :: May 2021 Challenge :: Evaluate Reverse Polish Notation
+LeetCode
+Evaluate Reverse Polish Notation
+December 2022 Challenge
 jramaswami
 """
 
