@@ -1,42 +1,29 @@
 """
-LeetCode :: November 2021 Challenge :: 739. Daily Temperatures
+LeetCode ::
+739. Daily Temperatures
+December 2022 Challenge
 jramaswami
-
-Thank you Larry!
 """
 
 
 import collections
 
 
-SItem = collections.namedtuple('SItem', ['temperature', 'index'])
+Item = collections.namedtuple('Item', ['index', 'temp'])
 
 
 class Solution:
     def dailyTemperatures(self, temperatures):
-        answers = [len(temperatures) for _ in temperatures]
-        stack = []
-        for i in range(len(temperatures) - 1, -1, -1):
-            # Remove any values smaller than temperature[i] because they
-            # will not be the nearest higher temperature to anything to
-            # the left of temperatures[i] because temperatures[i] will be.
-            while stack and stack[-1].temperature <= temperatures[i]:
-                stack.pop()
-
-            if stack:
-                # The only remaining items on the stack are greater than
-                # temperatures[i].  The top of the stack will be the first
-                # temperature higher than temperatures[i].
-                answers[i] = stack[-1].index - i
-            else:
-                # There is nothing on the stack, therefore, there is no answer
-                # for temperatures[i].
-                answers[i] = 0
-
-            # Add temperatures[i] to the stack.
-            stack.append(SItem(temperatures[i], i))
-
-        return answers
+        soln = [0 for _ in temperatures]
+        # Monoqueue invariant: temperatures from left to right are descending.
+        monoqueue = []
+        for i, t in enumerate(temperatures):
+            curr_item = Item(i, t)
+            while monoqueue and monoqueue[-1].temp < curr_item.temp:
+                prev_item = monoqueue.pop()
+                soln[prev_item.index] = curr_item.index - prev_item.index
+            monoqueue.append(curr_item)
+        return soln
 
 
 def test_1():
