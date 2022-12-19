@@ -15,7 +15,7 @@ class Solution:
         graph = [[] for _ in range(n)]
         for u, v in edges:
             graph[u].append(v)
-            graph[v].append(v)
+            graph[v].append(u)
 
         visited = [False for _ in range(n)]
         visited[source] = True
