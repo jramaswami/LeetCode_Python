@@ -1,24 +1,28 @@
 """
-LeetCode :: March 2021 Challenge :: Keys and Rooms
+LeetCode
+Keys and Rooms
+December 2022 Challenge
 jramaswami
 """
+
+
 from typing import *
-from collections import deque
+import collections
 
 
 class Solution:
     def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
-        keychain = set()
-        keychain.add(0)
-        queue = deque()
+        queue = collections.deque()
+        visited = [False for _ in rooms]
+        visited[0] = True
         queue.append(0)
         while queue:
-            room = queue.popleft()
-            for key in rooms[room]:
-                if key not in keychain:
-                    keychain.add(key)
-                    queue.append(key)
-        return len(keychain) == len(rooms)
+            r = queue.popleft()
+            for p in rooms[r]:
+                if not visited[p]:
+                    visited[p] = True
+                    queue.append(p)
+        return all(visited)
 
 
 def test_1():
