@@ -25,6 +25,7 @@ class Solution:
         graph = [[] for _ in range(N)]
         for u, v in dislikes:
             graph[u].append(v)
+            graph[v].append(u)
 
         for x in range(1, N):
             if color[x] == UNVISITED:
