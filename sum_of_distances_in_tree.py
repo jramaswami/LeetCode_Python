@@ -1,9 +1,12 @@
 """
-LeetCode :: September 2021 Challenge :: Sum of Distances in Tree
+LeetCode
+Sum of Distances in Tree
+December 2022 Challenge
 jramaswami
 """
 
-from collections import deque
+
+import collections
 
 
 class Solution:
@@ -42,7 +45,7 @@ class Solution:
         # subtree by 1 and decreasing the distance of every node in the
         # current node's subtree by 1.  Use BFS to populate in a way that
         # ensures that the parent soln has been computed before a child soln.
-        queue = deque()
+        queue = collections.deque()
         queue.extend(adj[0])
         while queue:
             # Compute solution for u.
