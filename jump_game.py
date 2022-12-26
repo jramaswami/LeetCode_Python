@@ -20,7 +20,7 @@ class Solution:
             if u == len(nums) - 1:
                 return True
             for x in range(1, nums[u]+1):
-                if not visited[u+x]:
+                if u+x < len(nums) and not visited[u+x]:
                     visited[u+x] = True
                     heapq.heappush(queue, -(u+x))
         return False
