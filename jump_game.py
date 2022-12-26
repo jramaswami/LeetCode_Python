@@ -1,17 +1,29 @@
 """
-LeetCode :: October 2021 Challenge :: Jump Game
+LeetCode
+Jump Game
+December 2022 Challenge
 jramaswami
 """
+
+
+import heapq
 
 
 class Solution:
 
     def canJump(solve, nums):
-        max_reachable = 0
-        for i, n in enumerate(nums):
-            if i <= max_reachable:
-                max_reachable =  max(max_reachable, i + n)
-        return max_reachable >= len(nums) - 1
+        visited = [False for _ in nums]
+        visited[0] = True
+        queue = [0]
+        while queue:
+            u = -heapq.heappop(queue)
+            if u == len(nums) - 1:
+                return True
+            for x in range(1, nums[u]+1):
+                if not visited[u+x]:
+                    visited[u+x] = True
+                    heapq.heappush(queue, -(u+x))
+        return False
 
 
 def test_1():
@@ -32,4 +44,10 @@ def test_3():
 def test_4():
     """WA"""
     nums = [0]
+    assert Solution().canJump(nums) == True
+
+
+def test_5():
+    "RTE"
+    nums = [2, 0]
     assert Solution().canJump(nums) == True
