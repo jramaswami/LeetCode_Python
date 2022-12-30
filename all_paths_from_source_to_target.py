@@ -1,23 +1,25 @@
 """
-LeetCode :: November 2021 Challenge :: 797. All Paths From Source to Target
+LeetCode
+797. All Paths From Source to Target
+December 2022 Challenge
 jramaswami
 """
 
 
 class Solution:
     def allPathsSourceTarget(self, graph):
-
-        def dfs(node, acc, soln):
-            acc.append(node)
-            if node == len(graph) - 1:
-                soln.append(list(acc))
-            else:
-                for neighbor in graph[node]:
-                    dfs(neighbor, acc, soln)
-            acc.pop()
-
         soln = []
-        dfs(0, [], soln)
+        path = []
+
+        def dfs(u):
+            path.append(u)
+            if u == len(graph) - 1:
+                soln.append(list(path))
+            for v in graph[u]:
+                dfs(v)
+            path.pop()
+
+        dfs(0)
         return soln
 
 
