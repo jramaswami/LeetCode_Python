@@ -1,61 +1,57 @@
 """
-LeetCode :: November 2021 Challenge :: 980. Unique Paths III
+LeetCode
+980. Unique Paths III
+December 2022 Challenge
 jramaswami
 """
 
 
-class Solver:
-    START = 1
-    END = 2
-    EMPTY = 0
-    OBSTACLE = -1
-    OFFSETS = ((1, 0), (-1, 0), (0, 1), (0, -1))
-
-    def __init__(self, grid):
-        self.grid = grid
-        self.visited = [[False for _ in row] for row in grid]
-        self.soln = 0
-        self.visited_count = 0
-
-        # Find the starting point and empty cells.
-        self.empty_cells = 0
-        for r, row in enumerate(grid):
-            for c, cell in enumerate(row):
-                if cell == Solver.START:
-                    self.start = (r, c)
-                elif cell == Solver.EMPTY:
-                    self.empty_cells += 1
-
-    def _inbounds(self, r, c):
-        return r >= 0 and c >= 0 and r < len(self.grid) and c < len(self.grid[r])
-
-    def _neighbors(self, r, c):
-        for dr, dc in Solver.OFFSETS:
-            r0, c0 = r + dr, c + dc
-            if self._inbounds(r0, c0):
-                yield r0, c0
-
-    def _dfs(self, r, c):
-        self.visited[r][c] = True
-        self.visited_count += 1
-        if self.grid[r][c] == Solver.END:
-            if self.visited_count == self.empty_cells + 2:
-                self.soln += 1
-        else:
-            for r0, c0 in self._neighbors(r, c):
-                if not self.visited[r0][c0] and self.grid[r0][c0] != Solver.OBSTACLE:
-                    self._dfs(r0, c0)
-
-        self.visited_count -= 1
-        self.visited[r][c] = False
-
-    def solve(self):
-        self._dfs(*self.start)
-        return self.soln
-
 class Solution:
     def uniquePathsIII(self, grid):
-        return Solver(grid).solve()
+        START = 1
+        TARGET = 2
+        OBSTACLE = -1
+        OFFSETS = ((0, 1), (0, -1), (1, 0), (-1, 0))
+        visited = [[False for _ in row] for row in grid]
+
+        def inbounds(r, c):
+            "Return True if (r, c) is inbounds."
+            return r >= 0 and c >= 0 and r < len(grid) and c < len(grid[r])
+
+        def neighbors(r, c):
+            "Return the 4-neighbors of (r, c)."
+            for dr, dc in OFFSETS:
+                r0, c0 = r + dr, c + dc
+                if inbounds(r0, c0):
+                    yield r0, c0
+
+        def dfs(r, c, k, empty_cells):
+            "DFS to count number of was to reach target cell."
+            result = 0
+
+            if grid[r][c] == TARGET:
+                if k == empty_cells:
+                    result = 1
+            else:
+                result = 0
+                visited[r][c] = True
+                for r0, c0 in neighbors(r, c):
+                    if not visited[r0][c0] and grid[r0][c0] != OBSTACLE:
+                        result += dfs(r0, c0, k+1, empty_cells)
+                visited[r][c] = False
+
+            return result
+
+        init_r = init_c = -1
+        empty_cells = 0
+        for r, row in enumerate(grid):
+            for c, val in enumerate(row):
+                if val == START:
+                    init_r, init_c = r, c
+                if val != OBSTACLE:
+                    empty_cells += 1
+
+        return dfs(init_r, init_c, 1, empty_cells)
 
 
 def test_1():
