@@ -1,25 +1,30 @@
 """
-LeetCode :: January 2022 Challenge :: 290. Word Pattern
+LeetCode
+290. Word Pattern
+January 2023 Challenge
 jramaswami
 """
 
 
+from typing import *
+
+
 class Solution:
     def wordPattern(self, pattern: str, s: str) -> bool:
-        visited_pattern = dict()
-        visited_word = dict()
-        tokens = s.strip().split()
-        if len(pattern) != len(tokens):
+        tokens = s.split()
+        if len(tokens) != len(pattern):
             return False
-        for p, w in zip(pattern, tokens):
-            if p in visited_pattern and  w != visited_pattern[p]:
-                return False
-            if w in visited_word and visited_word[w] != p:
-                return False
-            visited_pattern[p] = w
-            visited_word[w] = p
-        return True
 
+        pattern_visited = dict()
+        token_visited = dict()
+        for p, t in zip(pattern, tokens):
+            if p in pattern_visited and t != pattern_visited[p]:
+                return False
+            if t in token_visited and p != token_visited[t]:
+                return False
+            pattern_visited[p] = t
+            token_visited[t] = p
+        return True
 
 
 def test_1():
