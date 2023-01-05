@@ -1,44 +1,50 @@
 """
-LeetCode :: January 2022 Challenge :: 452. Minimum Number of Arrows to Burst Balloons
+LeetCode
+452. Minimum Number of Arrows to Burst Balloons
+January 2023 Challenge
 jramaswami
 """
 
 
 import collections
-import enum
-
-
-class EType(enum.IntEnum):
-    START = -1
-    STOP = 1
+import math
 
 
 Event = collections.namedtuple('Event', ['x', 'type', 'index'])
 
 
+START = -1
+STOP = 1
+WHITE = 0
+GRAY = 1
+BLACK = 2
+
+
 class Solution:
     def findMinArrowShots(self, points):
+        color = [WHITE for _ in points]
         events = []
-        for i, (a, b) in enumerate(points):
-            events.append(Event(a, EType.START, i))
-            events.append(Event(b, EType.STOP, i))
+        for i, (x1, x2) in enumerate(points):
+            events.append(Event(x1, START, i))
+            events.append(Event(x2, STOP, i))
         events.sort()
 
         soln = 0
-        curr_balloons = set()
-        for e in events:
-            if e.type == EType.START:
-                curr_balloons.add(e.index)
-            else:
-                if e.index in curr_balloons:
-                    # We are going to remove a balloon.  This is the max for
-                    # this interval of xs.
+        gray_balloons = []
+        for event in events:
+            print(gray_balloons, event)
+            if event.type == STOP:
+                assert color[event.index] != WHITE
+                if color[event.index] == GRAY:
+                    for b in gray_balloons:
+                        color[b] = BLACK
+                    gray_balloons = []
                     soln += 1
-                    curr_balloons.clear()
-                else:
-                    # We have already shot this balloon so we can ignore it
-                    # passing out of range.
-                    pass
+            else:
+                gray_balloons.append(event.index)
+                color[event.index] = GRAY
+        if gray_balloons:
+            soln += 1
         return soln
 
 
