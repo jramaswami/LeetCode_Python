@@ -11,25 +11,25 @@ from typing import *
 
 class Solution:
     def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
-
-        def can_make_it(start_station):
-            """
-            Return True if the car can make it from start_station
-            around the track.
-            """
-            curr_station = start_station
-            curr_gas = 0
-            for _ in gas:
-                curr_gas += gas[curr_station]
-                curr_gas -= cost[curr_station]
-                if curr_gas < 0:
-                    return False
-                curr_station = (curr_station + 1) % len(gas)
-            return True
-
-        for start_station, _ in enumerate(gas):
-            if can_make_it(start_station):
-                return start_station
+        N = len(gas)
+        curr_start = 0
+        curr_gas = 0
+        for i in range(2*N):
+            print(i, curr_gas)
+            # Did the car make it to this station?
+            if curr_gas < 0:
+                # If it did not, then reset start to this station.
+                # If we cannot make it to this station from the starting
+                # station then we cannot make it from any of the other
+                # previous stations either.
+                curr_start = i
+                curr_gas = 0
+            # Did we reach the end?
+            if i == curr_start + N:
+                return curr_start
+            # Fill up at this station and travel to the next.
+            curr_gas += gas[i % N]
+            curr_gas -= cost[i % N]
         return -1
 
 
