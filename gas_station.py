@@ -1,29 +1,35 @@
 """
-LeetCode :: January 2022 Challenge :: 134. Gas Station
+LeetCode
+134. Gas Station
+January 2022 Challenge
 jramaswami
 """
 
 
 from typing import *
-from itertools import repeat, chain
 
 
 class Solution:
     def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
-        # Create cycle of two of each list.
-        gas0 = chain.from_iterable(repeat(gas, 2))
-        cost0 = chain.from_iterable(repeat(cost, 2))
-        fuel_tank = 0
-        start = 0
-        for i, (g, c) in enumerate(zip(gas0, cost0)):
-            if i == start + len(gas):
-                return start
-            fuel_tank += g
-            if fuel_tank < c:
-                fuel_tank = 0
-                start = i + 1
-            else:
-                fuel_tank -= c
+
+        def can_make_it(start_station):
+            """
+            Return True if the car can make it from start_station
+            around the track.
+            """
+            curr_station = start_station
+            curr_gas = 0
+            for _ in gas:
+                curr_gas += gas[curr_station]
+                curr_gas -= cost[curr_station]
+                if curr_gas < 0:
+                    return False
+                curr_station = (curr_station + 1) % len(gas)
+            return True
+
+        for start_station, _ in enumerate(gas):
+            if can_make_it(start_station):
+                return start_station
         return -1
 
 
