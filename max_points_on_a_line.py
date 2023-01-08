@@ -10,6 +10,7 @@ from typing import *
 import collections
 import math
 
+
 class Solution:
     def maxPoints(self, points: List[List[int]]) -> int:
         def compute_slope(p1, p2):
@@ -25,14 +26,13 @@ class Solution:
         EPS = pow(10, -5)
         points0 = sorted(tuple(p) for p in points)
         slopes = collections.defaultdict(list)
-        soln = 0
+        soln = 1
         for i, p1 in enumerate(points0):
             for p2 in points0[i+1:]:
                 m = compute_slope(p1, p2)
                 collinear_points = 2
                 for m0, k in slopes[p1]:
                     if same_slope(m, m0):
-                        print('extending', m0, k)
                         collinear_points =  max(collinear_points, k+1)
                 slopes[p2].append((m, collinear_points))
                 soln = max(soln, collinear_points)
