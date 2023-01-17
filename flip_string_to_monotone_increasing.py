@@ -1,34 +1,36 @@
 """
-LeetCode :: August 2021 Challenge :: Flip String to Monotone Increasing
+LeetCode
+996. Flip String to Monotone Increasing
+January 2023 Challenge
 jramaswami
 """
 
 
+import itertools
+
+
 class Solution:
     def minFlipsMonoIncr(self, S):
-        ones_prefix = [0 for _ in S]
-        curr_ones = 0
-        for i, c in enumerate(S):
-            if c == '1':
-                curr_ones += 1
-            ones_prefix[i] = curr_ones
+        suffix_sum = list(itertools.accumulate(reversed([int(i) for i in S])))[::-1]
+        suffix_sum.append(0)
 
-        curr_zeros = 0
-        zeros_suffix = [0 for _ in S]
-        for i, c in enumerate(reversed(S), start=1):
-            j = len(S) - i
-            if c == '0':
-                curr_zeros += 1
-            zeros_suffix[j] = curr_zeros
+        def rec(i):
+            if i >= len(S):
+                return 0
 
-        # Start with changing all ones to zeros.
-        soln = ones_prefix[-1]
+            # If i is 1 then all the rest of the numbers must be one.
+            # Cost is number of zeros
+            slots = len(S) - i
+            result = slots - suffix_sum[i]
+            if S[i] == '0':
+                # We can leave it zero.
+                result = min(result, rec(i+1))
+            else:
+                # We can flip to zero.
+                result = min(result, 1 + rec(i+1))
+            return result
 
-        for i, _ in enumerate(S):
-            ones_to_change = 0 if i == 0 else ones_prefix[i-1]
-            zeros_to_change = zeros_suffix[i]
-            soln = min(soln, ones_to_change + zeros_to_change)
-        return soln
+        return rec(0)
 
 
 def test_1():
