@@ -6,29 +6,29 @@ jramaswami
 """
 
 
-
-import itertools as it
 import collections
+import math
 from typing import *
 
 
 class Solution:
     def maxSubarraySumCircular(self, A: List[int]) -> int:
-        soln = max(A) # non-empty
-        curr_sum = 0
-        window = collections.deque()
-        for x in it.chain.from_iterable(it.repeat(A, 2)):
-            if x < 0:
-                curr_sum = 0
-                window = []
-            else:
-                curr_sum += x
-                window.append(x)
-                while len(window) > len(A):
-                    curr_sum -= window[0]
-                    window.popleft()
-                soln = max(soln, curr_sum)
+
+        def kadane(X):
+            result = -math.inf
+            curr_sum = 0
+            for x in X:
+                curr_sum = max(x, curr_sum + x)
+                result = max(curr_sum, result)
+            return result
+
+        soln = -math.inf
+        A0 = collections.deque(A)
+        for _ in range(len(A0)):
+            soln = max(soln, kadane(A0))
+            A0.rotate(-1)
         return soln
+
 
 
 def test_1():
@@ -51,6 +51,6 @@ def test_3():
 
 def test_4():
     "WA"
-    nums = [-3,-2,-3]
-    expected = 3
+    nums = [3,-1,2,-1]
+    expected = 4
     assert Solution().maxSubarraySumCircular(nums) == expected
