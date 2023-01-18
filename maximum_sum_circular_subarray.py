@@ -13,21 +13,17 @@ from typing import *
 
 class Solution:
     def maxSubarraySumCircular(self, A: List[int]) -> int:
+        total = curr_max = curr_min = 0
+        max_sum = -math.inf
+        min_sum = math.inf
 
-        def kadane(X):
-            result = -math.inf
-            curr_sum = 0
-            for x in X:
-                curr_sum = max(x, curr_sum + x)
-                result = max(curr_sum, result)
-            return result
-
-        soln = -math.inf
-        A0 = collections.deque(A)
-        for _ in range(len(A0)):
-            soln = max(soln, kadane(A0))
-            A0.rotate(-1)
-        return soln
+        for a in A:
+            total += a
+            curr_max = max(curr_max + a, a)
+            curr_min = min(curr_min + a, a)
+            max_sum = max(max_sum, curr_max)
+            min_sum = min(min_sum, curr_min)
+        return max_sum if max_sum < 0 else max(max_sum, total - min_sum)
 
 
 
