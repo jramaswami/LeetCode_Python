@@ -32,8 +32,6 @@ class Solution:
         return [list(t) for t in soln]
 
 
-
-
 def test_1():
     nums = [4,6,7,7]
     expected = [[4,6],[4,6,7],[4,6,7,7],[4,7],[4,7,7],[6,7],[6,7,7],[7,7]]
