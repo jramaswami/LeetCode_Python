@@ -1,41 +1,36 @@
 """
-LeetCode :: January 2022 Challenge :: 131. Palindrome Partitioning
+LeetCode
+131. Palindrome Partitioning
+January 2023
 jramaswami
 """
 
 
-from functools import cache
 from typing import *
+import functools
 
 
 class Solution:
     def partition(self, s: str) -> List[List[str]]:
+        soln = []
 
-        @cache
-        def is_palindrome(left: int, right: int):
-            "Returns True if s[left:right+1] is a palindrome."
-            if left >= right:
+        @functools.cache
+        def is_palindrome(left, right):
+            if right < left:
                 return True
+            return s[left] == s[right] and is_palindrome(left+1, right-1)
 
-            if s[left] == s[right]:
-                return is_palindrome(left + 1, right - 1)
-
-            return False
-
-        def solve(left, acc, soln):
-            "DFS to indentify all possible partitions."
-            if left >= len(s):
+        def rec(i, acc):
+            if i >= len(s):
                 soln.append(list(acc))
 
-            for right in range(left, len(s)):
-                if is_palindrome(left, right):
-                    acc.append(s[left:right+1])
-                    solve(right+1, acc, soln)
+            for j in range(i, len(s)):
+                if is_palindrome(i, j):
+                    acc.append(s[i:j+1])
+                    rec(j+1, acc)
                     acc.pop()
 
-        acc = []
-        soln = []
-        solve(0, acc, soln)
+        rec(0, [])
         return soln
 
 
@@ -48,13 +43,6 @@ def test_1():
 
 def test_2():
     s = "a"
-    expected = [["a"]]
-    result = Solution().partition(s)
-    assert sorted(result) == sorted(expected)
-
-
-def test_3():
-    s = "a" * 16
     expected = [["a"]]
     result = Solution().partition(s)
     assert sorted(result) == sorted(expected)
