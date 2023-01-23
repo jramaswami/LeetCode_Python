@@ -1,5 +1,7 @@
 """
-LeetCode :: January 2022 Challenge :: 997. Find the Town Judge
+LeetCode
+997. Find the Town Judge
+January 2023 Challenge
 jramaswami
 """
 
@@ -7,19 +9,17 @@ jramaswami
 class Solution:
 
     def findJudge(self, n, trust):
-        trusts_another = [0 for _ in range(n)]
-        trusted_by_another = [0 for _ in range(n)]
+        trusts = [0 for _ in range(n)]
+        is_trusted_by = [0 for _ in range(n)]
 
         for a, b in trust:
-            trusts_another[a-1] += 1
-            trusted_by_another[b-1] += 1
+            # a trusts b
+            trusts[a-1] += 1
+            is_trusted_by[b-1] += 1
 
-        paranoid = set(i for i, t in enumerate(trusts_another) if t == 0)
-        trustworthy = set(i for i, t in enumerate(trusted_by_another) if t == n - 1)
-
-        maybe_judge = paranoid & trustworthy
-        if len(maybe_judge) == 1:
-            return 1 + maybe_judge.pop()
+        for i in range(n):
+            if trusts[i] == 0 and is_trusted_by[i] == n-1:
+                return i+1
         return -1
 
 
