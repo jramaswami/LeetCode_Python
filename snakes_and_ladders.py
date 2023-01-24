@@ -32,9 +32,9 @@ class Solution:
         last_cell = i-1
         queue = set()
         new_queue = set()
-        queue.add(0)
-        if 0 in snakes_and_ladders:
-            queue.add(snakes_and_ladders[0])
+        queue.add(1)
+        if 1 in snakes_and_ladders:
+            queue.add(snakes_and_ladders[1])
         dist = 0
         visited = set()
         visited.update(queue)
