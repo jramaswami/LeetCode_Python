@@ -46,10 +46,13 @@ class Solution:
                     if x in snakes_and_ladders:
                         if snakes_and_ladders[x] not in visited:
                             new_queue.add(snakes_and_ladders[x])
+                            visited.add(snakes_and_ladders[x])
                     elif x not in visited:
                         new_queue.add(x)
+                        visited.add(x)
             queue, new_queue = new_queue, set()
             dist += 1
+        return -1
 
 
 def test_1():
@@ -74,4 +77,10 @@ def test_2():
 def test_3():
     board = [[1,1,-1],[1,1,1],[-1,1,1]]
     expected = -1
+    assert Solution().snakesAndLadders(board) == expected
+
+
+def test_4():
+    board = [[-1,1,2,-1],[2,13,15,-1],[-1,10,-1,-1],[-1,6,2,8]]
+    expected = 2
     assert Solution().snakesAndLadders(board) == expected
