@@ -30,9 +30,10 @@ class Solution:
                     queue.append(v)
             return distance
 
-        return min(
+        t = min(
             (max(d1, d2), i) for i, (d1, d2) in enumerate(zip(bfs(node1), bfs(node2)))
-        )[1]
+        )
+        return -1 if t[0] == math.inf else t[1]
 
 
 def test_1():
