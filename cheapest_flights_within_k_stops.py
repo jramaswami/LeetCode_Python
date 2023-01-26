@@ -14,11 +14,11 @@ class Solution:
     def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
         cost = [math.inf for _ in range(n)]
         cost[src] = 0
-        new_cost = [math.inf for _ in range(n)]
+        new_cost = list(cost)
         for _ in range(k+1):
             for u, v, c in flights:
                 new_cost[v] = min(new_cost[v], cost[u] + c)
-            cost, new_cost = new_cost, [math.inf for _ in range(n)]
+            cost = list(new_cost)
         return (cost[dst] if cost[dst] < math.inf else -1)
 
 
