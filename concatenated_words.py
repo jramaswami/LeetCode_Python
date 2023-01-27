@@ -1,7 +1,11 @@
 """
-Leet Code :: 472. Concatenated Words
+Leet Code
+472. Concatenated Words
+January 2023 Challenge
 jramaswami
 """
+
+
 from typing import *
 from collections import defaultdict
 import sys
@@ -65,7 +69,7 @@ class Solution:
                 soln.append(word)
             else:
                 trie.insert(word)
-        return soln
+        return sorted(soln)
 
 
 def test_1():
