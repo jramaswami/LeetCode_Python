@@ -17,12 +17,13 @@ class UnionFind:
         self.range_end = dict()
 
     def add(self, x):
-        self.parent[x] = x
-        self.range_end[x] = x
-        if self.find(x-1):
-            self.join(x-1, x)
-        if self.find(x+1):
-            self.join(x, x+1)
+        if x not in self.parent:
+            self.parent[x] = x
+            self.range_end[x] = x
+            if x-1 in self.parent:
+                self.join(x-1, x)
+            if x+1 in self.parent:
+                self.join(x, x+1)
 
     def find(self, u):
         if self.parent[u] != u:
@@ -50,7 +51,6 @@ class SummaryRanges:
 
     def getIntervals(self) -> List[List[int]]:
         return [[x, self.uf.range_end[x]] for x in sorted(self.uf.range_end)]
-
 
 
 null = None
