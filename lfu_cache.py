@@ -18,6 +18,7 @@ Item = collections.namedtuple('Item', ['freq_used', 'last_used', 'key'])
 class LFUCache:
 
     def __init__(self, capacity: int):
+        # print(f'LFUCache(capacity={capacity})')
         self.capacity = capacity
         self.heap = []
         self.last_used = dict()
@@ -26,31 +27,38 @@ class LFUCache:
         self.timer = itertools.count()
 
     def get(self, key: int) -> int:
+        # print('get', key)
         if key in self.values:
             self.last_used[key] = next(self.timer)
             self.freq_used[key] += 1
             heapq.heappush(self.heap, Item(self.freq_used[key], self.last_used[key], key))
+            # print(f'{self.values=} {self.last_used=} {self.freq_used=}')
             return self.values[key]
         return -1
 
     def put(self, key: int, value: int) -> None:
+        # print('put', key, value)
         if key in self.values:
             self.last_used[key] = next(self.timer)
             self.freq_used[key] += 1
             self.values[key] = value
             heapq.heappush(self.heap, Item(self.freq_used[key], self.last_used[key], key))
         else:
+            # print(f'inserting {key=} {value=} {self.values=} {self.last_used=} {self.freq_used=}')
             while self.heap and len(self.values) > self.capacity - 1:
                 item_to_delete = heapq.heappop(self.heap)
+                print('popped', item_to_delete)
                 if item_to_delete.last_used == self.last_used[item_to_delete.key]:
                     del self.values[item_to_delete.key]
                     self.freq_used[item_to_delete.key] = 0
                     self.last_used[item_to_delete.key] = -1
-            if len(self.heap) < self.capacity:
+            # print(f'{len(self.heap)=} {self.capacity=}')
+            if len(self.values) < self.capacity:
                 self.last_used[key] = next(self.timer)
                 self.freq_used[key] = 1
                 self.values[key] = value
                 heapq.heappush(self.heap, Item(self.freq_used[key], self.last_used[key], key))
+        # print(f'{self.values=} {self.last_used=} {self.freq_used=}')
 
 
 null = None
