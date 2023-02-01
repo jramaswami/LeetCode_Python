@@ -20,7 +20,7 @@ class Solution:
                 return s == (t * d)
             return False
 
-        for k in range(1, min(len(str1), len(str2)) + 1):
+        for k in range(min(len(str1), len(str2)), 0, -1):
             if len(str1) % k == 0 and len(str2) % k  == 0 and str1[:k] == str2[:k]:
                 t = str1[:k]
                 if divides_s(str1, t) and divides_s(str2, t):
@@ -47,7 +47,6 @@ def test_3():
     str2 = "CODE"
     expected = ""
     assert Solution().gcdOfStrings(str1, str2) == expected
-
 
 
 def test_4():
