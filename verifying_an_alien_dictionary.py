@@ -1,7 +1,11 @@
 """
-LeetCode :: April 2021 Challenge :: Verifying an Alien Dictionary
+LeetCode
+953. Verifying an Alien Dictionary
+February 2023 Challenge
 jramaswami
 """
+
+
 from typing import *
 
 
