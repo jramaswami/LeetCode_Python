@@ -11,6 +11,9 @@ from typing import *
 
 class Solution:
     def convert(self, s: str, numRows: int) -> str:
+        if numRows == 1:
+            return s
+
         i = r = c = 0
         soln = [[""] for _ in range(numRows)]
         while i < len(s):
@@ -37,6 +40,7 @@ class Solution:
                 c += 1
 
         return "".join("".join(row) for row in soln)
+
 
 
 def test_1():
