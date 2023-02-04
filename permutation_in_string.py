@@ -1,5 +1,7 @@
 """
-LeetCode :: February 2022 Challenge :: 567. Permutation in String
+LeetCode
+567. Permutation in String
+February 2023 Challenge
 jramaswami
 """
 
