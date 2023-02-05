@@ -1,40 +1,40 @@
 """
-LeetCode :: February 2022 Challenge :: 438. Find All Anagrams in a String
+LeetCode
+438. Find All Anagrams in a String
+February 2023 Challenge
 jramaswami
 """
+
+import string
+import collections
 
 
 class Solution:
 
     def findAnagrams(self, s, p):
 
-        prefix = [[] for _ in s]
-        EMPTY = [0 for _ in range(26)]
-
-        def check(left, right, target):
-            for a, b, t in zip(left, right, target):
-                if b - a != t:
+        def eq(a, b):
+            for c in string.ascii_lowercase:
+                if a.get(c, 0) != b.get(c, 0):
                     return False
             return True
 
-        def get_prefix(i):
-            if i < 0:
-                return EMPTY
-            return prefix[i]
 
-        ord_a = ord('a')
-        target = list(EMPTY)
-        for c in p:
-            target[ord(c) - ord_a] += 1
+        pfreqs = collections.Counter(p)
+        wfreqs = collections.Counter()
 
+        window = collections.deque()
         soln = []
         for i, c in enumerate(s):
-            prefix[i] = list(get_prefix(i-1))
-            prefix[i][ord(c) - ord_a] += 1
-
-            if check(get_prefix(i-len(p)), prefix[i], target):
-                soln.append(i - len(p) + 1)
-
+            # Add letter to window.
+            wfreqs[c] += 1
+            window.append(c)
+            # Size window.
+            if len(window) > len(p):
+                wfreqs[window[0]] -= 1
+                window.popleft()
+            if eq(pfreqs, wfreqs):
+                soln.append(i-len(p)+1)
         return soln
 
 
