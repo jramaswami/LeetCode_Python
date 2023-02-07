@@ -12,16 +12,15 @@ import collections
 
 class Solution:
     def totalFruit(self, fruits: List[int]) -> int:
-        freqs = dict()
+        freqs = collections.defaultdict(int)
         window = collections.deque()
         count = 0
         soln = 0
         for f in fruits:
             # Add fruit to window.
             window.append(f)
-            if f not in freqs:
+            if freqs[f] == 0:
                 count += 1
-                freqs[f] = 0
             freqs[f] += 1
 
             # While there are more than two kinds of fruit,
