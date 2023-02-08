@@ -1,22 +1,23 @@
 """
-Leet Code :: Jump Game II
+Leet Code
+Jump Game II
+February 2023
 jramaswami
 """
+
+
 from typing import *
+import math
 
 
 class Solution:
     def jump(self, nums: List[int]) -> int:
-        if len(nums) <= 1:
-            return 0
-        jumps_made = 1
-        left = 0
-        right = nums[0]
-        finish = len(nums) - 1
-        while right < finish:
-            jumps_made += 1
-            left, right = right, max(i + n for i, n in enumerate(nums[left:right+1], start=left))
-        return jumps_made
+        dp = [math.inf for _ in nums]
+        dp[0] = 0
+        for i, x in enumerate(nums):
+            for j in range(i+1, min(i+x+1, len(nums))):
+                dp[j] = min(dp[j], dp[i] + 1)
+        return dp[-1]
 
 
 def test_1():
