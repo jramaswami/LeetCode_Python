@@ -3,32 +3,26 @@ LeetCode
 2306. Naming a Company
 February 2023 Challenge
 jramaswami
-
-Thank You Larry!
 """
 
 
-import string
 from typing import *
 
 
 class Solution:
     def distinctNames(self, ideas: List[str]) -> int:
-        ideas0 = set(ideas)
-        # Number of words that can switch from i -> j
-        can_switch = [[0 for _ in range(26)] for _ in range(26)]
         ord_a = ord('a')
+        groups = [set() for _ in range(26)]
         for idea in ideas:
             x = ord(idea[0]) - ord_a
-            for y, t in enumerate(string.ascii_lowercase):
-                idea0 = t + idea[1:]
-                if idea0 not in ideas:
-                    can_switch[x][y] += 1
-
+            groups[x].add(idea[1:])
         soln = 0
-        for x in range(26):
-            for y in range(26):
-                soln += (can_switch[x][y] * can_switch[y][x])
+        for i in range(26):
+            for j in range(i+1, 26):
+                intersection = groups[i] & groups[j]
+                a = len(groups[i]) - len(intersection)
+                b = len(groups[j]) - len(intersection)
+                soln += (2 * a * b)
         return soln
 
 
