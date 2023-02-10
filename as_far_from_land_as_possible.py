@@ -23,30 +23,28 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
-        def bfs(init_r, init_c):
-            visited = [[False for _ in row] for row in grid]
-            visited[init_r][init_c] = True
-            queue = [(init_r, init_c)]
-            new_queue = []
-            dist = -1
-            while queue:
-                dist += 1
-                for r, c in queue:
-                    if grid[r][c] == 1:
-                        return dist
-                    for r0, c0 in neighbors(r, c):
-                        if not visited[r0][c0]:
-                            new_queue.append((r0, c0))
-                            visited[r0][c0] = True
-                queue, new_queue = new_queue, []
-            return -1
+        dist = [[math.inf for _ in row] for row in grid]
+        queue = collections.deque()
+        soln = -1
+        for r, row in enumerate(grid):
+            for c, _ in enumerate(row):
+                if grid[r][c] == 1:
+                    queue.append((r, c))
+                    dist[r][c] = 0
+
+        while queue:
+            r, c = queue.popleft()
+            for r0, c0 in neighbors(r, c):
+                if dist[r][c] + 1 < dist[r0][c0]:
+                    dist[r0][c0] = dist[r][c] + 1
+                    queue.append((r0, c0))
 
         soln = -1
         for r, row in enumerate(grid):
             for c, _ in enumerate(row):
                 if grid[r][c] == 0:
-                    soln = max(soln, bfs(r, c))
-        return soln
+                    soln = max(soln, dist[r][c])
+        return -1 if soln == math.inf else soln
 
 
 def test_1():
