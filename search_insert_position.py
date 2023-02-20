@@ -1,23 +1,25 @@
 """
-LeetCode :: November 2021 Challenge :: 35. Search Insert Position
+LeetCode
+35. Search Insert Position
+February 2023 Challenge
 jramaswami
 """
 
 
 class Solution:
     def searchInsert(self, nums, target):
-        # Binary search for the lowest index such that nums[i] >= target.
-        soln = len(nums)
+        # Find the index of the rightmost item >= target.
         lo = 0
         hi = len(nums) - 1
+        i = len(nums)
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
             if nums[mid] >= target:
-                soln = min(soln, mid)
+                i = min(i, mid)
                 hi = mid - 1
             else:
                 lo = mid + 1
-        return soln
+        return i
 
 
 def test_1():
