@@ -1,23 +1,14 @@
 """
-LeetCode :: November 2021 Challenge :: 540. Single Element in a Sorted Array
+LeetCode
+540. Single Element in a Sorted Array
+February 2023 Challenge
 jramaswami
-
-Solve in O(log n) time and O(1) extra space.
-
-Key observations:
-(1) Any given index will be even or odd.
-(2) Assume that the single element is to the right of any given index.  If the
-    index is odd, then nums[index-1] will be the same number.  If the index is
-    even, then nums[index-1] will be a different number.
-(3) If (2) does not hold for the given index, then the single element is the
-    element at the given index or is to the left of the given index.
 """
 
 
 class Solution:
 
     def singleNonDuplicate(self, nums):
-
         # Corner case: array of length 1.
         if len(nums) == 1:
             return nums[0]
