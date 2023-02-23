@@ -22,8 +22,9 @@ class Solution:
             while all_projects and all_projects[0][1] <= working_capital:
                 heapq.heappush(avail_projects, all_projects[0])
                 all_projects.popleft()
-            best_project = heapq.heappop(avail_projects)
-            working_capital += -best_project[0]
+            if avail_projects:
+                best_project = heapq.heappop(avail_projects)
+                working_capital += -best_project[0]
         return working_capital
 
 
@@ -50,4 +51,5 @@ def test_3():
     w = 0
     profits = [1,2,3]
     capital = [1,1,2]
+    expected = 0
     assert Solution().findMaximizedCapital(k, w, profits, capital) == expected
