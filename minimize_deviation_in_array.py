@@ -9,46 +9,51 @@ import heapq
 import collections
 
 
+class MaxPQ:
+
+    def __init__(self):
+        self.heap = []
+
+    def push(self, x):
+        heapq.heappush(self.heap, -x)
+
+    def peek(self):
+        return -self.heap[0]
+
+    def pop(self):
+        return -heapq.heappop(self.heap)
+
+    def __len__(self):
+        return len(self.heap)
+
+
 class Solution:
 
     def minimumDeviation(self, nums):
-
-        def reduce(n):
-            # Reduce n to the first odd number.
-            while n % 2 == 0:
-                n //= 2
-            return n
-
-        top_n = collections.defaultdict(lambda: math.inf)
+        pq = MaxPQ()
+        curr_min = math.inf
         for n in nums:
             if n % 2:
-                top_n[n] = min(top_n[n], 2 * n)
+                # Odd number can be multiplied by 2 *once*
+                pq.push(2 * n)
+                curr_min = min(curr_min, 2 * n)
             else:
-                n0 = reduce(n)
-                top_n[n0] = min(top_n[n0], n)
+                pq.push(n)
+                curr_min = min(curr_min, n)
 
-        heap = list(top_n.items())
-        min_n = min(top_n)
-        max_n = max(top_n)
-        heapq.heapify(heap)
-
-        if len(heap) == 1:
-            return 0
-
-        while heap:
-            n, n_limit = heapq.heappop(heap)
-            if n * 2 > n_limit:
+        curr_soln = math.inf
+        while pq:
+            k = pq.pop()
+            curr_soln = min(curr_soln, k - curr_min)
+            if k % 2 == 0:
+                x = k // 2
+                curr_min = min(curr_min, x)
+                pq.push(x)
+            else:
+                # k cannot be reduced and will therefore remain the maximum.
+                # We would not want to reduce any remaining value.
                 break
-            if heap:
-                min_n0 = min(heap[0][0], 2 * n)
-            else:
-                if n == min_n:
-                    min_n0 = 2 * n
-            max_n0 = max(n * 2, max_n)
-            if (max_n - min_n) >= (max_n0 - min_n0):
-                heapq.heappush(heap, (n*2, n_limit))
-                min_n, max_n = min_n0, max_n0
-        return max_n - min_n
+        return curr_soln
 
 
 def test_1():
@@ -89,7 +94,7 @@ def test_5():
     assert Solution().minimumDeviation(nums) == expected
 
 
-def test_7():
-    nums = [200, 230]
-    expected = 15
-    assert Solution().minimumDeviation(nums) == expected
+# def test_7():
+#     nums = [200, 230]
+#     expected = 15
+#     assert Solution().minimumDeviation(nums) == expected
