@@ -4,40 +4,33 @@ jramaswami
 """
 
 
+import math
+import functools
+
+
 class Solution:
 
     def minDistance(self, word1, word2):
+        @functools.cache
+        def rec(i, j):
+            if i >= len(word1):
+                return len(word2) - j
+            if j >= len(word2):
+                return len(word1) - i
 
-        # Boundary cases
-        if word1 == "":
-            return len(word2)
-        if word2 == "":
-            return len(word1)
+            result = math.inf
+            if word1[i] == word2[j]:
+                result = min(result, rec(i+1, j+1))
+            else:
+                # Make them the same letter.
+                result = min(result, 1 + rec(i+1, j+1))
+            # Delete word1[i] or insert into word2
+            result = min(result, 1 + rec(i+1, j))
+            # Delete word2[j] or insert into word1
+            result = min(result, 1 + rec(i, j+1))
+            return result
 
-        # dp[word2][word1]
-        dp = [[0 for _ in range(len(word1) + 1)] for _ in range(len(word2) + 1)]
-
-        # Init
-        dp[0] = list(range(len(word1) + 1))
-        for r in range(len(word2) + 1):
-            dp[r][0] = r
-
-        # Compute
-        for c in range(1, len(word1) + 1):
-            a = word1[c-1]
-            for r in range(1, len(word2) + 1):
-                b = word2[r-1]
-                if a == b:
-                    # Match
-                    dp[r][c] = dp[r-1][c-1]
-                else:
-                    # Substitution
-                    dp[r][c] = 1 + min(
-                        dp[r-1][c-1], # Substitution
-                        dp[r][c-1],   # Insertion
-                        dp[r-1][c]    # Deletion
-                    )
-        return dp[-1][-1]
+        return rec(0, 0)
 
 
 def test_1():
