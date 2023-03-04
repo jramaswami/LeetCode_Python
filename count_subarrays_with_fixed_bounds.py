@@ -14,6 +14,8 @@ class Solution:
     def countSubarrays(self, nums: List[int], minK: int, maxK: int) -> int:
 
         def check(window):
+            if not window:
+                return 0
             leftmost_max = [math.inf for _ in window]
             leftmost_min = [math.inf for _ in window]
             if window[-1] == minK:
