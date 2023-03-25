@@ -8,7 +8,6 @@ jramaswami
 
 from typing import *
 import collections
-import itertools
 
 
 class Solution:
@@ -19,23 +18,24 @@ class Solution:
             graph[v].append(u)
 
         visited = [False for _ in graph]
-        component_sizes = []
+        soln = 0
         for root in range(n):
             if not visited[root]:
-                component_sizes.append(1)
+                component_size = 1
                 visited[root] = True
                 queue = collections.deque([root])
                 while queue:
                     u = queue.popleft()
                     for v in graph[u]:
                         if not visited[v]:
-                            component_sizes[-1] += 1
+                            component_size += 1
                             visited[v] = True
                             queue.append(v)
-        assert sum(component_sizes) == n
-        if len(component_sizes) == 1:
-            return 0
-        return sum((a * b) for a, b in itertools.combinations(component_sizes, 2))
+                # The nodes in this component cannot reach nodes not in this
+                # component
+                soln += (component_size * (n - component_size))
+        # Divide by two because we have double counted
+        return soln // 2
 
 
 def test_1():
