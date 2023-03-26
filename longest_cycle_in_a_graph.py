@@ -12,25 +12,18 @@ from typing import *
 class Solution:
     def longestCycle(self, edges: List[int]) -> int:
         visited = [False for _ in edges]
-        in_path = [-1 for _ in edges]
-        self.soln = -1
-
-        def dfs(u, path_length):
-            if in_path[u] >= 0:
-                print(in_path)
-                self.soln = max(self.soln, path_length - in_path[u])
-            else:
-                visited[u] = True
-                in_path[u] = path_length
-                if edges[u] >= 0:
-                    dfs(edges[u], path_length + 1)
-                in_path[u] = -1
-
+        soln = -1
         for root, _ in enumerate(edges):
-            if not visited[root]:
-                print(root)
-                dfs(root, 1)
-        return self.soln
+            if not visited[root] and edges[root] >= 0:
+                path = {}
+                curr = root
+                while curr >= 0 and not visited[curr]:
+                    visited[curr] = True
+                    path[curr] = len(path)
+                    curr = edges[curr]
+                if curr in path:
+                    soln = max(soln, len(path) - path[curr])
+        return soln
 
 
 def test_1():
@@ -41,5 +34,12 @@ def test_1():
 
 def test_2():
     edges = [2,-1,3,1]
+    expected = -1
+    assert Solution().longestCycle(edges) == expected
+
+
+def test_3():
+    "WA"
+    edges = [-1,4,-1,2,0,4]
     expected = -1
     assert Solution().longestCycle(edges) == expected
