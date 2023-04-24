@@ -1,5 +1,7 @@
 """
-LeetCode :: April 2022 Challenge :: 1046. Last Stone Weight
+LeetCode
+1046. Last Stone Weight
+April 2023 Challenge
 jramaswami
 """
 
