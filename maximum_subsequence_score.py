@@ -21,9 +21,9 @@ class Solution:
         values.sort(key=operator.itemgetter(1), reverse=True)
         for num1, num2 in values:
             curr_sum += num1
-            heapq.heappush(heap, -num1)
+            heapq.heappush(heap, num1)
             while len(heap) > k:
-                curr_sum += heapq.heappop(heap)
+                curr_sum -= heapq.heappop(heap)
             if len(heap) == k:
                 soln = max(soln, num2 * curr_sum)
         return soln
