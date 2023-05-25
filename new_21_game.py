@@ -3,23 +3,30 @@ LeetCode
 837. New 21 Game
 May 2023 Challenge
 jramaswami
+
+REF: https://www.youtube.com/watch?v=zKi4LzjK27k
 """
-
-
-import functools
 
 
 class Solution:
     def new21Game(self, n: int, k: int, maxPts: int) -> float:
+        if k == 0 or k + maxPts <= n:
+            return 1.0
 
-        @functools.cache
-        def rec(currScore):
-            # Base case: stop when you reach k points.
-            if currScore >= k:
-                return 1 if currScore <= n else 0
-            return sum(rec(currScore + draw) for draw in range(1, maxPts+1)) / maxPts
+        windowSum = 0
+        for i in range(k, k+ maxPts):
+            windowSum += 1 if i <= n else 0
 
-        return rec(0)
+        dp = {}
+        for i in range(k - 1, -1, -1):
+            dp[i] = windowSum / maxPts
+
+            remove = 0
+            if i + maxPts <= n:
+                remove = dp.get(i + maxPts, 1)
+            windowSum += dp[i] - remove
+
+        return dp[0]
 
 
 EPS = pow(10, -5)
