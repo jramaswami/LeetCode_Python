@@ -7,11 +7,13 @@ jramaswami
 
 
 import fractions
+import math
 from typing import *
 
 
 class Solution:
     def checkStraightLine(self, coordinates: List[List[int]]) -> bool:
+
         # Sort by y so we are always going up.
         coordinates.sort(key=lambda t: t[1])
 
@@ -19,6 +21,8 @@ class Solution:
         def slope(p1, p2):
             x1, y1 = p1
             x2, y2 = p2
+            if x2-x1 == 0:
+                return math.inf
             return fractions.Fraction(y2-y1, x2-x1)
 
         # Slope between first and last coordinates.
@@ -44,4 +48,10 @@ def test_3():
     "RTE"
     coordinates = [[0,0],[0,1],[0,-1]]
     expected = True
+    assert Solution().checkStraightLine(coordinates) == expected
+
+def test_4():
+    "Still RTE"
+    coordinates = [[1,1],[2,2],[2,0]]
+    expected = False
     assert Solution().checkStraightLine(coordinates) == expected
