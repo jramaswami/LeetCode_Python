@@ -11,22 +11,24 @@ class Solution:
         # Binary search the answer
         def summation(x):
             if x <= 0:
-                return -x
+                return 0
             return (x * (x + 1)) // 2
 
         def check(guess):
             g = guess - 1
-            # Left fill
             left = summation(guess - 1) - summation(guess - 1 - index)
             right = summation(guess - 1) - summation(guess - 1 - (n - index - 1))
-            print(f"{left=} {right=} {guess=} {left + right + guess=}")
-            if guess + left + right <= maxSum:
+            left_fill = max(0, index + 1 - guess)
+            right_fill = max(0, n - index - guess)
+            total = guess + left + right + left_fill + right_fill
+            # print(f"{left=} {right=} {guess=} {left_fill=} {right_fill=} {total=} {maxSum=}")
+            if total <= maxSum:
                 return True
             return False
 
-        lo = 0
+        lo = 1
         hi = maxSum
-        soln = 0
+        soln = 1
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
             if check(mid):
