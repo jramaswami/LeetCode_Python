@@ -11,15 +11,16 @@ class Solution:
         # Binary search the answer
         def summation(x):
             if x <= 0:
-                return 0
+                return -x
             return (x * (x + 1)) // 2
 
         def check(guess):
-            t = (summation(guess) * 2) - guess
-            l = summation(guess - (index + 1))
-            r = summation(guess - (n - index))
-            # print(f"{guess=} {t=} {l=} {r=} {t - l - r=} {maxSum=} {(t - l - r) >= maxSum}")
-            if (t - l - r) <= maxSum:
+            g = guess - 1
+            # Left fill
+            left = summation(guess - 1) - summation(guess - 1 - index)
+            right = summation(guess - 1) - summation(guess - 1 - (n - index - 1))
+            print(f"{left=} {right=} {guess=} {left + right + guess=}")
+            if guess + left + right <= maxSum:
                 return True
             return False
 
@@ -68,4 +69,13 @@ def test_4():
     index = 0
     maxSum = 4
     expected = 1
+    assert Solution().maxValue(n, index, maxSum) == expected
+
+
+def test_5():
+    "WA"
+    n = 3
+    index = 2
+    maxSum = 18
+    expected = 7
     assert Solution().maxValue(n, index, maxSum) == expected
