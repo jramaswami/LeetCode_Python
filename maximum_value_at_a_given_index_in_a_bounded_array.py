@@ -8,36 +8,33 @@ jramaswami
 
 class Solution:
     def maxValue(self, n: int, index: int, maxSum: int) -> int:
-        # Edge cases:
-        if n == 1:
-            return maxSum
-        if n >= maxSum:
-            return 1
+        # Binary search the answer
+        def summation(x):
+            if x <= 0:
+                return 0
+            return (x * (x + 1)) // 2
 
-        # Compute how many slots there are to fill to the left and
-        # right of the selected index.
-        left_fill = index
-        right_fill = n - index - 1
+        def check(guess):
+            t = (summation(guess) * 2) - guess
+            l = summation(guess - (index + 1))
+            r = summation(guess - (n - index))
+            # print(f"{guess=} {t=} {l=} {r=} {t - l - r=} {maxSum=} {(t - l - r) >= maxSum}")
+            if (t - l - r) <= maxSum:
+                return True
+            return False
 
-        # Make all numbers 1.
-        maxSum -= n
-
-        # Make the selected index 2.
-        soln = 2
-        maxSum -= 1
-
-        # Loop filling each side up so that difference between items is always
-        # just 1.
-        curr_left = min(1, left_fill)
-        curr_right = min(1, right_fill)
-        while maxSum > 0:
-            curr_total_fill = curr_left + curr_right + 1
-            maxSum -= curr_total_fill
-            if maxSum >= 0:
-                soln += 1
-            curr_left = min(curr_left + 1, left_fill)
-            curr_right = min(curr_right + 1, right_fill)
+        lo = 0
+        hi = maxSum
+        soln = 0
+        while lo <= hi:
+            mid = lo + ((hi - lo) // 2)
+            if check(mid):
+                soln = max(soln, mid)
+                lo = mid + 1
+            else:
+                hi = mid - 1
         return soln
+
 
 
 def test_1():
@@ -62,4 +59,13 @@ def test_3():
     index = 0
     maxSum = 815094800
     expected = 271698267
+    assert Solution().maxValue(n, index, maxSum) == expected
+
+
+def test_4():
+    "WA"
+    n = 4
+    index = 0
+    maxSum = 4
+    expected = 1
     assert Solution().maxValue(n, index, maxSum) == expected
