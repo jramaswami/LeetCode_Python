@@ -1,17 +1,21 @@
 """
-LeetCode :: 1187. Make Array Strictly Increasing
+LeetCode
+1187. Make Array Strictly Increasing
+June 2023 Challenge
 jramaswami
 """
-from math import inf
-from bisect import bisect_left, bisect_right
-from collections import deque
+
+
+import math
+import bisect
+import collections
 from typing import *
 
 
 # From Python docs.
 def find_gt(a, x):
     'Find leftmost value greater than x'
-    i = bisect_right(a, x)
+    i = bisect.bisect_right(a, x)
     if i != len(a):
         return i
     return None
@@ -21,7 +25,7 @@ class Solution:
     def makeArrayIncreasing(self, arr1: List[int], arr2: List[int]) -> int:
         A = arr1
         B = sorted(set(arr2))
-        dp = [[inf for _ in A] for _ in range(len(B)+1)]
+        dp = [[math.inf for _ in A] for _ in range(len(B)+1)]
         # Col-wise index
         for curr_index in range(len(A)):
             # Row-wise index
@@ -32,7 +36,7 @@ class Solution:
                     ops = dp[prev_index][curr_index-1]
 
                 if curr_index == 0:
-                    prev_val = -inf
+                    prev_val = -math.inf
                 elif prev_index == len(B):
                     prev_val = A[curr_index-1]
                 else:
@@ -47,7 +51,7 @@ class Solution:
                     dp[index0][curr_index] = min(dp[index0][curr_index], ops + 1)
 
         soln =  min(row[-1] for row in dp)
-        if soln == inf: 
+        if soln == math.inf: 
             return -1
         else:
             return soln
