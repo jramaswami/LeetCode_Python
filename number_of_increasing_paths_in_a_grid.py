@@ -21,7 +21,7 @@ class Solution:
         # Process cells in order with caching the number of ways to a cell
         # O(m*n)
         # Initially a cell has 1 way.
-        MOD = pow(10, 9)
+        MOD = pow(10, 9) + 7
         soln = 0
         dp = [[1 for _ in row] for row in grid]
 
