@@ -17,7 +17,6 @@ class Solution:
             while abs(right - left) >= eps:
                 left_third = left  + (right - left) / 3
                 right_third = right - (right - left) / 3
-                print(f"{left=} {left_third=} {f(left_third)=}, {right=} {right_third=} {f(right_third)=}")
                 if f(left_third) > f(right_third):
                     left = left_third
                 else:
@@ -25,8 +24,8 @@ class Solution:
 
             return (left + right) / 2
 
-        best_x = int(ternary_search(compute_cost, min(nums), max(nums), 0.00000001))
-        return compute_cost(best_x)
+        best_x = ternary_search(compute_cost, min(nums), max(nums), 0.00000001)
+        return compute_cost(round(best_x))
 
 
 def test_1():
