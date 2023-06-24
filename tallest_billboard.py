@@ -13,6 +13,9 @@ from typing import List
 class Solution:
     def tallestBillboard(self, rods: List[int]) -> int:
 
+        # A leg cannot be bigger than half the total length of the rods.
+        leg_max = sum(rods) // 2
+
         @functools.cache
         def rec(i, left, right):
             # Base case:
@@ -21,6 +24,10 @@ class Solution:
                 if left == right:
                     return left
                 # Unequal rods cannot be used, return 0.
+                return 0
+
+            # Limiting case:
+            if left > leg_max or right > leg_max:
                 return 0
 
             # If we have equal heights, start with that as our max.
