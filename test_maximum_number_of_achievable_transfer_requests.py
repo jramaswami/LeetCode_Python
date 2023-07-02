@@ -33,5 +33,13 @@ def test_4():
     "TLE"
     n = 2
     requests = [[1,0],[0,0],[1,0],[0,1],[0,1],[1,1],[0,1],[0,0],[0,0],[0,1],[1,0],[0,0],[0,1],[1,1],[1,1]]
-    expected = -1
+    expected = 13
+    assert Solution().maximumRequests(n, requests) == expected
+
+
+def test_5():
+    "WA"
+    n = 9
+    requests = [[3,7],[6,0],[4,7],[4,0],[6,6],[0,6],[7,4],[6,7],[5,4],[1,8],[4,3]]
+    expected = 6
     assert Solution().maximumRequests(n, requests) == expected

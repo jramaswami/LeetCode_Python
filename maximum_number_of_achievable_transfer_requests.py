@@ -16,7 +16,10 @@ class Solution:
         # contains the index of the request (edge).
         graph = [[] for _ in range(n)]
         for i, (u, v) in enumerate(requests):
-            graph[u].append(i)
+            if u == v:
+                request_fulfilled[i] = True
+            else:
+                graph[u].append(i)
 
         longest_cycle = []
         def dfs(node, path):
