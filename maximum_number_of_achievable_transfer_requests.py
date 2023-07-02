@@ -3,6 +3,8 @@ LeetCode
 1601. Maximum Number of Achievable Transfer Requests
 July 2023 Challenge
 jramaswami
+
+With a little help from Larry.
 """
 
 
@@ -21,31 +23,20 @@ class Solution:
             else:
                 graph[u].append(i)
 
-        longest_cycle = []
-        def dfs(node, path):
-            nonlocal longest_cycle
-            if path and requests[path[0]][0] == node:
-                # Cycle found.
-                if len(path) > len(longest_cycle):
-                    longest_cycle = list(path)
+        def check(requests_bitmap):
+            requests_delta = [0 for _ in range(n)]
+            requests_fulfilled = 0
+            for request_index in range(len(requests)):
+                if (1 << request_index) & requests_bitmap:
+                    requests_fulfilled += 1
+                    move_from, move_to = requests[request_index]
+                    requests_delta[move_from] -= 1
+                    requests_delta[move_to] += 1
+            if all(d == 0 for d in requests_delta):
+                return requests_fulfilled
+            return 0
 
-            for request_index in graph[node]:
-                if not request_fulfilled[request_index]:
-                    path.append(request_index)
-                    request_fulfilled[request_index] = True
-                    dfs(requests[request_index][1], path)
-                    path.pop()
-                    request_fulfilled[request_index] = False
-
-        for root in range(n):
-            while 1:
-                longest_cycle = []
-                path = []
-                dfs(root, path)
-                if longest_cycle:
-                    for request_index in longest_cycle:
-                        request_fulfilled[request_index] = True
-                else:
-                    break
-
-        return sum(request_fulfilled)
+        soln = 0
+        for request_bitmap in range((1 << len(requests))):
+            soln = max(soln, check(request_bitmap))
+        return soln
