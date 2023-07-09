@@ -12,32 +12,48 @@ import itertools
 
 class Solution:
     def largestVariance(self, s: str) -> int:
+        freqs = collections.Counter(s)
         soln = 0
-        t = set(s)
-        for a in t:
-            for b in t:
-                if a == b:
-                    continue
-                # print(f"+{a}, -{b}")
-                window = collections.deque()
-                a_freq = 0
-                b_freq = 0
-                for char in s:
+
+        for a, b in itertools.permutations(freqs, 2):
+
+            freq_a = freqs[a]
+            freq_b = freqs[b]
+
+            seen_a = seen_b = False
+            delta = 0
+            
+            for char in s:
+                if delta < 0:
+                    # If we are negative and there are no more a's left
+                    # we can stop looking
+                    if freq_a == 0:
+                        break
+
+                    # If there are no b's left, we can just take the
+                    # remaining b's
+                    elif freq_b == 0:
+                            soln = max(soln, (delta + freq_a))
+                            break
+
+                    # Otherwise, just discard the previous substring
+                    else:
+                        seen_a = seen_b = False
+                        delta = 0
+                else:
+
                     if char == a:
-                        a_freq += 1
-                        window.append(char)
+                        delta += 1
+                        freq_a -= 1
+                        seen_a = True
+
                     elif char == b:
-                        b_freq += 1
-                        window.append(char)
-                    while b_freq > 1 and a_freq and (b_freq > a_freq):
-                        if window[0] == a:
-                            a_freq -= 1
-                        else:
-                            b_freq -= 1
-                        window.popleft()
-                    if a_freq and b_freq:
-                        soln = max(soln, a_freq - b_freq)
-                    # print(window)
+                        delta -= 1
+                        freq_a += 1
+                        seen_b = True
+                    
+                    if seen_a and seen_b:
+                        soln = max(soln, delta)
         return soln
 
 
@@ -64,4 +80,12 @@ def test_4():
     "WA"
     s = "ykudzhiixwttnvtesiwnbcjmsydidttiyabbwzlfbmmycwjgzwhbtvtxyvkkjgfehaypiygpstkhakfasiloaveqzcywsiujvixcdnxpvvtobxgroznswwwipypwmdhldsoswrzyqthaqlbwragjrqwjxgmftjxqugoonxadazeoxalmccfeyqtmoxwbnphxih"
     expected = 12
+    assert Solution().largestVariance(s) == expected
+
+
+
+def test_5():
+    "WA"
+    s = "lripaa"
+    expected = 1
     assert Solution().largestVariance(s) == expected
