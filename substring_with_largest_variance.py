@@ -12,48 +12,33 @@ import itertools
 
 class Solution:
     def largestVariance(self, s: str) -> int:
-        freqs = collections.Counter(s)
         soln = 0
-
-        for a, b in itertools.permutations(freqs, 2):
-
-            freq_a = freqs[a]
-            freq_b = freqs[b]
-
-            seen_a = seen_b = False
-            delta = 0
-            
+        for a, b in itertools.permutations(set(s), 2):
+            window = collections.deque()
+            a_freq = b_freq = 0
             for char in s:
-                if delta < 0:
-                    # If we are negative and there are no more a's left
-                    # we can stop looking
-                    if freq_a == 0:
-                        break
+                if char not in (a, b):
+                    continue
 
-                    # If there are no b's left, we can just take the
-                    # remaining b's
-                    elif freq_b == 0:
-                            soln = max(soln, (delta + freq_a))
-                            break
-
-                    # Otherwise, just discard the previous substring
-                    else:
-                        seen_a = seen_b = False
-                        delta = 0
+                window.append(char)
+                if char == b:
+                    b_freq += 1
                 else:
+                    a_freq += 1
 
-                    if char == a:
-                        delta += 1
-                        freq_a -= 1
-                        seen_a = True
+                # If there are any b's on the tail that we don't need,
+                # get rid of them.
+                while b_freq > 1 and a_freq > 0 and window[0] == b:
+                    window.popleft()
+                    b_freq -= 1
 
-                    elif char == b:
-                        delta -= 1
-                        freq_a += 1
-                        seen_b = True
-                    
-                    if seen_a and seen_b:
-                        soln = max(soln, delta)
+                # If the score is negative, discard all but this element
+                if b_freq > a_freq:
+                    window = collections.deque([char])
+                    a_freq, b_freq = 0, 1
+
+                if a_freq and b_freq:
+                    soln = max(soln, a_freq - b_freq)
         return soln
 
 
