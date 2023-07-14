@@ -24,8 +24,8 @@ class Solution:
             m = n + difference
             if m in locations:
                 for j in locations[m]:
-                    dp[j] = max(dp[j], dp[i] + 1)
-
+                    if j > i:
+                        dp[j] = max(dp[j], dp[i] + 1)
         return max(dp)
 
 
