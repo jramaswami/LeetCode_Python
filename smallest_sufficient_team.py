@@ -14,59 +14,29 @@ Person = collections.namedtuple('Person', ['index', 'skill_key'])
 
 class Solution:
     def smallestSufficientTeam(self, req_skills: List[str], people: List[List[str]]) -> List[int]:
-        # Create a lookup to see which people fulfill a given skill.
+        INF = 1000
+        skillset_limit = 1 << len(req_skills)
         skill_lookup = dict((t, i) for i, t in enumerate(req_skills))
-
-        def add_skill(curr_skills, skill_index):
-            return curr_skills | (1 << skill_index)
-
-
-        def make_skill_key(person_skills):
-            key = 0
+        # dp[skill bitset] = min number of people to reach it.
+        dp = [(INF,0) for _ in range(skillset_limit)]
+        dp[0] = (0, 0)
+        for person_index, person_skills in enumerate(people):
+            person_bit = 1 << person_index
+            # Convert person's skills into a bitset.
+            person_skillset = 0
             for skill in person_skills:
                 skill_index = skill_lookup[skill]
-                key = add_skill(key, skill_index)
-            return key
-
-        persons = [Person(i, make_skill_key(p)) for i, p in enumerate(people)]
-        person_skill_lookup = [[] for _ in req_skills]
-        key_limit = 1 << (len(req_skills))
-        for skill_index, _ in enumerate(req_skills):
-            skill_bit = 1 << skill_index
-            for person in persons:
-                if skill_bit & person.skill_key:
-                    person_skill_lookup[skill_index].append(person)
-
-        # Recursive solution.
-        def rec(skill_index, curr_skill_key, curr_people_indexes):
-            # Base cases
-            if curr_skill_key == (key_limit - 1):
-                return list(curr_people_indexes)
-
-            if skill_index >= len(req_skills):
-                return None
-
-            # If the current skill is not fulfilled, try each person
-            # that can fulfill the skill.
-            result = None
-            if curr_skill_key & (1 << skill_index) == 0:
-                for person in person_skill_lookup[skill_index]:
-                    curr_people_indexes.append(person.index)
-                    local_result = rec(
-                        skill_index + 1,
-                        curr_skill_key | person.skill_key,
-                        curr_people_indexes
-                    )
-                    curr_people_indexes.pop()
-                    if local_result:
-                        if not result or len(result) > len(local_result):
-                            result = local_result
-                return result
-
-            # If curent skill is fulfilled, move on to next skill.
-            return rec(skill_index + 1, curr_skill_key, curr_people_indexes)
-
-        return rec(0, 0, [])
+                person_skillset |= (1 << skill_index)
+            # For every possible skillset:
+            for skillset in range(skillset_limit - 1, -1, -1):
+                skillset0 = skillset | person_skillset
+                if dp[skillset0][0] > dp[skillset][0] + 1:
+                    dp[skillset0] = (dp[skillset][0] + 1, dp[skillset][1] | person_bit)
+        soln = []
+        for p in range(len(people)):
+            if (1 << p) & dp[skillset_limit-1][1]:
+                soln.append(p)
+        return soln
 
 
 def test_1():
