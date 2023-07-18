@@ -6,43 +6,26 @@ jramaswami
 """
 
 
-import heapq
+import collections
 
 
 class LRUCache:
 
     def __init__(self, capacity: int):
-        self.lru_keys = []
-        self.lru_time = dict()
-        self.lru_values = dict()
+        self.cache = collections.OrderedDict()
         self.capacity = capacity
-        self.time = 0
-
-    def _use(self, key):
-        self.lru_time[key] = self.time
-        heapq.heappush(self.lru_keys, (self.time, key))
-        self.time += 1
 
     def get(self, key: int) -> int:
-        if key in self.lru_values:
-            self._use(key)
-            return self.lru_values[key]
+        if key in self.cache:
+            self.cache.move_to_end(key, last=False)
+            return self.cache[key]
         return -1
 
     def put(self, key: int, value: int) -> None:
-        self.lru_values[key] = value
-        self._use(key)
-        while len(self.lru_values) > self.capacity:
-            t, k = heapq.heappop(self.lru_keys)
-            if t == self.lru_time[k]:
-                del self.lru_values[k]
-                del self.lru_time[k]
-
-
-# Your LRUCache object will be instantiated and called as such:
-# obj = LRUCache(capacity)
-# param_1 = obj.get(key)
-# obj.put(key,value)
+        self.cache[key] = value
+        self.cache.move_to_end(key, False)
+        while len(self.cache) > self.capacity:
+            self.cache.popitem(last=True)
 
 
 null = None
