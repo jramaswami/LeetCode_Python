@@ -22,7 +22,7 @@ class Solution:
                 # If target is less than both nums[mid] and nums[lo] then it is
                 # to the right of mid.
                 lo = mid + 1
-            elif target > nums[mid] and target > nums[-1]:
+            elif target > nums[mid] and target > nums[hi]:
                 # If target is greater than both nums[mid] and nums[hi] then it
                 # is to the left of mid.
                 hi = mid - 1
@@ -75,3 +75,10 @@ def test_5():
     expected = 2
     assert Solution().search(nums, target) == expected
 
+
+def test_6():
+    "WA"
+    nums = [4,5,6,7,8,1,2,3]
+    target = 8
+    expected = 4
+    assert Solution().search(nums, target) == expected
