@@ -35,7 +35,7 @@ class Solution:
                 # is to the right of mid.
                 lo = mid + 1
             else:
-                raise Exception("Surprise!")
+                break
         return -1
 
 
@@ -65,5 +65,13 @@ def test_4():
     nums = [1,3,5]
     target = 2
     expected = -1
+    assert Solution().search(nums, target) == expected
+
+
+def test_5():
+    "WA"
+    nums = [4,5,6,7,0,1,2]
+    target = 6
+    expected = 2
     assert Solution().search(nums, target) == expected
 
