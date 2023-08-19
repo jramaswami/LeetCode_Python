@@ -38,42 +38,44 @@ class Solution:
     def findCriticalAndPseudoCriticalEdges(self, n: int, edges: List[List[int]]) -> List[List[int]]:
         # Sort edges by
         edges = sorted(((a, b, w, i) for i, [a, b, w] in enumerate(edges)), key=operator.itemgetter(2))
-        print(edges)
 
-        def kruskal(skip_edge_index):
-            print('kruskal skipping', skip_edge_index)
-            uf = UnionFind(n)
+        def kruskal(skip_edge_index, uf):
+            """
+            Kruskal's algorithm
+            skip_edge_index: edge_index to skip
+            uf: UnionFind passed in so we can force inclusion of an edge
+            """
             mst_weight = 0
-            mst_edges = []
             for a, b, w, edge_index in edges:
                 if uf.find(a) != uf.find(b):
                     if edge_index != skip_edge_index:
-                        print('using edge', edge_index, a, b)
                         uf.union(a, b)
                         mst_weight += w
-                        mst_edges.append(edge_index)
 
-            print([(i, uf.find(i)) for i in range(n)])
             if uf.count == 1:
-                return mst_weight, mst_edges
-            return math.inf, []
+                return mst_weight
+            return math.inf
 
         # Get mst weight with all edges
-        mst_weight, mst_edges = kruskal(-1)
-        print('mst from all edges', mst_weight, mst_edges)
+        mst_weight = kruskal(-1, UnionFind(n))
         critical_edges = []
-        pseudocritical_edges = set()
-        for skip_edge_index, _ in enumerate(edges):
-            # Kruskal's algorithm
-            mst_weight0, mst_edges0 = kruskal(skip_edge_index)
-            print('mst skipping', skip_edge_index, mst_weight0, mst_edges0)
-            if mst_weight0 > mst_weight:
-                critical_edges.append(skip_edge_index)
-            elif mst_weight0 == mst_weight:
-                pseudocritical_edges.update(mst_edges0)
+        pseudocritical_edges = []
+        for a, b, w, edge_index in edges:
+            # First see if deleting this edge causes the mst weight to increase
+            mst_weight0 = kruskal(edge_index, UnionFind(n))
 
-        pseudocritical_edges.difference_update(critical_edges)
-        return [critical_edges, list(pseudocritical_edges)]
+            # Now see if we can create a mst with the same weight with the
+            # inclusion of this edge
+            uf = UnionFind(n)
+            uf.union(a, b)
+            mst_weight1 = w + kruskal(edge_index, uf)
+
+            if mst_weight0 > mst_weight:
+                critical_edges.append(edge_index)
+            elif mst_weight1 == mst_weight:
+                pseudocritical_edges.append(edge_index)
+
+        return [critical_edges, pseudocritical_edges]
 
 
 def test_1():
