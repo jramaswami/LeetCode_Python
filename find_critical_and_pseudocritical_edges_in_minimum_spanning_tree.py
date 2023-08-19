@@ -37,14 +37,15 @@ class UnionFind:
 class Solution:
     def findCriticalAndPseudoCriticalEdges(self, n: int, edges: List[List[int]]) -> List[List[int]]:
         # Sort edges by
-        edges.sort(key=operator.itemgetter(2))
+        edges = sorted(((a, b, w, i) for i, [a, b, w] in enumerate(edges)), key=operator.itemgetter(2))
+        print(edges)
 
         def kruskal(skip_edge_index):
             print('kruskal skipping', skip_edge_index)
             uf = UnionFind(n)
             mst_weight = 0
             mst_edges = []
-            for edge_index, [a, b, w] in enumerate(edges):
+            for a, b, w, edge_index in edges:
                 if uf.find(a) != uf.find(b):
                     if edge_index != skip_edge_index:
                         print('using edge', edge_index, a, b)
@@ -96,5 +97,14 @@ def test_3():
     n = 6
     edges = [[0,1,1],[1,2,1],[0,2,1],[2,3,4],[3,4,2],[3,5,2],[4,5,2]]
     expected = [[3],[0,1,2,4,5,6]]
+    result = [sorted(t) for t in Solution().findCriticalAndPseudoCriticalEdges(n, edges)]
+    assert result == expected
+
+
+def test_4():
+    "WA"
+    n = 4
+    edges = [[0,1,1],[0,3,1],[0,2,1],[1,2,1],[1,3,1],[2,3,1]]
+    expected = [[],[0,1,2,3,4,5]]
     result = [sorted(t) for t in Solution().findCriticalAndPseudoCriticalEdges(n, edges)]
     assert result == expected
