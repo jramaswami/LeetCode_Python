@@ -58,38 +58,30 @@ class Solution:
         group_toposort = khans_algorith(group_graph)
         if not group_toposort:
             return []
-        print('group toposort=', group_toposort)
 
         # Place each item in its group
         groups = [[] for _ in range(groupCount)]
         for item, group_index in enumerate(group):
             groups[group_index].append(item)
 
-        print('group', group)
-        print('groups', groups)
         # Topologically sort each group
         soln = []
         for group_index in group_toposort:
-            # Create graph of intergroup dependencies
-            item_graph = {i: [] for i in groups[group_index]}
-            for item in groups[group_index]:
-                for before_item in beforeItems[item]:
-                    before_item_group = group[before_item]
-                    if before_item_group == group_index:
-                        # before_item must come before item
-                        item_graph[before_item].append(item)
+            if groups[group_index]:
+                # Create graph of intergroup dependencies
+                item_graph = {i: [] for i in groups[group_index]}
+                for item in groups[group_index]:
+                    for before_item in beforeItems[item]:
+                        before_item_group = group[before_item]
+                        if before_item_group == group_index:
+                            # before_item must come before item
+                            item_graph[before_item].append(item)
 
-            print('item graph for group', group_index, item_graph)
-            item_topo = khans_algorith(item_graph)
-            if item_topo == []:
-                return []
-            print('item topo for group', group_index, item_topo)
-            soln.extend(item_topo)
-        print('soln', soln)
+                item_topo = khans_algorith(item_graph)
+                if item_topo == []:
+                    return []
+                soln.extend(item_topo)
         return soln
-
-
-
 
 
 def check(topoSort, beforeItems):
