@@ -16,7 +16,9 @@ Tap = collections.namedtuple('Tap', ['left', 'right'])
 
 class Solution:
     def minTaps(self, n: int, ranges: List[int]) -> int:
-        taps = [Tap(i-k, i+k) for i, k in enumerate(ranges)]
+        # We do not care if a tap extends outside of the garden, so limit the
+        # ranges to the garden
+        taps = [Tap(max(i-k, 0), min(i+k, n)) for i, k in enumerate(ranges)]
         taps.sort(key=operator.attrgetter('right'))
 
         open_taps = [Tap(0,0)]
@@ -50,7 +52,16 @@ def test_2():
 
 
 def test_3():
+    "WA"
     n = 8
     ranges = [4,0,0,0,4,0,0,0,4]
     expected = 1
+    assert Solution().minTaps(n, ranges) == expected
+
+
+def test_4():
+    "WA"
+    n = 9
+    ranges = [0,5,0,3,3,3,1,4,0,4]
+    expected = 2
     assert Solution().minTaps(n, ranges) == expected
