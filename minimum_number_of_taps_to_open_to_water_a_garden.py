@@ -29,9 +29,12 @@ class Solution:
                 # open taps because the taps were sorted by right
                 while open_taps and tap.left <= open_taps[-1].left:
                     open_taps.pop()
-                open_taps.append(tap)
-        print(taps)
-        print(open_taps)
+                # Only count the extension
+                if open_taps:
+                    open_taps.append(Tap(open_taps[-1].right, tap.right))
+                else:
+                    open_taps.append(tap)
+
         if open_taps[-1].right >= n:
             return len(open_taps)
         return -1
@@ -64,4 +67,12 @@ def test_4():
     n = 9
     ranges = [0,5,0,3,3,3,1,4,0,4]
     expected = 2
+    assert Solution().minTaps(n, ranges) == expected
+
+
+def test_5():
+    "WA"
+    n = 7
+    ranges = [1,2,1,0,2,1,0,1]
+    expected = 3
     assert Solution().minTaps(n, ranges) == expected
