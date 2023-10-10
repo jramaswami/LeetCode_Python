@@ -11,12 +11,13 @@ from typing import List
 
 class Solution:
     def minOperations(self, nums: List[int]) -> int:
-        nums.sort()
+        # Remove duplicates and sort list.
+        nums0 = list(sorted(set(nums)))
         soln = len(nums) - 1
         limit = len(nums) - 1
         right = 0
-        for left, _ in enumerate(nums):
-            while right < len(nums) and nums[right] - nums[left] <= limit:
+        for left, _ in enumerate(nums0):
+            while right < len(nums0) and nums0[right] - nums0[left] <= limit:
                 right += 1
             soln = min(soln, len(nums) - (right - left))
         return soln
