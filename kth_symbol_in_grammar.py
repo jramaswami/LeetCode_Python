@@ -13,14 +13,25 @@ class Solution:
 
         # Convert to zero-based index
         k -= 1
-        n -= 1
+        # n -= 1
 
-        curr = '01'
-        for b in range(n, -1, -1):
-            if b == 0:
-                return int(curr[k & 1])
-            i = k & (1<<b)
-            curr = '10' if (k & (1 << b)) else '01'
+        curr = 0
+        for b in range(n+1):
+            if b == n:
+                return curr
+            if k & (1 << b):
+                # Go right
+                if curr == 1:
+                    curr = 0
+                else:
+                    curr = 1
+            else:
+                # Go left
+                if curr == 1:
+                    curr = 1
+                else:
+                    curr = 0
+
 
 
 def test_1():
@@ -34,8 +45,10 @@ def test_2():
 def test_3():
     assert Solution().kthGrammar(2, 2) == 1
 
+
 def test_4():
     assert Solution().kthGrammar(30, 67548) == 0
+
 
 def test_5():
     "WA"
