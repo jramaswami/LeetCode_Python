@@ -8,6 +8,7 @@ jramaswami
 
 class Solution:
     def countHomogenous(self, s: str) -> int:
+        MOD = pow(10, 9) + 7
         curr_letter = s[0]
         curr_length = 1
         soln = 1
