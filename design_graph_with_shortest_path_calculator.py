@@ -6,8 +6,10 @@ jramaswami
 """
 
 
+from typing import List
 import collections
 import heapq
+import math
 
 
 Edge = collections.namedtuple('Edge', ['u', 'v', 'wt'])
@@ -28,14 +30,18 @@ class Graph:
 
     def shortestPath(self, node1: int, node2: int) -> int:
         queue = [QItem(0, node1)]
-
+        dist = collections.defaultdict(lambda: math.inf)
+        dist[node1] = 0
         while queue:
             item = heapq.heappop(queue)
             if item.u == node2:
                 return item.dist
+            if item.dist > dist[item.u]:
+                continue
             for edge in self.adj[item.u]:
                 item0 = QItem(item.dist + edge.wt, edge.v)
                 heapq.heappush(queue, item0)
+                dist[edge.v] = min(dist[edge.v], item0.dist)
         return -1
 
 
