@@ -12,6 +12,10 @@ import collections
 
 class Solution:
     def numBusesToDestination(self, routes: List[List[int]], source: int, target: int) -> int:
+        # Corner case
+        if source == target:
+            return 0
+
         graph = collections.defaultdict(list)
         target_bus = -1
         source_bus = -1
@@ -61,4 +65,13 @@ def test_3():
     source = 5
     target = 5
     expected = 0
+    assert Solution().numBusesToDestination(routes, source, target) == expected
+
+
+def test_4():
+    "WA"
+    routes = [[16,25,29,35,42],[32],[1],[1,2,5,17,22,34,38,41,44],[1,16,23,24,32,36,38,45],[9,11,43],[5,10,15,22,27,38],[7,8,14,19,22,23,25,26,27],[3,8,24,29,47,48],[4,16,18,25,36,41]]
+    source = 17
+    target = 38
+    expected = 1
     assert Solution().numBusesToDestination(routes, source, target) == expected
