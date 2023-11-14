@@ -10,27 +10,19 @@ a b a
 """
 
 
-import functools
+import string
 
 
 class Solution:
     def countPalindromicSubsequence(self, s: str) -> int:
-        curr_queue = set([""])
-        solns = set()
-        for i, c in enumerate(s):
-            next_queue = set()
-            for t in curr_queue:
-                # Do not choose this one.
-                next_queue.add(t)
-                # Choose this one.
-                u = t + c
-                if len(u) == 3:
-                    if (u[0] == u[1] and u[1] == u[2]) or (u[0] == u[2]):
-                        solns.add(u)
-                else:
-                    next_queue.add(u)
-            curr_queue, next_queue = next_queue, set()
-        return len(solns)
+        soln = 0
+        for first_letter in string.ascii_lowercase:
+            left = s.find(first_letter)
+            right = s.rfind(first_letter)
+            if right > left:
+                t = set(s[left+1:right])
+                soln += len(t)
+        return soln
 
 
 def test_1():
