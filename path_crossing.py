@@ -29,6 +29,7 @@ class Solution:
             if q in visited:
                 return True
             visited.add(q)
+            p = q
         return False
 
 
