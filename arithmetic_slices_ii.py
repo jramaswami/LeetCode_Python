@@ -1,6 +1,7 @@
 """
-LeetCode :: Arithmetic Slices II - Subsequences
-November 2022 Challenge
+LeetCode
+Arithmetic Slices II - Subsequences
+January 2024 Challenge
 jramaswami
 """
 
