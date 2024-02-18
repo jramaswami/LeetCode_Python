@@ -11,26 +11,44 @@ import heapq
 from typing import *
 
 
-Room = collections.namedtuple('Room', ['time', 'id'])
+Event = collections.namedtuple('Event', ['time', 'type', 'id'])
+Room = collections.namedtuple('Room', ['id', 'time'])
 Meeting = collections.namedtuple('Meeting', ['start', 'end'])
 
 
 class Solution:
     def mostBooked(self, n: int, meetings: List[List[int]]) -> int:
-        roomq = [Room(0, x) for x in range(n)]
-        heapq.heapify(roomq)
-        meetingq = collections.deque(sorted(Meeting(s, e) for s, e in meetings))
-
+        eventq = [Event(0, 'room', x) for x in range(n)]
+        eventq.extend(Event(m[0], 'meeting', i) for i, m in enumerate(meetings))
+        heapq.heapify(eventq)
         room_meetings = [0 for _ in range(n)]
-        while meetingq:
-            meeting = meetingq.popleft()
-            room = heapq.heappop(roomq)
-            room_meetings[room.id] += 1
-            meeting_time = meeting.end - meeting.start
-            print(meeting, room, '->', meeting_time, '+', Room(max(room.time, meeting.start) + meeting_time, room.id))
-            heapq.heappush(roomq, Room(max(room.time, meeting.start) + meeting_time, room.id))
+        roomq = []
+        meetingq = []
 
-        print(room_meetings)
+        # While there are events left or meetings
+        while eventq or meetingq:
+            # Take all the events that occur at the time, t, of the first
+            # event in the event queue
+            while eventq and ((not roomq) or (not meetingq)):
+                t = eventq[0].time
+                while eventq and eventq[0].time == t:
+                    event = heapq.heappop(eventq)
+                    if event.type == 'room':
+                        heapq.heappush(roomq, Room(event.id, event.time))
+                    else:
+                        heapq.heappush(meetingq, Meeting._make(meetings[event.id]))
+
+            # For every pair of rooms and meetings that are available,
+            # start the meeting in the given room
+            while roomq and meetingq:
+                room = heapq.heappop(roomq)
+                meeting = heapq.heappop(meetingq)
+                room_meetings[room.id] += 1
+                meeting_time = meeting.end - meeting.start
+                actual_meeting_start = max(meeting.start, room.time)
+                actual_meeting_end = actual_meeting_start + meeting_time
+                heapq.heappush(eventq, Event(actual_meeting_end, 'room', room.id))
+
         soln_room = 0
         soln_meetings = 0
         for room_id, meeting_count in enumerate(room_meetings):
