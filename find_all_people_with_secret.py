@@ -7,6 +7,7 @@ jramaswami
 
 
 import collections
+import math
 from typing import List
 
 
@@ -16,6 +17,7 @@ QItem = collections.namedtuple('QItem', ['source', 'time'])
 
 class Solution:
     def findAllPeople(self, n: int, meetings: List[List[int]], firstPerson: int) -> List[int]:
+        print(list(sorted(meetings, key=lambda t: t[2])))
         # Transform meetings into graph with timed edges
         graph = [[] for _ in range(n)]
         for u, v, t in meetings:
@@ -25,6 +27,8 @@ class Solution:
         # Zero tells firstPerson
         graph[0].append(Edge(firstPerson, 0))
         has_secret = [False for _ in range(n)]
+        secret_time = [math.inf for _ in range(n)]
+        secret_time[0] = 0
         has_secret[0] = True
         queue = collections.deque()
         # Zero knows secret at time 0
@@ -32,9 +36,10 @@ class Solution:
         while queue:
             item = queue.popleft()
             for edge in graph[item.source]:
-                if item.time <= edge.time and not has_secret[edge.dest]:
-                    print(item, edge)
+                if item.time <= edge.time and edge.time < secret_time[edge.dest]:
+                    # print(item, edge)
                     has_secret[edge.dest] = True
+                    secret_time[edge.dest] = edge.time
                     queue.append(QItem(edge.dest, edge.time))
 
         return [i for i, s in enumerate(has_secret) if s]
