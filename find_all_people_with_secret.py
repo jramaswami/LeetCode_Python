@@ -22,11 +22,13 @@ class Solution:
             graph[u].append(Edge(v,t))
             graph[v].append(Edge(u,t))
 
+        # Zero tells firstPerson
+        graph[0].append(Edge(firstPerson, 0))
         has_secret = [False for _ in range(n)]
         has_secret[0] = True
-        has_secret[firstPerson] = True
         queue = collections.deque()
-        queue.append(QItem(firstPerson, 0))
+        # Zero knows secret at time 0
+        queue.append(QItem(0,0))
         while queue:
             item = queue.popleft()
             for edge in graph[item.source]:
@@ -68,4 +70,13 @@ def test_4():
     meetings = [[0,2,1],[1,3,1],[4,5,1]]
     firstPerson = 1
     expected = [0,1,2,3]
+    assert Solution().findAllPeople(n, meetings, firstPerson) == expected
+
+
+def test_5():
+    "WA"
+    n = 12
+    meetings = [[10,8,6],[9,5,11],[0,5,18],[4,5,13],[11,6,17],[0,11,10],[10,11,7],[5,8,3],[7,6,16],[3,6,10],[3,11,1],[8,3,2],[5,0,7],[3,8,20],[11,0,20],[8,3,4],[1,9,4],[10,7,11],[8,10,18]]
+    firstPerson = 9
+    expected = [0,1,4,5,6,9,11]
     assert Solution().findAllPeople(n, meetings, firstPerson) == expected
