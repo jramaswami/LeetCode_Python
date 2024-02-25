@@ -47,6 +47,10 @@ class UnionFind:
 
 class Solution:
     def canTraverseAllPairs(self, nums: List[int]) -> bool:
+
+        if len(nums) < 2:
+            return True
+
         if any(n == 1 for n in nums):
             return False
 
