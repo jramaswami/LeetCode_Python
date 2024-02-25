@@ -54,7 +54,7 @@ class Solution:
         # prime factors <= sqrt(10^5) ~ 317
         primes = sieve_primes(350)
         uf = UnionFind(pow(10,5)+1)
-        for n in nums:
+        for i, n in enumerate(nums):
             x = n
             for p in primes:
                 if p > x:
@@ -64,7 +64,7 @@ class Solution:
                 while x % p == 0:
                     x //= p
             if x > 1:
-                uf.union(p, n)
+                uf.union(x, n)
 
         x = uf.find(nums[0])
         return all(uf.find(n) == x for n in nums)
@@ -95,6 +95,14 @@ def test_4():
 
 
 def test_5():
+    "WA"
     nums = [920,429,616,42,385,780,728,795,630,112,420,462,210,143,78,792,770,794,462,910,286,990,390,616,385,275,546,990,924,567,715,156,429,385,660,660,693,28,770,945,399,840,440,231,210,780,210,910,60,546,210,840,308,715,858,704,260,770,735,975,910,715,286,420,770,650,462,845,390,990,312,176,715,624,110,750,990,528,546,819,390,770,10,390,770,461,520,539,770,490,910,364,91,468,462,260,770,525,858,195,378,840,429,210,308,819,840,336,770,182,840,130,165,420,546,462,390,924,468,735,286,630,264,819,308,720,770,198,420,924,364,780,429,825,858,770,198,870,990,465,660,294,546]
     expected = False
+    assert Solution().canTraverseAllPairs(nums) == expected
+
+
+def test_6():
+    "WA"
+    nums = [1]
+    expected = True
     assert Solution().canTraverseAllPairs(nums) == expected
