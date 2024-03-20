@@ -5,26 +5,53 @@ jramaswami
 """
 
 
+import enum
+import collections
+from typing import List
+
+
+MatchElement = collections.namedtuple('MatchElement', ['character', 'quantifier'])
+
+
+class Quantifier(enum.Enum):
+    Single = enum.auto()
+    Any = enum.auto()
+
+
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
 
+        match_pattern: List[MatchElement] = []
+        i = 0
+        while i < len(p):
+            char = p[i]
+            quantifier = Quantifier.Single
+            if i + 1 < len(p) and p[i + 1] == '*':
+                quantifier = Quantifier.Any
+                i += 1
+            match_pattern.append(MatchElement(char, quantifier))
+            i += 1
+
+        print(match_pattern)
+
         def rec(i, j):
             # If both pointers are done, we have a match.
-            if i >= len(s) and j >= len(p):
+            if i >= len(s) and j >= len(match_pattern):
                 return True
 
             # If only one pointer is done, we do not have a match.
-            if i >= len(s) or j >= len(p):
+            if i >= len(s) or j >= len(match_pattern):
                 return False
 
-            if p[j] == '*':
-                # We match and we can choose to move j or stay
-                return rec(i+1, j) or rec(i+1, j+1)
-            elif p[j] == '.':
-                # We match
-                return rec(i+1, j+1)
+            result = False
 
-            return s[i] == p[j] and rec(i+1, j+1)
+            if match_pattern[j].quantifier == Quantifier.Any:
+                result = result or rec(i+1, j+1)
+                result = result or rec(i+1, j)
+            elif s[i] == match_pattern[j].character or match_pattern[j].character == '.':
+                result = result or rec(i+1, j+1)
+
+            return result
 
         return rec(0, 0)
 
@@ -70,4 +97,12 @@ def test_6():
     s = 'aab'
     p = 'c*a*b'
     expected = True
+    assert Solution().isMatch(s, p) == expected
+
+
+def test_7():
+    "WA"
+    s = "mississippi"
+    p = "mis*is*p*."
+    expected = False
     assert Solution().isMatch(s, p) == expected
