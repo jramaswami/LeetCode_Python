@@ -5,8 +5,10 @@ jramaswami
 """
 
 
-import enum
+
 import collections
+import enum
+import functools
 from typing import List
 
 
@@ -32,6 +34,7 @@ class Solution:
             match_pattern.append(MatchElement(char, quantifier))
             i += 1
 
+        @functools.cache
         def rec(i, j):
             # If both pointers are done, we have a match.
             if i >= len(s) and j >= len(match_pattern):
@@ -53,6 +56,7 @@ class Solution:
                 if s[i] ==  match_pattern[j].character or match_pattern[j].character == '.':
                     result = result or rec(i+1, j)
                     result = result or rec(i+1, j+1)
+                    result = result or rec(i, j+1)
                 else:
                     result = result or rec(i, j+1)
             elif s[i] == match_pattern[j].character or match_pattern[j].character == '.':
@@ -128,4 +132,12 @@ def test_9():
     s = "bbbba"
     p = ".*a*a"
     expected = True
+    assert Solution().isMatch(s, p) == expected
+
+
+def test_10():
+    "TLE"
+    s = "aaaaaaaaaaaaab"
+    p = "a*a*a*a*a*a*a*a*a*c"
+    expected = False
     assert Solution().isMatch(s, p) == expected
