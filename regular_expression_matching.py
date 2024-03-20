@@ -38,7 +38,13 @@ class Solution:
                 return True
 
             # If only one pointer is done, we do not have a match.
-            if i >= len(s) or j >= len(match_pattern):
+            if j >= len(match_pattern):
+                return False
+
+            if i >= len(s):
+                # Unless the remaining pattern elements are any's.
+                if match_pattern[j].quantifier == Quantifier.Any:
+                    return rec(i, j+1)
                 return False
 
             result = False
@@ -113,5 +119,13 @@ def test_8():
     "WA: need to handle *'s after reaching the end of s"
     s = "a"
     p = "ab*"
+    expected = True
+    assert Solution().isMatch(s, p) == expected
+
+
+def test_9():
+    "WA"
+    s = "bbbba"
+    p = ".*a*a"
     expected = True
     assert Solution().isMatch(s, p) == expected
