@@ -32,8 +32,6 @@ class Solution:
             match_pattern.append(MatchElement(char, quantifier))
             i += 1
 
-        print(match_pattern)
-
         def rec(i, j):
             # If both pointers are done, we have a match.
             if i >= len(s) and j >= len(match_pattern):
@@ -46,8 +44,11 @@ class Solution:
             result = False
 
             if match_pattern[j].quantifier == Quantifier.Any:
-                result = result or rec(i+1, j+1)
-                result = result or rec(i+1, j)
+                if s[i] ==  match_pattern[j].character or match_pattern[j].character == '.':
+                    result = result or rec(i+1, j)
+                    result = result or rec(i+1, j+1)
+                else:
+                    result = result or rec(i, j+1)
             elif s[i] == match_pattern[j].character or match_pattern[j].character == '.':
                 result = result or rec(i+1, j+1)
 
@@ -81,7 +82,7 @@ def test_3():
 def test_4():
     s = 'abcda'
     p = 'ab*a'
-    expected = True
+    expected = False
     assert Solution().isMatch(s, p) == expected
 
 
@@ -105,4 +106,12 @@ def test_7():
     s = "mississippi"
     p = "mis*is*p*."
     expected = False
+    assert Solution().isMatch(s, p) == expected
+
+
+def test_8():
+    "WA: need to handle *'s after reaching the end of s"
+    s = "a"
+    p = "ab*"
+    expected = True
     assert Solution().isMatch(s, p) == expected
