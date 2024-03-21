@@ -1,14 +1,24 @@
 """
-LeetCode :: 206. Reverse Linked List
+LeetCode
+206. Reverse Linked List
+March 2023 Challenge
 jramaswami
 """
+
+
 class Solution:
     def reverseList(self, head: ListNode) -> ListNode:
-        prev = None
-        curr = follow = head
-        while curr:
-            follow = curr.next
-            curr.next = prev
-            prev = curr
-            curr = follow
-        return prev
+
+        dummy = ListNode(0)
+
+        def rec(node):
+            if node is None:
+                return dummy
+
+            prev = rec(node.next)
+            prev.next = node
+            node.next = None
+            return node
+
+        rec(head)
+        return dummy.next
