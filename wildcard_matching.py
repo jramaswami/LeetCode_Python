@@ -13,9 +13,12 @@ class Solution:
 
         @functools.cache
         def rec(i: int, j: int) -> bool:
+            print(f'rec({i=} {j=}')
             if i >= len(s) and j >= len(p):
                 return True
             if i >= len(s):
+                if p[j] == '*':
+                    return rec(i, j+1)
                 return False
             if j >= len(p):
                 return False
