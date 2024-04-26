@@ -7,32 +7,20 @@ jramaswami
 
 
 from typing import List
-import heapq
-import collections
-
-
-RowMin = collections.namedtuple('RowMin', ['value', 'index'])
+import math
 
 
 class Solution:
     def minFallingPathSum(self, grid: List[List[int]]) -> int:
-        row_mins = []
-        for row in grid:
-            row_mins.append(heapq.nsmallest(2, (RowMin(x, i) for i, x in enumerate(row))))
-
-        dp = [[None for _ in row] for row in row_mins]
-        dp [0] = [t[0] for t in row_mins[0]]
-        for r, _ in enumerate(row_mins[1:], start=1):
-            if row_mins[r][0].index == row_mins[r-1][0].index:
-                dp[r][0] = row_mins[r][0].value + dp[r-1][1]
-            else:
-                dp[r][0] = row_mins[r][0].value + dp[r-1][0]
-
-            if row_mins[r][1].index == row_mins[r-1][1].index:
-                dp[r][1] = row_mins[r][1].value + dp[r-1][0]
-            else:
-                dp[r][1] = row_mins[r][1].value + dp[r-1][1]
-
+        dp = [[math.inf for _ in row] for row in grid]
+        dp[0] = grid[0]
+        for r, row in enumerate(grid[:-1]):
+            for c, _ in enumerate(row):
+                for i, x in enumerate(dp[r]):
+                    if c == i:
+                        # Do not choose from same column
+                        continue
+                    dp[r+1][c] = min(dp[r+1][c], grid[r+1][c] + x)
         return min(dp[-1])
 
 
