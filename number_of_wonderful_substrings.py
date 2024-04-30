@@ -3,34 +3,30 @@ LeetCode
 1915. Number of Wonderful Substrings
 April 2024 Challenge
 jramaswami
+
+Thank You, Larry!
 """
 
 
-import itertools
+import collections
 
 
 class Solution:
     def wonderfulSubstrings(self, word: str) -> int:
-
-        prefix = []
-        prefix_value = 0
+        seen = collections.Counter()
+        soln = 0
+        seen[0] = 1
+        curr_mask = 0
         for c in word:
             i = ord(c) - ord('a')
-            mask = 1 << i
-            prefix_value = prefix_value ^ mask
-            prefix.append(prefix_value)
-
-        def get_prefix(i):
-            if i < 0:
-                return 0
-            return prefix[i]
-
-        soln = 0
-        for left, _ in enumerate(word):
-            for right, _ in enumerate(word[left:], start=left):
-                p = prefix[right] ^ get_prefix(left-1)
-                if p.bit_count() <= 1:
-                    soln += 1
+            m = (1 << i)
+            curr_mask ^= m
+            soln += seen[curr_mask]
+            for j in range(10):
+                t = (1 << j)
+                x = curr_mask ^ t
+                soln += seen[x]
+            seen[curr_mask] += 1
         return soln
 
 
