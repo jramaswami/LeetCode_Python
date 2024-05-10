@@ -17,7 +17,7 @@ QItem = collections.namedtuple('QItem', ['fraction', 'numerator_index', 'denomin
 
 class Solution:
     def kthSmallestPrimeFraction(self, arr: List[int], k: int) -> List[int]:
-        queue = [QItem(fractions.Fraction(1, x), 0, i) for i, x in enumerate(arr[1:], start=1)]
+        queue = [QItem(1/x, 0, i) for i, x in enumerate(arr[1:], start=1)]
         heapq.heapify(queue)
         curr_item = None
         for _ in range(k):
@@ -26,7 +26,7 @@ class Solution:
                 n = arr[curr_item.numerator_index + 1]
                 d = arr[curr_item.denominator_index]
                 next_item = QItem(
-                    fractions.Fraction(n,d),
+                    n/d,
                     curr_item.numerator_index + 1,
                     curr_item.denominator_index
                 )
