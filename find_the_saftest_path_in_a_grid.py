@@ -12,59 +12,57 @@ import math
 from typing import List
 
 
-Posn = collections.namedtuple('Posn', ['row', 'col'])
-
-
 class Solution:
     def maximumSafenessFactor(self, grid: List[List[int]]) -> int:
         EMPTY, THIEF = 0, 1
 
-        def inbounds(p):
+        def inbounds(r, c):
             return (
-                p.row >= 0 and p.col >= 0 and
-                p.row < len(grid) and p.col < len(grid[p.row])
+                r >= 0 and c >= 0 and
+                r < len(grid) and c < len(grid[r])
             )
 
-        OFFSETS = ((1, 0), (-1, 0), (0, 1), (0, -1))
+        def neighbors(r, c):
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                r0, c0 = r + dr, c + dc
+                if inbounds(r0, c0):
+                    yield r0, c0
 
-        def neighbors(p):
-            for dr, dc in OFFSETS:
-                q = Posn(p.row + dr, p.col + dc)
-                if inbounds(q):
-                    yield q
-
+        # Compute the min distance to a thief for all cells.
         safety = [[math.inf for _ in row] for row in grid]
         queue = collections.deque()
         for r, row in enumerate(grid):
             for c, cell in enumerate(row):
                 if cell == THIEF:
-                    queue.append(Posn(r, c))
+                    queue.append((r, c))
                     safety[r][c] = 0
 
         while queue:
-            p = queue.popleft()
-            d = safety[p.row][p.col] + 1
-            for q in neighbors(p):
-                if d < safety[q.row][q.col]:
-                    safety[q.row][q.col] = d
-                    queue.append(q)
+            r, c = queue.popleft()
+            d = safety[r][c] + 1
+            for r0, c0 in neighbors(r, c):
+                if d < safety[r0][c0]:
+                    safety[r0][c0] = d
+                    queue.append((r0, c0))
 
         path_safety = [[math.inf for _ in row] for row in grid]
-        target = Posn(len(grid)-1, len(grid[0])-1)
+        target = (len(grid)-1, len(grid[0])-1)
         queue = []
         if grid[0][0] == EMPTY:
-            queue.append((-safety[0][0], Posn(0, 0)))
+            queue.append((-safety[0][0], 0, 0))
             path_safety[0][0] = safety[0][0]
         while queue:
-            s, p = heapq.heappop(queue)
+            s, r, c = heapq.heappop(queue)
             s *= -1
-            if p == target:
+            if (r, c) == target:
                 return s
-            for q in neighbors(p):
-                s0 = min(s, safety[q.row][q.col])
-                if s0 < path_safety[q.row][q.col]:
-                    path_safety[q.row][q.col] = s0
-                    heapq.heappush(queue, (-s0, q))
+            if s > path_safety[r][c]:
+                continue
+            for r0, c0 in neighbors(r, c):
+                s0 = min(s, safety[r0][c0])
+                if s0 < path_safety[r0][c0]:
+                    path_safety[r0][c0] = s0
+                    heapq.heappush(queue, (-s0, r0, c0))
 
         return 0
 
