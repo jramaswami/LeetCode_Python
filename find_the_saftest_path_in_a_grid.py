@@ -3,6 +3,8 @@ LeetCode
 2812. Find the Safest Path in a Grid
 May 2024 Challenge
 jramaswami
+
+Thank you NeetCodeIO.
 """
 
 
@@ -29,39 +31,37 @@ class Solution:
                     yield r0, c0
 
         # Compute the min distance to a thief for all cells.
-        safety = [[math.inf for _ in row] for row in grid]
+        safety = dict()
         queue = collections.deque()
         for r, row in enumerate(grid):
             for c, cell in enumerate(row):
                 if cell == THIEF:
                     queue.append((r, c))
-                    safety[r][c] = 0
+                    safety[(r, c)] = 0
 
         while queue:
             r, c = queue.popleft()
-            d = safety[r][c] + 1
+            d = safety[(r, c)] + 1
             for r0, c0 in neighbors(r, c):
-                if d < safety[r0][c0]:
-                    safety[r0][c0] = d
+                if (r0, c0) not in safety:
+                    safety[(r0, c0)] = d
                     queue.append((r0, c0))
 
-        path_safety = [[math.inf for _ in row] for row in grid]
+        path_safety = dict()
         target = (len(grid)-1, len(grid[0])-1)
         queue = []
         if grid[0][0] == EMPTY:
-            queue.append((-safety[0][0], 0, 0))
-            path_safety[0][0] = safety[0][0]
+            queue.append((-safety[(0,0)], 0, 0))
+            path_safety[(0, 0)] = safety[(0,0)]
         while queue:
             s, r, c = heapq.heappop(queue)
             s *= -1
             if (r, c) == target:
                 return s
-            if s > path_safety[r][c]:
-                continue
             for r0, c0 in neighbors(r, c):
-                s0 = min(s, safety[r0][c0])
-                if s0 < path_safety[r0][c0]:
-                    path_safety[r0][c0] = s0
+                if (r0, c0) not in path_safety:
+                    s0 = min(s, safety[(r0, c0)])
+                    path_safety[(r0, c0)] = s0
                     heapq.heappush(queue, (-s0, r0, c0))
 
         return 0
