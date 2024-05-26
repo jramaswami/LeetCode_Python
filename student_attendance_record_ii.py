@@ -6,36 +6,45 @@ jramaswami
 """
 
 
-import functools
-
-
 class Solution:
     def checkRecord(self, n: int) -> int:
         MOD = pow(10, 9) + 7
+        # Convert to prev/curr table
+        # curr[absences][lates] where absences are 0, 1 and lates are 0, 1, 2
+        prev = [[0 for _ in range(3)] for _ in range(2)]
+        curr = [[0 for _ in range(3)] for _ in range(2)]
+        prev[0][0] = 1
 
-        @functools.cache
-        def rec(i, a, l):
-            if i == 0:
-                return 1
+        for i in range(n):
+            # Present day i
+            # prev[a][l] -> curr[a][0]
+            for a in range(2):
+                for l in range(3):
+                    curr[a][0] += prev[a][l]
+                    curr[a][0] %= MOD
 
-            # Present
-            result = rec(i-1, a, 0)
-            # Absent
-            if a == 0:
-                result += rec(i-1, a+1, 0)
-                result %= MOD
-            # Late
-            if l < 2:
-                result += rec(i-1, a, l+1)
-                result %= MOD
+            # Absent day i
+            # prev[0][l] -> curr[1][0]
+            for l in range(3):
+                curr[1][0] += prev[0][l]
+                curr[1][0] %= MOD
 
-            return result % MOD
+            # Late day i
+            # prev[a][l] -> curr[1][l+1] where l < 2
+            for a in range(2):
+                for l in range(2):
+                    curr[a][l+1] += prev[a][l]
+                    curr[a][l+1] %= MOD
 
-        return rec(n, 0, 0)
+            prev = curr
+            curr = [[0 for _ in range(3)] for _ in range(2)]
 
-
-import sys
-sys.setrecursionlimit(pow(10, 6))
+        soln = 0
+        for a in range(2):
+            for l in range(3):
+                soln += prev[a][l]
+                soln %= MOD
+        return soln % MOD
 
 
 def test_1():
@@ -52,4 +61,4 @@ def test_3():
 
 def test_4():
     "MLE"
-    assert Solution().checkRecord(99995) == 0
+    assert Solution().checkRecord(99995) == 969766675
