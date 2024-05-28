@@ -6,26 +6,26 @@ jramaswami
 """
 
 
-import functools
-
 
 class Solution:
-    def equalSubstring(self, s: str, t: str, maxCost: int) -> int:
+    def equalSubstring(self, s: str, t: str, max_cost: int) -> int:
+        soln = 0
+        left = 0
+        right = 0
+        curr_cost = 0
+        while right < len(s):
+            # Add the right index.
+            curr_cost += abs(ord(s[right]) - ord(t[right]))
+            right += 1
 
-        def rec(i, cost):
-            if i >= len(s):
-                return 0
+            # Pop left while the cost is too high
+            while curr_cost > max_cost:
+                curr_cost -= abs(ord(s[left]) - ord(t[left]))
+                left += 1
 
-            if s[i] == t[i]:
-                return 1 + rec(i+1, cost)
-            else:
-                x = abs(ord(s[i]) - ord(t[i]))
-                if x + cost <= maxCost:
-                    return 1 + rec(i, x + cost)
-            return 0
+            soln = max(soln, right - left)
 
-        return rec(0, 0)
-
+        return soln
 
 
 def test_1():
