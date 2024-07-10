@@ -1,0 +1,20 @@
+"""
+LeetCode
+1598. Crawler Log Folder
+July 2024 Challenge
+jramaswami
+"""
+
+
+class Solution:
+    def minOperations(self, logs: List[str]) -> int:
+        stack = []
+        for t in logs:
+            if t == '../':
+                if stack:
+                    stack.pop()
+            elif t == './':
+                pass
+            else:
+                stack.append(t)
+        return len(stack)
