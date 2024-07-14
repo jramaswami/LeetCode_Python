@@ -85,24 +85,28 @@ class Solution:
         def parse(i):
             elements = []
             current_element = ''
-            current_count = 0
+            current_count = ''
             while i >= 0:
                 if formula[i].islower():
                     # Add to element
                     current_element = formula[i] + current_element
                 elif formula[i].isupper():
                     current_element = formula[i] + current_element
-                    elements.append((current_element, max(current_count, 1)))
+                    k = 1
+                    if current_count:
+                        k = int(current_count)
+                    elements.append((current_element, k))
                     current_element = ''
-                    current_count = 0
+                    current_count = ''
                 elif formula[i].isdigit():
-                    current_count = (current_count * 10) + int(formula[i])
+                    current_count = formula[i] + current_count
                 elif formula[i] == ')':
                     sub_formula, i = parse(i - 1)
                     if current_count:
-                        sub_formula = [(t, x*current_count) for t, x in sub_formula]
+                        k = int(current_count)
+                        sub_formula = [(t, x*k) for t, x in sub_formula]
                     elements.extend(sub_formula)
-                    current_count = 0
+                    current_count = ''
                     current_element = ''
                 elif formula[i] == '(':
                     return elements, i
