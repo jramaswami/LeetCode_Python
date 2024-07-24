@@ -10,13 +10,14 @@ from typing import List
 
 
 def map_number(n, mapping):
+    if n == 0:
+        return mapping[n]
     t = 1
     m = 0
     while n:
         n, x = divmod(n, 10)
         y = mapping[x]
         m += (t * y)
-        print(n, x, y, m)
         t *= 10
     return m
 
