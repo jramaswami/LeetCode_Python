@@ -21,7 +21,7 @@ class Solution:
                 dist[u][v] = math.inf
 
         for u, v, w in zip(original, changed, cost):
-            dist[u][v] = w
+            dist[u][v] = min(dist[u][v], w)
 
         for u in string.ascii_lowercase:
             dist[u][u] = 0
