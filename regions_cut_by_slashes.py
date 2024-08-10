@@ -7,47 +7,46 @@ jramaswami
 
 
 from typing import List
-
-
 class Solution:
     def regionsBySlashes(self, grid: List[str]) -> int:
-        # Remove all lattice points connected to a slash
-        removed_lattice_points = set()
-        for cell_row, row in enumerate(grid):
-            for cell_col, cell_val in enumerate(row):
-                if cell_val == '/':
-                    removed_lattice_points.add((cell_row+1, cell_col))
-                    removed_lattice_points.add((cell_row, cell_col+1))
-                elif cell_val == '\\':
-                    removed_lattice_points.add((cell_row, cell_col))
-                    removed_lattice_points.add((cell_row+1, cell_col+1))
+        original_rows, original_cols = len(grid), len(grid[0])
+        scaled_rows, scaled_cols = 3 * original_rows, 3 * original_cols
+        scaled_grid = [[0 for _ in range(scaled_cols)] for _ in range(scaled_rows)]
 
-        def inbounds(lr, lc):
-            return lr >= 0 and lr <= len(grid) and lc >= 0 and lc <= len(grid[0])
+        for r in range(original_rows):
+            for c in range(original_cols):
+                r0, c0 = 3 * r, 3 * c
+                if grid[r][c] == '/':
+                    scaled_grid[r0][c0+2] = 1
+                    scaled_grid[r0+1][c0+1] = 1
+                    scaled_grid[r0+2][c0] = 1
+                elif grid[r][c] == '\\':
+                    scaled_grid[r0][c0] = 1
+                    scaled_grid[r0+1][c0+1] = 1
+                    scaled_grid[r0+2][c0+2] = 1
 
-        OFFSETS = ((0, 1), (0, -1), (1, 0), (-1, 0))
-        def neighbors(lr, lc):
-            for dlr, dlc in OFFSETS:
-                lr0 = lr + dlr
-                lc0 = lc + dlc
-                if inbounds(lr0, lc0):
-                    yield lr0, lc0
+        def inbounds(r, c):
+            return (
+                r >= 0 and r < len(scaled_grid) and
+                c >= 0 and c < len(scaled_grid[r])
+            )
 
-        components = 0
         visited = set()
+        OFFSETS = ((0, 1), (0, -1), (1, 0), (-1, 0))
+        def dfs(r, c):
+            visited.add((r, c))
+            for dr, dc in OFFSETS:
+                r0, c0 = r + dr, c + dc
+                if inbounds(r0, c0) and scaled_grid[r0][c0] == 0 and (r0, c0) not in visited:
+                    dfs(r0, c0)
 
-        def visit(lr, lc):
-            visited.add((lr, lc))
-            for lr0, lc0 in neighbors(lr, lc):
-                if (lr0, lc0) not in visited and (lr0, lc0) not in removed_lattice_points:
-                    visit(lr0, lc0)
-
-        for lattice_row in range(0, len(grid)+1):
-            for lattice_col in range(0, len(grid[0])+1):
-                if (lattice_row, lattice_col) not in visited and (lattice_row, lattice_col) not in removed_lattice_points:
-                    components += 1
-                    visit(lattice_row, lattice_col)
-        return components
+        soln = 0
+        for r in range(scaled_rows):
+            for c in range(scaled_cols):
+                if scaled_grid[r][c] == 0 and (r, c) not in visited:
+                    soln += 1
+                    dfs(r, c)
+        return soln
 
 
 def test_1():
