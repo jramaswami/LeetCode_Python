@@ -41,7 +41,7 @@ class Solution:
 
             return components == 1
 
-        if not is_connected:
+        if not is_connected():
             return 0
         for r, row in enumerate(grid):
             for c, val in enumerate(row):
