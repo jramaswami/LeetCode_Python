@@ -76,14 +76,15 @@ class Solution:
         p = convert_to_palindrome(t)
         p1 = previous_palindrome(p)
         p2 = next_palindrome(p)
+        print(p0, p, p1, p2)
 
         m = int(n)
         curr_min = m
         result = "0"
-        for p_ in ([0], p0, p, p1, p2):
-            d = abs(digits_to_int(p_) - m)
+        for p_ in sorted(digits_to_int(a) for a in ([0], p0, p, p1, p2)):
+            d = abs(p_ - m)
             if d > 0 and d < curr_min:
-                result = str(''.join(str(x) for x in p_))
+                result = str(p_)
                 curr_min = d
         return result
 
@@ -134,3 +135,8 @@ def test_8():
     n = "1837722381"
     expected = "1837667381"
     assert Solution().nearestPalindromic(n) == expected
+
+
+def test_9():
+    n = "10"
+    expected = "9"
