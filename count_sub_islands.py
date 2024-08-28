@@ -24,7 +24,7 @@ class Solution:
 
         # Establish island ids
         visited = [[False for _ in row] for row in grid1]
-        island_id = [[-1 for _ in row] for row in grid1]
+        island_id = [[0 for _ in row] for row in grid1]
         island_id_generator = itertools.count(1)
         for r0, row in enumerate(grid1):
             for c0, val in enumerate(row):
@@ -44,9 +44,10 @@ class Solution:
         # Check sub islands
         soln = 0
         visited = [[False for _ in row] for row in grid1]
-        for r0, row in enumerate(grid1):
+        for r0, row in enumerate(grid2):
             for c0, val in enumerate(row):
                 if not visited[r0][c0] and val == 1:
+                    print('.' * 20)
                     visited[r0][c0] = True
                     curr_island_id = island_id[r0][c0]
                     is_sub_island = True
@@ -56,10 +57,10 @@ class Solution:
                         if island_id[r1][c1] != curr_island_id:
                             is_sub_island = False
                         for r2, c2 in neighbors(r1, c1):
-                            if not visited[r2][c2] and grid1[r2][c2] == 1:
+                            if not visited[r2][c2] and grid2[r2][c2] == 1:
                                 queue.append((r2, c2))
                                 visited[r2][c2] = True
-                    if is_sub_island:
+                    if is_sub_island and curr_island_id > 0:
                         soln += 1
         return soln
 
