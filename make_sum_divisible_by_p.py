@@ -3,37 +3,46 @@ LeetCode
 1590. Make Sum Divisible by P
 October 2024 Challenge
 jramaswami
+
+Thank You NeetCodeIO!
 """
 
 
 class Solution:
     def minSubarray(self, nums: List[int], p: int) -> int:
-        # Take prefix sums modulo p
-        prefix = [None for _ in nums]
+        # Get total modulo p
+        T = 0
+        for i, n in enumerate(nums):
+            T += n
+            T %= p
+        
+        # If total sum is divisible by p, return  0.
+        if T == 0:
+            return 0
+        
+        # Iterate over nums keeping track of prefix sums 
+        # at the position we last saw it
+        soln = len(nums)
         curr_sum = 0
+        seen = dict()
+        # Intialize prefix sum of zero at position before 
+        #beginning of nums
+        seen[0] = -1
         for i, n in enumerate(nums):
             curr_sum += n
             curr_sum %= p
-            prefix[i] = curr_sum
-        
-        if curr_sum == 0:
-            return 0
+            
+            # Compute the prefix sum that when removed will
+            # result in the sum(nums[j:i+1]) % p == 0, if
+            # it exists
+            x = (curr_sum - T + p) % p
+            if x in seen:
+                j = seen[x]
+                soln = min(soln, i-j)
+            
+            # Add curr prefix sum to seen, since this is
+            # the last time we saw it
+            seen[curr_sum] = i
 
-        # Get function to return the sum a subarray [left:right] (inclusive)
-        def get(left, right):
-            if left == 0:
-                return prefix[right]
-            return (prefix[right] - prefix[left-1] + p) % p
-
-        # Check each subarray
-        soln = len(nums) + 10
-        for left in range(len(nums)):
-            for right in range(left, len(nums)):
-                # Do not remove the entire array
-                if left == 0 and right == len(nums) - 1:
-                    continue
-                x = get(left, right)
-                y = (curr_sum - x + p) % p
-                if y == 0:
-                    soln = min(soln, (right - left + 1))
-        return -1 if soln == len(nums) + 10 else soln
+        # If we removed the entire array, return -1
+        return -1 if soln == len(nums) else soln
