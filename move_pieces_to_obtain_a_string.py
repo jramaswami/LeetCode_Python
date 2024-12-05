@@ -11,6 +11,11 @@ import collections
 
 class Solution:
     def canChange(self, start: str, target: str) -> bool:
+        start_freqs = collections.Counter(start)
+        target_freqs = collections.Counter(target)
+        if start_freqs != target_freqs:
+            return False
+
         start0 = collections.deque((i, x) for i, x in enumerate(start) if x in 'LR')
         target0 = collections.deque((i, x) for i, x in enumerate(target) if x in 'LR')
 
