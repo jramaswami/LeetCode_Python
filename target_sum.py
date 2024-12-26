@@ -6,6 +6,7 @@ jramaswami
 """
 
 
+import collections
 import itertools
 import operator
 from typing import List
@@ -13,14 +14,16 @@ from typing import List
 
 class Solution:
     def findTargetSumWays(self, nums: List[int], target: int) -> int:
-        soln = 0
-        for operators in itertools.product([operator.add, operator.sub], repeat=len(nums)):
-            a = 0
-            for b, op in zip(nums, operators):
-                a = op(a, b)
-            if a == target:
-                soln += 1
-        return soln
+        # BFS
+        curr_queue = collections.defaultdict(int)
+        curr_queue[0] = 1
+        next_queue = collections.defaultdict(int)
+        for n in nums:
+            for a, x in curr_queue.items():
+                next_queue[a - n] += x
+                next_queue[a + n] += x
+            curr_queue, next_queue = next_queue, collections.defaultdict(int)
+        return curr_queue[target]
 
 
 def test_1():
@@ -28,7 +31,6 @@ def test_1():
     target = 3
     expected = 5
     assert Solution().findTargetSumWays(nums, target) == expected
-
 
 
 def test_2():
