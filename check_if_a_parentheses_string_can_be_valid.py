@@ -30,3 +30,4 @@ class Solution:
                     return rec(number_of_opens - 1, i + 1)
     
         return rec(0, 0)
+
