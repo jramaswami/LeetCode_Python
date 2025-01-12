@@ -3,31 +3,36 @@ LeetCode
 2116. Check if a Parentheses String Can Be Valid
 January 2025 Challenge
 jramaswami
+
+Thank You NeetCode.IO!
 """
-
-
-import functools
 
 
 class Solution:
     def canBeValid(self, s: str, locked: str) -> bool:
-        
-        @functools.cache
-        def rec(number_of_opens, i):
-            if number_of_opens < 0:
-                return False
-            if i >= len(s):
-                return number_of_opens == 0
-            if locked[i] == '0':
-                return (
-                    rec(number_of_opens + 1, i + 1) or
-                    rec(number_of_opens - 1, i + 1)
-                )
-            else:
-                if s[i] == '(':
-                    return rec(number_of_opens + 1, i + 1)
-                else:
-                    return rec(number_of_opens - 1, i + 1)
-    
-        return rec(0, 0)
+        if len(s) % 2:
+            return False
 
+        locked_stack = []
+        unlocked_stack = []
+
+        for i, (char, lock) in enumerate(zip(s, locked)):
+            if lock == '0':
+                unlocked_stack.append(i)
+            elif s[i] == '(':
+                locked_stack.append(i)
+            else:  # ')'
+                if locked_stack:
+                    locked_stack.pop()
+                elif unlocked_stack:
+                    unlocked_stack.pop()
+                else:
+                    return False
+        
+        while locked_stack:
+            if locked_stack[-1] > unlocked_stack[-1]:
+                return False
+            locked_stack.pop()
+            unlocked_stack.pop()
+
+        return len(unlocked_stack) % 2 == 0
