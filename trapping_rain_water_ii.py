@@ -6,66 +6,47 @@ jramaswami
 """
 
 
-import math
+import collections
+import heapq
 from typing import List
 
 
+QItem = collections.namedtuple('QItem', ['height', 'row', 'col'])
+
 class Solution:
     def trapRainWater(self, height_map: List[List[int]]) -> int:
-        row_prefixes = []
-        row_suffixes = []
-        for row in height_map:
-            row_prefixes.append([])
-            curr_max = 0
-            for x in row:
-                curr_max = max(curr_max, x)
-                row_prefixes[-1].append(curr_max)
+        def inbounds(r, c):
+            return r >= 0 and c >= 0 and r < len(height_map) and c < len(height_map[r])
 
-            row_suffixes.append([])
-            curr_max = 0
-            for x in reversed(row):
-                curr_max = max(curr_max, x)
-                row_suffixes[-1].append(curr_max)
-            row_suffixes[-1] = row_suffixes[-1][::-1]
-
-        col_prefixes = []
-        col_suffixes = []
+        def neighbors(r, c):
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                r0, c0 = r + dr, c + dc
+                if inbounds(r0, c0):
+                    yield r0, c0
+        
+        curr_height = 0
+        # Add boundary elements
+        visited = set()
+        HEIGHT, WIDTH = len(height_map), len(height_map[0])
         for c in range(len(height_map[0])):
-            col_prefixes.append([])
-            curr_max = 0
-            for row in height_map:
-                x = row[c]
-                curr_max = max(curr_max, x)
-                col_prefixes[-1].append(curr_max)
-
-            col_suffixes.append([])
-            curr_max = 0
-            for row in reversed(height_map):
-                x = row[c]
-                curr_max = max(curr_max, x)
-                col_suffixes[-1].append(curr_max)
-            col_suffixes[-1] = col_suffixes[-1][::-1]
-
-        def get_min(r, c):
-            min_west = min_east = min_north = min_south = 0
-            if c - 1 >= 0:
-                min_west = row_prefixes[r][c-1]
-            if c + 1 < len(height_map[r]):
-                min_east = row_suffixes[r][c+1]
-            if r - 1 >= 0:
-                min_north = col_prefixes[c][r-1]
-            if r + 1 < len(height_map):
-                min_south = col_prefixes[c][r+1]
-            return min(min_west, min_east, min_north, min_south)
-
-        soln = 0
-        for r, row in enumerate(height_map):
-            for c, height in enumerate(row):
-                min_wall = get_min(r, c)
-                if height < min_wall:
-                    soln += min_wall - height
+            visited.add((0, c))
+            visited.add((HEIGHT-1, c))
+        for r in range(1, HEIGHT-1):
+            visited.add((r, 0))
+            visited.add((r, WIDTH-1))
+        queue = [QItem(height_map[r][c], r, c) for r, c in visited]
+        heapq.heapify(queue)
+        soln = max_height = 0
+        while queue:
+            item = heapq.heappop(queue)
+            max_height = max(item.height, max_height)
+            soln += (max_height - item.height)
+            for r0, c0 in neighbors(item.row, item.col):
+                if (r0, c0) not in visited:
+                    visited.add((r0, c0))
+                    item0 = QItem(height_map[r0][c0], r0, c0)
+                    heapq.heappush(queue, item0)
         return soln
-
 
 
 def test_1():
