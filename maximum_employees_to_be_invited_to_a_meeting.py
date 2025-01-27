@@ -3,6 +3,8 @@ LeetCode
 2127. Maximum Employees to Be Invited to a Meeting
 January 2025 Challenge
 jramaswami
+
+Thank You NeetCodeIO!
 """
 
 
@@ -12,49 +14,54 @@ from typing import List
 
 class Solution:
     def maximumInvitations(self, favorite: List[int]) -> int:
-        # Longest cycle or chain
-        soln = 0
+        # Find the longest cycle.
+        longest_cycle = 0
+        visited = [False for _ in favorite]
+        length_2_cycles = []
+        for i, _ in enumerate(favorite):
+            if not visited[i]:
+                start, curr = i, i
+                curr_set = set()
+                while not visited[curr]:
+                    visited[curr] = True
+                    curr_set.add(curr)
+                    curr = favorite[curr]
 
-        # Find cycle using bfs
-        visited = set()
-        for root, _ in enumerate(favorite):
-            if root not in visited:
-                visited.add(root)
-                queue = collections.deque()
-                queue.append((1, root))
-                while queue:
-                    d, u = queue.popleft()
-                    v = favorite[u]
-                    if v in visited:
-                        # Cycle
-                        soln = max(soln, d)
-                    else:
-                        visited.add(v)
-                        queue.append((d+1, v))
-
-        # Reverse the graph to find the end of any chains (zero indegree)
-        # Start with those to find chains with bfs
+                # Curr points to cycle.
+                if curr in curr_set:
+                    # New cycle.
+                    cycle_length = len(curr_set)
+                    # Remove nodes before cycle.
+                    while start != curr:
+                        cycle_length -= 1
+                        start = favorite[start]
+                    longest_cycle = max(longest_cycle, cycle_length)
+                    if cycle_length == 2:
+                        length_2_cycles.append([curr, favorite[curr]])
+        
+        # Find the longest non closed circles.
         reverse_graph = collections.defaultdict(list)
-        indegree = [0 for _ in favorite]
-        for v, u in enumerate(favorite):
-            reverse_graph[u].append(v)
-            indegree[v] += 1
+        for dst, src in enumerate(favorite):
+            reverse_graph[src].append(dst)
 
-        for root in (u for u, d in enumerate(indegree) if d == 0):
-            # zero indegree is the beginning of a chain
-            visited = set()
+        def bfs(root, pair):
+            result = 0
             queue = collections.deque()
-            visited.add(root)
-            queue.append((1, root))
+            queue.append((root, 0))
             while queue:
-                d, u = queue.popleft()
-                soln = max(soln, d)
-                for v in reverse_graph[u]:
-                    if v not in visited:
-                        visited.add(v)
-                        queue.append((d+1, v))
+                u, d = queue.popleft()
+                if u != pair:
+                    result = max(result, d)
+                    for v in reverse_graph[u]:
+                        queue.append((v, d+1))
+            return result
 
-        return soln
+        chain_sum = 0
+        for root1, root2 in length_2_cycles:
+            chain_sum += bfs(root1, root2) + bfs(root2, root1) + 2
+        return max(chain_sum, longest_cycle)
+
+
 
 
 def test1():
