@@ -27,7 +27,7 @@ class Solution:
             return sum(t) >= cars
 
         low = 0
-        high = pow(10, 8)
+        high = min(ranks) * cars * cars
         soln = high
         while low <= high:
             mid = low + ((high - low) // 2)
