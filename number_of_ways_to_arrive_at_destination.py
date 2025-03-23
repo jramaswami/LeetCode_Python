@@ -42,21 +42,20 @@ class Solution:
         ways_to_reach[0][0] = 1
         visited = collections.defaultdict(lambda: collections.defaultdict(bool))
         MOD = pow(10, 9) + 7
-        min_distance = math.inf
         queue = [(0, 0)]
         while queue:
             d, u = heapq.heappop(queue)
-            if u == n-1:
-                min_distance = min(min_distance, d)
-            if d <= min_distance and not visited[u][d]:
-                visited[u][d] = True
+            if d == dist[u]:
                 for e in graph[u]:
                     v = e.other(u)
                     d0 = d + e.weight
-                    ways_to_reach[v][d0] += ways_to_reach[u][d]
-                    ways_to_reach[v][d0] %= MOD
-                    heapq.heappush(queue, (d0, v))
-        return ways_to_reach[n-1][min_distance] % MOD
+                    if d0 <= dist[v]:
+                        ways_to_reach[v][d0] += ways_to_reach[u][d]
+                        ways_to_reach[v][d0] %= MOD
+                        if d0 < dist[v]:
+                            dist[v] = d0
+                            heapq.heappush(queue, (d0, v))
+        return ways_to_reach[n-1][dist[n-1]] % MOD
 
 
 def test_1():
