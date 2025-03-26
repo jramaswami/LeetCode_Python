@@ -22,8 +22,8 @@ class Solution:
         if any (t % x != rem for t in flat):
             return -1
         flat = [t - rem for t in flat]
-        mean = statistics.mean(flat)
-        lower_bound = mean - (mean % x)
+        med = statistics.median(flat)
+        lower_bound = int(med - (med % x))
         upper_bound = lower_bound + x
         return min(
             sum(abs(t - lower_bound) for t in flat) // x,
