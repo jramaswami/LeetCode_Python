@@ -23,7 +23,7 @@ class Solution:
             return -1
         flat = [t - rem for t in flat]
         mean = statistics.mean(flat)
-        lower_bound = mean // x
+        lower_bound = mean - (mean % x)
         upper_bound = lower_bound + x
         return min(
             sum(abs(t - lower_bound) for t in flat) // x,
@@ -57,4 +57,12 @@ def test_4():
     grid = [[931,128],[639,712]]
     x = 73
     expected = 12
+    assert Solution().minOperations(grid, x) == expected
+
+
+def test_5():
+    "WA"
+    grid = [[529,529,989],[989,529,345],[989,805,69]]
+    x = 92
+    expected = 25
     assert Solution().minOperations(grid, x) == expected
