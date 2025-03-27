@@ -16,6 +16,7 @@ class Solution:
         for x in nums:
             if counter == 0:
                 majority = x
+                counter = 1
             elif majority == x:
                 counter += 1
             else:
