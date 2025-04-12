@@ -24,52 +24,53 @@ class Solution:
 
         # Compute the possible palindromic numbers
         possibles = []
-        def rec(i, t, acc):
-            if i >= t:
+        def rec(i, n, acc):
+            if i >= (n // 2):
                 if n % 2 == 1:
-                    possibles.append(tuple(itertools.chain(acc, reversed(acc))))
+                    for m in range(10):
+                        possibles.append(tuple(itertools.chain(acc, [m], reversed(acc))))
                 else:
-                    possibles.append(tuple(itertools.chain(acc, reversed(acc[:-1]))))
+                    possibles.append(tuple(itertools.chain(acc, reversed(acc))))
                 return
 
             min_number = 0 if i > 0 else 1
             for x in range(min_number, 10):
                 acc.append(x)
-                rec(i+1, t, acc)
+                rec(i+1, n, acc)
                 acc.pop()
-
-        t = n // 2 if n % 2 == 0 else 1 + (n // 2)
-        rec(0, t, [])
+        rec(0, n, [])
 
         soln = 0
-        # Which possibles are divisible by k?
-        visited_keys = set()
+        # Which unique possibles are divisible by k?
+        visited = set()
+        unique_possibles = []
         for candidate in possibles:
             if divisible(candidate, k):
                 # How many permutations with replacement are there?
-                perms = math.factorial(len(candidate))
-                freqs = collections.Counter(candidate)
-                key = tuple((f, freqs[f]) for f in sorted(freqs))
-                if key not in visited_keys:
-                    visited_keys.add(key)
-                    for r in freqs.values():
-                        perms //= math.factorial(r)
-                    # Subtract the number of any that begin with zeros
-                    lz_perms = 0
-                    if freqs[0]:
-                        freqs[0] -= 1
-                        lz_perms = math.factorial(len(candidate) - 1)
-                        for r in freqs.values():
-                            lz_perms //= math.factorial(r)
-                        perms -= lz_perms
-                    print(candidate, perms, lz_perms)
-                    soln += perms
+                candidate0 = tuple(sorted(candidate))
+                visited.add(candidate0)
+
+        for candidate in visited:
+            freqs = collections.Counter(candidate)
+            perms = math.factorial(len(candidate))
+            for r in freqs.values():
+                perms //= math.factorial(r)
+            # Subtract the number of any that begin with zeros
+            lz_perms = 0
+            if freqs[0] > 0:
+                lz_perms = math.factorial(len(candidate) - 1)
+                for x, r in freqs.items():
+                    if x == 0:
+                        r -= 1
+                    lz_perms //= math.factorial(r)
+            perms -= lz_perms
+            soln += perms
 
         return soln
 
 
 def test_1():
-    n = 4
+    n = 3
     k = 5
     expected = 27
     assert Solution().countGoodIntegers(n, k) == expected
