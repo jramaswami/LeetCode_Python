@@ -26,5 +26,7 @@ class Solution:
                 freqs[x] += 1
                 curr_pairs += pair_count(freqs[x])
                 if curr_pairs >= k:
-                    soln += 1
+                    # From here on out, there will be enough values
+                    # when we start from left and go at least to right
+                    soln += (len(nums) - right + 1)
         return soln
