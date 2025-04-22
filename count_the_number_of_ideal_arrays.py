@@ -6,24 +6,22 @@ jramawami
 """
 
 
-
 class Solution:
     def idealArrays(self, n: int, maxValue: int) -> int:
         MOD = pow(10, 9) + 7
         # dp[i][j] = number of ways where 0 <= i < n and 0 <= j <= maxValue
-        dp = [[0 for _ in range(maxValue+1)] for _ in range(n)]
         # Initialize initial row
-        dp[0] = [1 for _ in range(maxValue+1)]
+        prev_row = [1 for _ in range(maxValue+1)]
+        curr_row = [0 for _ in range(maxValue+1)]
         for i in range(n-1):
             for j in range(1, maxValue+1):
                 for k in range(j, maxValue+1, j):
-                    dp[i+1][k] += dp[i][j]
-                    dp[i+1][k] %= MOD
+                    curr_row[k] += prev_row[j]
+                    curr_row[k] %= MOD
+            prev_row, curr_row = curr_row, [0 for _ in range(maxValue+1)]
 
-        for row in dp:
-            print(row)
         soln = 0
-        for t in dp[-1]:
+        for t in prev_row:
             soln += t
             soln %= MOD
         return soln % MOD
