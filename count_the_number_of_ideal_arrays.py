@@ -6,25 +6,38 @@ jramawami
 """
 
 
+import functools
+import math
+
+
 class Solution:
     def idealArrays(self, n: int, maxValue: int) -> int:
         MOD = pow(10, 9) + 7
-        # dp[i][j] = number of ways where 0 <= i < n and 0 <= j <= maxValue
-        # Initialize initial row
-        prev_row = [1 for _ in range(maxValue+1)]
-        curr_row = [0 for _ in range(maxValue+1)]
-        for i in range(n-1):
-            for j in range(1, maxValue+1):
-                for k in range(j, maxValue+1, j):
-                    curr_row[k] += prev_row[j]
-                    curr_row[k] %= MOD
-            prev_row, curr_row = curr_row, [0 for _ in range(maxValue+1)]
 
-        soln = 0
-        for t in prev_row:
-            soln += t
-            soln %= MOD
-        return soln % MOD
+        @functools.cache
+        def get_comb(N, k):
+            return math.comb(N, k) % MOD
+
+        total = 0
+        def gen():
+            p = arr[-1]
+            nonlocal total
+            total += get_comb(n-1, len(arr) - 1)
+            current = p + p
+            while current <= maxValue:
+                arr.append(current)
+                gen()
+                arr.pop()
+                current += p
+
+        arr = []
+        for i in range(1, maxValue+1):
+            arr.append(i)
+            gen()
+            arr.pop()
+        return total % MOD
+
+
 
 
 def test_1():
