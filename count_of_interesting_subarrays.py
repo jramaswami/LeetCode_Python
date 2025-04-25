@@ -17,12 +17,13 @@ class Solution:
         # Convert nums yes/no for nums[i] % modulo == k
         nums0 = [1 if n % modulo == k else 0 for n in nums]
         # Prefix sums for the number of nums[i] % modulo == k
-        nums1 = [x % modulo for x in itertools.accumulate(nums0)]
+        nums1 = list(itertools.accumulate(nums0))
         seen = collections.defaultdict(int)
         seen[0] = 1
         for x in nums1:
-            soln += seen[x]
-            seen[x] += 1
+            i = (x + modulo - k) % modulo
+            soln += seen[i]
+            seen[x % modulo] += 1
         return soln
 
 
