@@ -21,10 +21,10 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
-        heap = [(moveTime[0][0], 0, 0)]
+        heap = [(0, 0, 0)]
         INF = pow(10, 10)
         dist = [[INF for _ in row] for row in moveTime]
-        dist[0][0] = moveTime[0][0]
+        dist[0][0] = 0
         while heap:
             curr_dist, r, c = heapq.heappop(heap)
             if curr_dist != dist[r][c]:
