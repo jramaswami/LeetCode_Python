@@ -12,23 +12,27 @@ import collections
 class Solution:
     def lengthAfterTransformations(self, s: str, t: int) -> int:
         MOD = pow(10, 9) + 7
-        prev_freqs = collections.Counter(s)
-        next_freqs = collections.Counter()
+        # Convert array to integers
+        prev_freqs = [0 for _ in range(26)]
+        ord_a = ord('a')
+        for c in s:
+            x = ord(c) - ord_a
+            prev_freqs[x] += 1
+        next_freqs = [0 for _ in range(26)]
         for _ in range(t):
-            for c, n in prev_freqs.items():
-                if c == 'z':
-                    next_freqs['a'] += n
-                    next_freqs['a'] %= MOD
-                    next_freqs['b'] += n
-                    next_freqs['b'] %= MOD
+            for c, n in enumerate(prev_freqs):
+                if c == 25:
+                    next_freqs[0] += n
+                    next_freqs[0] %= MOD
+                    next_freqs[1] += n
+                    next_freqs[1] %= MOD
                 else:
-                    d = chr(ord(c)+1)
-                    next_freqs[d] += n
-                    next_freqs[d] %= MOD
-            prev_freqs, next_freqs = next_freqs, collections.Counter()
+                    next_freqs[c+1] += n
+                    next_freqs[c+1] %= MOD
+            prev_freqs, next_freqs = next_freqs, [0 for _ in range(26)]
 
         soln = 0
-        for n in prev_freqs.values():
+        for n in prev_freqs:
             soln += n
             soln %= MOD
         return soln % MOD
