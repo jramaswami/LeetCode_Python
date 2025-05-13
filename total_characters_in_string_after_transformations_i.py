@@ -6,23 +6,29 @@ jramaswami
 """
 
 
-import functools
+import collections
 
 
 class Solution:
     def lengthAfterTransformations(self, s: str, t: int) -> int:
         MOD = pow(10, 9) + 7
-
-        @functools.cache
-        def rec(i, c):
-            if i == 0:
-                return 1
-            if c == 'z':
-                return (rec(i-1, 'a') + rec(i-1, 'b')) % MOD
-            return rec(i-1, chr(ord(c)+1))
+        prev_freqs = collections.Counter(s)
+        next_freqs = collections.Counter()
+        for _ in range(t):
+            for c, n in prev_freqs.items():
+                if c == 'z':
+                    next_freqs['a'] += n
+                    next_freqs['a'] %= MOD
+                    next_freqs['b'] += n
+                    next_freqs['b'] %= MOD
+                else:
+                    d = chr(ord(c)+1)
+                    next_freqs[d] += n
+                    next_freqs[d] %= MOD
+            prev_freqs, next_freqs = next_freqs, collections.Counter()
 
         soln = 0
-        for c in s:
-            soln += rec(t, c)
+        for n in prev_freqs.values():
+            soln += n
             soln %= MOD
         return soln % MOD
