@@ -17,54 +17,55 @@ class Solution:
         for u, v in edges1:
             graph1[u].append(v)
             graph1[v].append(u)
-            nodes1.add(u)
-            nodes1.add(v)
 
         graph2 = collections.defaultdict(list)
         nodes2 = set()
         for u, v in edges2:
             graph2[u].append(v)
             graph2[v].append(u)
-            nodes2.add(u)
-            nodes2.add(v)
 
-        def bfs(root, graph):
+        def color_graph(root, graph):
             even_nodes = 0
             odd_nodes = 0
+            colors = dict()
             visited = set()
             visited.add(root)
             queue = collections.deque()
             queue.append((root, 0))
             while queue:
                 u, d = queue.popleft()
-                if d % 2:
-                    odd_nodes += 1
-                else:
-                    even_nodes += 1
+                colors[u] = d % 2
                 for v in graph[u]:
                     if v not in visited:
                         visited.add(v)
                         queue.append((v, d + 1))
-            return even_nodes, odd_nodes
+            return colors
 
-        even_nodes1 = dict()
-        odd_nodes1 = dict()
-        for root in nodes1:
-            evens, odds = bfs(root, graph1)
-            even_nodes1[root] = evens
-            odd_nodes1[root] = odds
+        root1 = edges1[0][0]
+        root2 = edges2[0][0]
+        colors1 = color_graph(root1, graph1)
+        colors2 = color_graph(root2, graph2)
+        odds1 = evens1 = 0
+        for color in colors1.values():
+            if color:
+                odds1 += 1
+            else:
+                evens1 += 1
 
-        even_nodes2 = dict()
-        odd_nodes2 = dict()
-        for root in nodes2:
-            evens, odds = bfs(root, graph2)
-            even_nodes2[root] = evens
-            odd_nodes2[root] = odds
+        odds2 = evens2 = 0
+        for color in colors2.values():
+            if color:
+                odds2 += 1
+            else:
+                evens2 += 1
+        max_from2 = max(odds2, evens2)
 
-        soln = [0 for _ in nodes1]
-        for root1 in nodes1:
-            for root2 in nodes2:
-                soln[root1] = max(soln[root1], even_nodes1[root1] + odd_nodes2[root2])
+        soln = [0 for _ in colors1]
+        for root1, color in colors1.items():
+            if color % 2:
+                soln[root1] = odds1 + max_from2
+            else:
+                soln[root1] = evens1 + max_from2
         return soln
 
 
