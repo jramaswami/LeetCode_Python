@@ -6,27 +6,28 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
     def distributeCandies(self, n: int, limit: int) -> int:
-        # Child 1 can have 0 .. min(n, limit)
-        # Child 2 can have 0 .. min(n - child1, limit)
-        # Child 3 must have limit - child1 - child2
-        # dp[child index][candies used] = ways to reach
-        dp = [[0 for _ in range(n+1)] for _ in range(3)]
-        for x in range(min(n+1, limit+1)):
-            dp[0][x] = 1
-
-        for x in range(n+1):
-            for t in range(limit+1):
-                if x + t <= n:
-                    dp[1][x+t] += dp[0][x]
-
-        for y in range(n+1):
-            for t in range(limit+1):
-                if y + t <= n:
-                    dp[2][y+t] += dp[1][y]
-
-        return dp[-1][-1]
+        x = 1
+        incr = 1
+        window = collections.deque((0 for _ in range(limit+1)))
+        curr_sum = 0
+        for i in range(n+1):
+            # Add x to window and curr_sum
+            window.append(x)
+            curr_sum += x
+            x += incr
+            x = max(x, 0)
+            if x == limit + 1:
+                incr = -1
+            # Remove any expired elements
+            while len(window) > limit + 1:
+                curr_sum -= window[0]
+                window.popleft()
+        return curr_sum
 
 
 def test_1():
@@ -39,6 +40,7 @@ def test_2():
     n = 3
     limit = 3
     assert Solution().distributeCandies(n, limit) == 10
+
 
 def test_3():
     n = 10001
