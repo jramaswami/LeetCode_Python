@@ -13,20 +13,33 @@ import heapq
 class Solution:
     def robotWithString(self, s: str) -> str:
         t = []
-        h = [(c, i) for i, c in enumerate(s)]
         p = []
-        heapq.heapify(h)
-        j = 0  # Points to next unused character
-        while h:
-            while t and t[-1] < h[0][0]:
-                p.append(t[-1])
-                t.pop()
-            c, i = heapq.heappop(h)
-            if j <= i:
-                for x in range(j, i):
-                    t.append(s[x])
-                p.append(c)
-                j = i + 1
+
+        # Determine the index and letter that is the minimum from a given
+        # position to the end of the string.
+        h = []
+        curr = (s[-1], len(s)-1)
+        for i in range(len(s) - 1, -1, -1):
+            c = s[i]
+            curr = min(curr, (c, i))
+            h.append(curr)
+        h = h[::-1]
+
+        i = 0
+        while i < len(s):
+            target_letter, target_index = h[i]
+            # While the last character in t is less than or equal to the
+            # minimum character in s from i to the end, put the character
+            # from t in p
+            while t and t[-1] <= target_letter:
+                p.append(t.pop())
+
+            # Go to minimum character from i to the end of the string, putting
+            # the letters on t
+            while i <= target_index:
+                t.append(s[i])
+                i += 1
+
         return "".join(itertools.chain(p, reversed(t)))
 
 
