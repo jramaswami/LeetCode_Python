@@ -18,7 +18,7 @@ class Solution:
         if S[0] == '1':
             replace_with = '0'
         for i, digit in enumerate(S):
-            if i == 0 and digit == '1':
+            if replace_with == '0' and digit == '1':
                 min_value += (multiplier * int(digit))
             elif digit == replace_with:
                 min_value += (multiplier * int(replace_with))
