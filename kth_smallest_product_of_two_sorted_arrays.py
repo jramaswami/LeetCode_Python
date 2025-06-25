@@ -3,18 +3,51 @@ LeetCode
 2040. Kth Smallest Product of Two Sorted Arrays
 June 2025 Challenge
 jramaswami
+
+Thank You Larry!
 """
 
 
+import bisect
+import math
 from typing import List
 
 
 class Solution:
     def kthSmallestProduct(self, nums1: List[int], nums2: List[int], k: int) -> int:
-        # Brute force
-        A = [a * b for a in nums1 for b in nums2]
-        A.sort()
-        return A[k-1]
+        # looking for a * b < x
+        # if a > 0 then
+        #   b < x / a
+        # if a < 0 then binary (signs switched because a is negative)
+        #   b > x / a
+        # if a = 0 then
+        #   all a * b = 0
+        def count_smaller_products(target):
+            smaller = 0
+            for a in nums1:
+                if a < 0:
+                    smaller += len(nums2) - bisect.bisect_left(nums2, math.ceil(target / a))
+                elif a == 0:
+                    if target >= 0:
+                        smaller += len(nums2)
+                else:
+                    smaller += bisect.bisect_right(nums2, target // a)
+            return smaller
+
+        def good(target):
+            return count_smaller_products(target) >= k
+
+        # Binary search the answer
+        low = -pow(10, 10)
+        high = pow(10, 10)
+        while low < high:
+            mid = low + ((high - low) // 2)
+            if good(mid):
+                high = mid
+            else:
+                low = mid + 1
+        return low
+
 
 
 def test_1():
