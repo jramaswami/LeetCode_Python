@@ -11,6 +11,7 @@ from typing import List
 
 class Solution:
     def numSubseq(self, nums: List[int], target: int) -> int:
+        MOD = pow(10,9)+7
         nums.sort()
         soln = 0
         for i, min_num in enumerate(nums):
@@ -22,7 +23,8 @@ class Solution:
                 k += k
                 j += 1
             soln += k
-        return soln
+            soln %= MOD
+        return soln % MOD
 
 
 def test_1():
