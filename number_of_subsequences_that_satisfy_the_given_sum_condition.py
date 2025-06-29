@@ -14,15 +14,15 @@ class Solution:
         MOD = pow(10,9)+7
         nums.sort()
         soln = 0
+        j = 0
         for i, min_num in enumerate(nums):
             if min_num * 2 > target:
                 break
-            k = 1
-            j = i
             while j+1 < len(nums) and min_num + nums[j+1] <= target:
-                k += k
                 j += 1
-            soln += k
+            while j >= 0 and min_num + nums[j] > target:
+                j -= 1
+            soln += pow(2, j-i, MOD)
             soln %= MOD
         return soln % MOD
 
