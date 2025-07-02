@@ -3,10 +3,12 @@ LeetCode
 3333. Find the Original Typed String II
 July 2025 Challenge
 jramaswami
+
+REF: https://www.youtube.com/watch?v=CymJVoz7XSY
 """
 
 
-import functools
+import itertools
 
 
 class Solution:
@@ -16,27 +18,34 @@ class Solution:
         # Group by letter
         LETTER, COUNT = 0, 1
         groups = []
+        P = 1
         for letter in word:
             if not groups or groups[-1][LETTER] != letter:
                 groups.append([letter, 1])
             else:
                 groups[-1][COUNT] += 1
 
-        @functools.cache
-        def rec(g, curr_length):
-            if g >= len(groups):
-                if curr_length >= k:
-                    return 1
-                return 0
+        P = 1
+        for g in groups:
+            P *= g[COUNT]
+            P %= MOD
 
-            count = groups[g][COUNT]
-            result = 0
-            for t in range(1, count+1):
-                result += rec(g+1, curr_length + t)
-                result %= MOD
-            return result
+        if k <= len(groups):
+            return P
 
-        return rec(0, 0)
+        # dp[number of groups][length up to k-1] = number of ways
+        dp = [[0 for _ in range(k)] for _ in range(len(groups)+1)]
+        dp[0][0] = 1
+        for i in range(1, len(groups)+1):
+            prefix = list(itertools.accumulate(dp[i-1]))
+            for j in range(1,k):
+                left = j - 1 - groups[i-1][COUNT]
+                x = prefix[j-1]
+                if left >= 0:
+                    x -= prefix[left]
+                dp[i][j] += x
+                dp[i][j] %= MOD
+        return (P - sum(dp[-1])) % MOD
 
 
 def test_1():
