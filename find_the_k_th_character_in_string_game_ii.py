@@ -17,14 +17,9 @@ class Solution:
             x = (x + 1) % 26
             return chr(x + ord('a'))
 
-        stack = [k]
-        while stack[-1] > 0:
-            p = pow(2, int(math.log(stack[-1], 2)))
-            stack.append(stack[-1] - p)
-
         soln = "a"
-        for _, op in zip(reversed(stack), operations):
-            if op:
+        for bit, op in zip(reversed(bin(k-1)[2:]), operations):
+            if int(bit) and op:
                 soln = shift(soln)
         return soln
 
