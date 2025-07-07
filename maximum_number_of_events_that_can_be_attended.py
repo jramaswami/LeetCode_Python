@@ -3,26 +3,43 @@ LeetCode
 1353. Maximum Number of Events That Can Be Attended
 July 2025 Challenge
 jramaswami
+
+REF: https://algo.monster/liteproblems/1353
 """
 
+
+import math
 import collections
+import heapq
 from typing import List
-
-
-Event = collections.namedtuple('Event', ['start', 'end'])
 
 
 class Solution:
     def maxEvents(self, events: List[List[int]]) -> int:
-        events0 = [Event(*e) for e in events]
-        events0.sort()
-        timer = -1
-        soln = 0
-        for event in events0:
-            if timer <= event.end:
-                timer = event.start + 1
-                soln += 1
-        return soln
+        event_dict = collections.defaultdict(list)
+        earliest_start, latest_end = math.inf, 0
+
+        for start, end in events:
+            event_dict[start].append(end)
+            earliest_start = min(earliest_start, start)
+            latest_end = max(latest_end, end)
+
+        min_heap = []
+        max_events_attended = 0
+
+        for day in range(earliest_start, latest_end + 1):
+            while min_heap and min_heap[0] < day:
+                heapq.heappop(min_heap)
+
+            for end in event_dict[day]:
+                heapq.heappush(min_heap, end)
+
+            if min_heap:
+                max_events_attended += 1
+                heapq.heappop(min_heap)
+
+        return max_events_attended
+
 
 
 def test_1():
