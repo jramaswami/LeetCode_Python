@@ -23,7 +23,7 @@ class Solution:
         soln = 0
         # What is the most free time right now?
         for meeting in meetings:
-            while len(window) > k + 2:
+            while len(window) > k + 1:
                 window.popleft()
             # Create window with
             # non-moving-meeting[0], moving meetings ..., non-moving meeting[-1]
@@ -34,7 +34,6 @@ class Solution:
             if len(window) > 2:
                 window_duration = window[-1].start - window[0].end
                 meetings_duration = sum(window[i].duration for i in range(1, len(window)-1))
-                # print(window, window_duration, meetings_duration)
                 soln = max(soln, window_duration - meetings_duration)
         return soln
 
