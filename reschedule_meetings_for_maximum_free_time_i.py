@@ -21,23 +21,23 @@ class Solution:
         window = collections.deque()
         window.append(Meeting(0, 0, 0))
         soln = 0
+        meetings_duration = 0
         # What is the most free time right now?
         for meeting in meetings:
             while len(window) > k + 1:
                 window.popleft()
+                meetings_duration -= window[0].duration
             # Create window with
             # non-moving-meeting[0], moving meetings ..., non-moving meeting[-1]
             # Compute or store the duration of moving meetings, Y
             # Compute duration from window[0].end to window[-1].start, X
             # The shifting the moving meetings will allow you to have X - Y free time
+            meetings_duration += window[-1].duration
             window.append(meeting)
             if len(window) > 2:
                 window_duration = window[-1].start - window[0].end
-                meetings_duration = sum(window[i].duration for i in range(1, len(window)-1))
                 soln = max(soln, window_duration - meetings_duration)
         return soln
-
-
 
 
 def test_1():
