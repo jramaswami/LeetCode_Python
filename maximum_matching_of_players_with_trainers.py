@@ -17,7 +17,8 @@ class Solution:
         soln = 0
         for p in players:
             while trainers and trainers[0] < p:
-                heapq.heappop()
+                heapq.heappop(trainers)
             if trainers:
-                heapq.heappop()
+                heapq.heappop(trainers)
+                soln += 1
         return soln
