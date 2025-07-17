@@ -7,6 +7,7 @@ jramaswami
 
 
 import functools
+from typing import List
 
 
 class Solution:
