@@ -39,6 +39,7 @@ class Solution:
                 if fruit <= block_max:
                     placed += 1
                     update_block(block_index, fruit)
+                    break
         return len(fruits) - placed
 
 
