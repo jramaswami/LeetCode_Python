@@ -5,54 +5,41 @@ August 2025 Challenge
 jramaswami
 
 Thank You, Larry!
+REF: https://leetcode.doocs.org/en/lc/3363/#solution-1-dynamic-programming
 """
 
 
+import math
 from typing import List
 
 
 class Solution:
     def maxCollectedFruits(self, fruits: List[List[int]]) -> int:
         N = len(fruits)
+        dp = [[-math.inf for _ in range(N)] for _ in range(N)]
+
         diagonal = 0
         for i in range(N):
             diagonal += fruits[i][i]
-            fruits[i][i] = 0
 
         # Top Right: row [1, N); column from [0, N)
-        dp = [[0 for _ in range(N)] for _ in range(N)]
         dp[0][N-1] = fruits[0][N-1]
         for row in range(1, N):
-            for col in range(N):
-                # Came from N
-                result = dp[row-1][col]
-                # Came from NW
-                if col-1 >= 0:
-                    result = max(result, dp[row-1][col-1])
-                # Came from NE
-                if col+1 < N:
-                    result = max(result, dp[row-1][col+1])
-                result += fruits[row][col]
-                dp[row][col] = result
+            for col in range(row + 1, N):
+                for dc in (-1, 0, 1):
+                    if 0 <= col + dc < N:
+                        dp[row][col] = max(dp[row][col], dp[row-1][col + dc] + fruits[row][col])
 
-        best_top_right = dp[N-1][N-1]
+        best_top_right = dp[N-2][N-1]
 
         # Bottom left: column [1, N); row [0, N)
-        dp = [[0 for _ in range(N)] for _ in range(N)]
         dp[N-1][0] = fruits[N-1][0]
         for col in range(1, N):
-            for row in range(N):
-                # Came from W
-                result = dp[row][col-1]
-                # Came from  NW
-                if row - 1 >= 0:
-                    result = max(result, dp[row-1][col-1])
-                # Came from SW
-                if row + 1 < N:
-                    result = max(result, dp[row+1][col-1])
-                result += fruits[row][col]
-                dp[row][col] = result
-        best_bottom_left = dp[N-1][N-1]
+            for row in range(col + 1, N):
+                for dr in (-1, 0, 1):
+                    if 0 <= row + dr < N:
+                        dp[row][col] = max(dp[row][col], dp[row + dr][col-1] + fruits[row][col])
+        best_bottom_left = dp[N-1][N-2]
 
         return diagonal + best_top_right + best_bottom_left
 
