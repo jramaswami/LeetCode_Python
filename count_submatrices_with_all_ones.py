@@ -6,54 +6,38 @@ jramaswami
 """
 
 
+import math
 from typing import List
 
 
 class Solution:
     def numSubmat(self, mat: List[List[int]]) -> int:
-        # Compute a prefix sum for the matrix
-        # S[row][column] = sum for submatrix that is
-        # mat[0][0] to mat[row][column] (inclusive)
+        # S[row][column] = the number of ones to the left of S[row][column]
         S = [[0 for _ in row] for row in mat]
         for r, row in enumerate(mat):
-            row_sum = 0
+            curr_ones = 0
             for c, val in enumerate(row):
-                row_sum += val
-                if r == 0:
-                    S[r][c] = row_sum
+                if val == 0:
+                    curr_ones = 0
                 else:
-                    S[r][c] = row_sum + S[r-1][c]
+                    curr_ones += 1
+                S[r][c] = curr_ones
 
-        def get(r, c):
-            """Function retrieve value from prefix sum.
-            Returns zero if cell is out of bounds."""
-            if 0 <= r < len(S) and 0 <= c < len(S[r]):
-                return S[r][c]
-            return 0
-
-        def get_submat_sum(r0, c0, r1, c1):
-            """Function to return the sum of values in
-            the submatrix."""
-            T = get(r1, c1)
-            A = get(r0-1, c0-1)
-            B = get(r0-1, c1)
-            C = get(r1, c0-1)
-            return T - B - C + A
-        
-        # Iterate over all submatrices. If the sum of the
-        # values in the submatrix is equal to the area of
-        # the submatrix, then it is all ones.
+        # Iterate over the possible top right and bottom
+        # right corners for all submatrices
         soln = 0
         N = len(mat)
         M = len(mat[0])
-        for r0 in range(N):
-            for r1 in range(r0, N):
-                for c0 in range(M):
-                    for c1 in range(c0, M):
-                        submat_area = (r1 - r0 + 1) * (c1 - c0 + 1)
-                        submat_sum = get_submat_sum(r0, c0, r1, c1)
-                        if submat_sum == submat_area:
-                            soln += 1
+        for c in range(M):
+            for start_row in range(N):
+                min_width = math.inf
+                for end_row in range(start_row, N):
+                    # Add the current row to the minimum width
+                    min_width = min(min_width, S[end_row][c])
+                    # The widest matrix with to right corner
+                    # (start_row, c) and bottom right corner
+                    # (end_row, c) is the minimum width.
+                    soln += min_width
         return soln
 
 
