@@ -5,6 +5,8 @@ August 2025 Challenge
 jramaswami
 """
 
+
+import collections
 from typing import List
 
 
@@ -13,27 +15,39 @@ class Solution:
         """
         Do not return anything, modify board in-place instead.
         """
+        row_values = collections.defaultdict(set)
+        col_values = collections.defaultdict(set)
+        box_values = collections.defaultdict(set)
 
-        def col_generator(c):
-            for row in board:
-                yield row[c]
+        def get_box_key(r, c):
+            return (3 * (r // 3), 3 * (c // 3))
 
-        def row_generator(r):
-            for k in board[r]:
-                yield k
+        def add_value(r, c, val):
+            row_values[r].add(val)
+            col_values[c].add(val)
+            box_values[get_box_key(r, c)].add(val)
+            board[r][c] = val
 
-        def box_generator(r, c):
-            r0 = 3 * (r // 3)
-            c0 = 3 * (c // 3)
-            for r in range(r0, r0+3):
-                for c in range(c0, c0+3):
-                    yield board[r][c]
+        def remove_value(r, c, val):
+            row_values[r].remove(val)
+            col_values[c].remove(val)
+            box_values[get_box_key(r, c)].remove(val)
+            board[r][c] = '.'
+
+        def is_valid_value(r, c, val):
+            return (
+                val not in row_values[r] and
+                val not in col_values[c] and
+                val not in box_values[get_box_key(r, c)]
+            )
 
         cells_to_fill = []
         for r, row in enumerate(board):
             for c, val in enumerate(row):
                 if val == '.':
                     cells_to_fill.append((r, c))
+                else:
+                    add_value(r, c, val)
 
         def rec(i):
             if i >= len(cells_to_fill):
@@ -42,18 +56,12 @@ class Solution:
             # Try every value
             for cell_value in '123456789':
                 # If it is a valid value for the cell
-                if cell_value in row_generator(r):
-                    pass
-                elif cell_value in col_generator(c):
-                    pass
-                elif cell_value in box_generator(r, c):
-                    pass
-                else:
-                    board[r][c] = cell_value
+                if is_valid_value(r, c, cell_value):
+                    add_value(r, c, cell_value)
                     result = rec(i+1)
                     if result:
                         return result
-                    board[r][c] = '.'
+                    remove_value(r, c, cell_value)
 
         rec(0)
 
