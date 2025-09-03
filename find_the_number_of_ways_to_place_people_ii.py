@@ -23,7 +23,7 @@ class Solution:
                 return True
             # x1 is < x2, so y1 has to be more than y2
             return y1 > y2
-        points.sort()
+        points.sort(key=lambda p: (p[0], -p[1]))
 
         soln = 0
         for i, (x1, y1) in enumerate(points):
