@@ -12,46 +12,41 @@ from typing import List
 
 
 REMOVED = 0
-Task = collections.namedtuple('Task', ['priority', 'user_id', 'task_id'])
+Task = collections.namedtuple('Task', ['key', 'priority', 'task_id', 'user_id', ])
 
 
 class TaskManager:
 
     def __init__(self, tasks: List[List[int]]):
         self.heap = []
-        self.current_priority = dict()
+        self.current_task = dict()
         self.task_user_id = dict()
         for task in tasks:
             self.add(*task)
 
-    def add(self, userId: int, taskId: int, priority: int) -> None:
-        task = Task(-priority, -userId, taskId)
-        self.task_user_id[taskId] = userId
-        self.current_priority[taskId] = -priority
+    def add(self, user_id: int, task_id: int, priority: int) -> None:
+        key = (-priority, -task_id)
+        task = Task(key, priority, task_id, user_id)
+        self.task_user_id[task_id] = user_id
+        self.current_task[task_id] = task
         heapq.heappush(self.heap, task)
 
-    def edit(self, taskId: int, newPriority: int) -> None:
-        self.current_priority[taskId] = -newPriority
-        task = Task(-newPriority, -self.task_user_id[taskId], taskId)
-        heapq.heappush(self.heap, task)
+    def edit(self, task_id: int, new_priority: int) -> None:
+        user_id = self.task_user_id[task_id]
+        self.add(user_id, task_id, new_priority)
 
-    def rmv(self, taskId: int) -> None:
-        self.current_priority[taskId] = REMOVED
+    def rmv(self, task_id: int) -> None:
+        self.current_task[task_id] = None
 
     def execTop(self) -> int:
         if not self.heap:
             return -1
 
         top = heapq.heappop(self.heap)
-        while 1:
-            if top.priority == self.current_priority[top.task_id]:
-                break
-            if not self.heap:
-                return -1
-            top = heapq.heappop(self.heap)
+        if self.current_task[top.task_id] and top == self.current_task[top.task_id]:
+            return top.user_id
 
-        self.current_priority[top.task_id] = REMOVED
-        return -top.user_id
+        return self.execTop()
 
 
 # Your TaskManager object will be instantiated and called as such:
@@ -82,11 +77,12 @@ def test_2():
     es = [null,null,null,2,null,null,50]
     tm = TaskManager(*params[0])
     for f, p, e in zip(fns[1:], params[1:], es[1:]):
+        print(f, p)
         r = getattr(tm, f)(*p)
         assert r == e
 
 
-def test_2():
+def test_3():
     "WA"
     fns = ["TaskManager","execTop"]
     params = [[[[10,4,10],[10,0,6],[5,23,50],[3,29,50],[2,15,9]]],[]]
