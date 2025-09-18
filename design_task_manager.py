@@ -44,6 +44,7 @@ class TaskManager:
 
         top = heapq.heappop(self.heap)
         if self.current_task[top.task_id] and top == self.current_task[top.task_id]:
+            self.current_task[top.task_id] = None
             return top.user_id
 
         return self.execTop()
