@@ -23,36 +23,37 @@ class Router:
     def __init__(self, memory_limit: int):
         self.memory_limit = memory_limit
         self.packet_queue = collections.deque()
-        self.packet_set = set()
+        self.packet_set = collections.defaultdict(set)
 
     def addPacket(self, source: int, destination: int, timestamp: int) -> bool:
         packet = Packet(source, destination, timestamp)
         # A packet is considered a duplicate if another packet with the
         # same source, destination, and timestamp already exists in the router.
-        if packet in self.packet_set:
+        if packet in self.packet_set[destination]:
             return False
         # If adding a new packet would exceed this limit, the oldest
         # packet must be removed to free up space.
         while len(self.packet_queue) >= self.memory_limit:
             x_packet = self.packet_queue.popleft()
-            self.packet_set.remove(x_packet)
+            self.packet_set[x_packet.destination].remove(x_packet)
         self.packet_queue.append(packet)
-        self.packet_set.add(packet)
+        self.packet_set[packet.destination].add(packet)
         return True
 
     def forwardPacket(self) -> List[int]:
         if self.packet_queue:
             packet = self.packet_queue.popleft()
-            self.packet_set.remove(packet)
+            self.packet_set[packet.destination].remove(packet)
             return [packet.source, packet.destination, packet.timestamp]
         return []
 
     def getCount(self, destination: int, start_time: int, end_time: int) -> int:
         count = 0
-        for p in self.packet_set:
-            if p.destination == destination and start_time <= p.timestamp <= end_time:
+        for p in self.packet_set[destination]:
+            if start_time <= p.timestamp <= end_time:
                 count += 1
         return count
+
 
 null = None
 true = True
