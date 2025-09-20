@@ -8,6 +8,7 @@ jramaswami
 
 import collections
 import dataclasses
+import sortedcontainers
 from typing import List
 
 
@@ -23,36 +24,43 @@ class Router:
     def __init__(self, memory_limit: int):
         self.memory_limit = memory_limit
         self.packet_queue = collections.deque()
-        self.packet_set = collections.defaultdict(set)
+        self.packet_set = set()
+        self.packets_by_timestamp = collections.defaultdict(sortedcontainers.SortedList)
+
+    def _forget_packet(self, packet):
+        self.packet_set.remove(packet)
+        self.packets_by_timestamp[packet.destination].discard(packet.timestamp)
+
+    def _remember_packet(self, packet):
+        self.packet_set.add(packet)
+        self.packets_by_timestamp[packet.destination].add(packet.timestamp)
 
     def addPacket(self, source: int, destination: int, timestamp: int) -> bool:
         packet = Packet(source, destination, timestamp)
         # A packet is considered a duplicate if another packet with the
         # same source, destination, and timestamp already exists in the router.
-        if packet in self.packet_set[destination]:
+        if packet in self.packet_set:
             return False
         # If adding a new packet would exceed this limit, the oldest
         # packet must be removed to free up space.
         while len(self.packet_queue) >= self.memory_limit:
             x_packet = self.packet_queue.popleft()
-            self.packet_set[x_packet.destination].remove(x_packet)
+            self._forget_packet(x_packet)
         self.packet_queue.append(packet)
-        self.packet_set[packet.destination].add(packet)
+        self._remember_packet(packet)
         return True
 
     def forwardPacket(self) -> List[int]:
         if self.packet_queue:
             packet = self.packet_queue.popleft()
-            self.packet_set[packet.destination].remove(packet)
+            self._forget_packet(packet)
             return [packet.source, packet.destination, packet.timestamp]
         return []
 
     def getCount(self, destination: int, start_time: int, end_time: int) -> int:
-        count = 0
-        for p in self.packet_set[destination]:
-            if start_time <= p.timestamp <= end_time:
-                count += 1
-        return count
+        i = self.packets_by_timestamp[destination].bisect_left(start_time)
+        j = self.packets_by_timestamp[destination].bisect_right(end_time)
+        return j - i
 
 
 null = None
