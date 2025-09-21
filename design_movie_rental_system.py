@@ -20,7 +20,7 @@ class MovieRentingSystem:
             self.available[m].add(movie)
 
     def search(self, movie_id: int) -> List[int]:
-        return [m.shop_id for m in self.available[movie_id]]
+        return [m.shop_id for m in self.available[movie_id][:5]]
 
     def rent(self, shop_id: int, movie_id: int) -> None:
         inventory_key = (shop_id, movie_id)
