@@ -6,32 +6,31 @@ jramaswami
 """
 
 
-import collections
+import sortedcontainers
+from typing import List
 
 
 class Solution:
     def avoidFlood(self, rains: List[int]) -> List[int]:
         soln = [-1 for _ in rains]
-        sunny_days = []
-        lake_filled = collections.defaultdict(lambda: -1)
+        sunny_days = sortedcontainers.SortedList()
+        lake_filled = dict()
         for i, lake in enumerate(rains):
             if lake == 0:
-                sunny_days.append(i)
+                sunny_days.add(i)
                 soln[i] = 1
             else:
                 # Is the lake full?
-                if lake_filled[lake] >= 0:
+                if lake in lake_filled:
                     # We need to empty it first. Search for
-                    # the earliest day we can empty it.
-                    emptied = False
-                    for d, day in enumerate(sunny_days):
-                        if day > lake_filled[lake]:
-                            soln[day] = lake
-                            sunny_days[d] *= -1
-                            emptied = True
-                            lake_filled[lake] = -1
-                            break
-                    if not emptied:
+                    # the earliest day we can empty it. That
+                    # day must be *after* the day it was
+                    # previously filled.
+                    d = sunny_days.bisect_right(lake_filled[lake])
+                    if d == len(sunny_days):
                         return []
+                    soln[sunny_days[d]] = lake
+                    # We used the sunny day, remove it.
+                    sunny_days.pop(d)
                 lake_filled[lake] = i
         return soln
