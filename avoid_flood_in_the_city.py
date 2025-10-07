@@ -6,26 +6,32 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
     def avoidFlood(self, rains: List[int]) -> List[int]:
         soln = [-1 for _ in rains]
-        full = set()
+        sunny_days = []
+        lake_filled = collections.defaultdict(lambda: -1)
         for i, lake in enumerate(rains):
             if lake == 0:
-                # Empty a lake, but which lake?
-                # The next lake that is full
-                for lake0 in rains[i+1:]:
-                    if lake0 in full:
-                        soln[i] = lake0
-                        full.remove(lake0)
-                        break
-                if soln[i] == -1:
-                    if full:
-                        soln[i] = full.pop()
-                    else:
-                        soln[i] = 1
+                sunny_days.append(i)
+                soln[i] = 1
             else:
-                if lake in full:
-                    return []
-                full.add(lake)
+                # Is the lake full?
+                if lake_filled[lake] >= 0:
+                    # We need to empty it first. Search for
+                    # the earliest day we can empty it.
+                    emptied = False
+                    for d, day in enumerate(sunny_days):
+                        if day > lake_filled[lake]:
+                            soln[day] = lake
+                            sunny_days[d] *= -1
+                            emptied = True
+                            lake_filled[lake] = -1
+                            break
+                    if not emptied:
+                        return []
+                lake_filled[lake] = i
         return soln
