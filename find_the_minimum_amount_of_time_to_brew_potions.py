@@ -12,9 +12,11 @@ from typing import List
 
 class Solution:
     def minTime(self, skill: List[int], mana: List[int]) -> int:
-        prev = list(itertools.accumulate(mana[0] * s for s in skill))
+        prev = [0]
+        prev.extend(itertools.accumulate(mana[0] * s for s in skill))
         for m in mana[1:]:
-            curr = list(itertools.accumulate(m * s for s in skill))
+            curr = [0]
+            curr.extend(itertools.accumulate(m * s for s in skill))
             d = 0
             for p, c in zip(prev[1:], curr):
                 d = max(d, p-c)
