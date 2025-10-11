@@ -7,37 +7,38 @@ jramaswami
 
 
 import functools
+import collections
 from typing import List
 
 
 class Solution:
     def maximumTotalDamage(self, power: List[int]) -> int:
-        power.sort()
+        freqs = collections.Counter(power)
+        spells = list(sorted(freqs))
 
-        def can_cast(curr, prev):
-            if prev == None:
-                return True
-
-            if curr == prev:
-                return True
-
-            return not (prev-2 <= curr <= prev+2)
+        def next_spell(i):
+            # Has to be more than 2 greater than the previous spell
+            j = i + 1
+            while j < len(spells) and spells[j] <= spells[i] + 2:
+                j += 1
+            return j
 
         @functools.cache
-        def rec(i, prev):
+        def rec(i):
             # Base case
-            if i >= len(power):
+            if i >= len(spells):
                 return 0
 
             # Do not cast this spell
-            result = rec(i+1, prev)
+            result = rec(i+1)
 
             # Cast this spell
-            if can_cast(power[i], prev):
-                result = max(
-                    result,
-                    power[i] + rec(i+1, power[i])
-                )
+            damage = spells[i] * freqs[spells[i]]
+            j = next_spell(i)
+            result = max(
+                result,
+                damage + rec(j)
+            )
             return result
 
-        return rec(0, None)
+        return rec(0)
