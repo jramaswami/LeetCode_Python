@@ -11,7 +11,6 @@ from typing import List
 
 class Solution:
     def maxIncreasingSubarrays(self, nums: List[int]) -> int:
-        soln = 0
         suffix = [0 for _ in nums]
         suffix[-1] = 1
         for i in range(len(nums)-2, -1, -1):
@@ -20,6 +19,7 @@ class Solution:
             else:
                 suffix[i] = 1
 
+        soln = 0
         curr = 0
         for i in range(len(nums)-1):
             if i == 0 or nums[i-1] < nums[i]:
