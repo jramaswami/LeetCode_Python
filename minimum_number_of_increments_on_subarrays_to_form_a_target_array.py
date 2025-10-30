@@ -11,19 +11,9 @@ from typing import List
 
 class Solution:
     def minNumberOperations(self, target: List[int]) -> int:
-        ns = [0]
-        ns.extend(sorted(set(target)))
-        soln = 0
-        while len(ns) > 1:
-            k = ns.pop()
-            window = False
-            for t in target:
-                if t >= k:
-                    window = True
-                else:
-                    if window:
-                        soln += (k - ns[-1])
-                        window = False
-            if window:
-                soln += (k - ns[-1])
+        soln = curr = 0
+        for n in target:
+            if curr < n:
+                soln += n - curr
+            curr = n
         return soln
