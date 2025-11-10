@@ -6,28 +6,35 @@ jramaswami
 """
 
 
+import dataclasses
 from typing import List
+
+
+@dataclasses.dataclass(frozen=True)
+class QItem:
+    index: int
+    value: int
 
 
 class Solution:
     def minOperations(self, nums: List[int]) -> int:
+        nums.append(0)
+        soln = 0
+        mtq = [QItem(-1, 0)]
+        for i, n in enumerate(nums):
 
-        def rec(left, right):
-            if left >= right:
-                return 0
+            if mtq[-1].value == n:
+                continue
 
-            result = 0
-            min_val = min(nums[left:right])
-            if min_val != 0:
-                result = 1
-            i = left
-            while i < right:
-                while i < right and nums[i] == min_val:
-                    i += 1
-                j = i
-                while j < right and nums[j] != min_val:
-                    j += 1
-                i = j
-            return result
+            while mtq[-1].value > n:
+                mtq.pop()
+                soln += 1
+            if mtq[-1].value != n:
+                mtq.append(QItem(i, n))
 
-        return rec(0, len(nums))
+        return soln
+
+
+def test_3():
+    nums = [1,2,1,2,1,2]
+    assert Solution().minOperations(nums) == 4
