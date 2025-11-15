@@ -3,32 +3,38 @@ LeetCode
 3234. Count the Number of Substrings With Dominant Ones
 November 2025 Challenge
 jramaswami
+
+REF: https://www.youtube.com/watch?v=QySHur5CGRI
 """
-
-
-import itertools
 
 
 class Solution:
     def numberOfSubstrings(self, s: str) -> int:
-        ones_prefix = list(itertools.accumulate(int(x) for x in s))
-
-        def get(left, right):
-            if left == 0:
-                return ones_prefix[right]
-            return ones_prefix[right] - ones_prefix[left - 1]
+        N = len(s)
+        next_zero = [N] * (N)
+        for i in range(N-2, -1, -1):
+            if s[i+1] == '0':
+                next_zero[i] = i + 1
+            else:
+                next_zero[i] = next_zero[i+1]
 
         soln = 0
-        for i, _ in enumerate(s):
-            j = i
-            while j < len(s):
-                curr_ones = get(i, j)
-                curr_zeros = (j - i + 1) - curr_ones
-                if curr_ones >= pow(curr_zeros, 2):
-                    soln += 1
-                    j += 1
-                elif curr_zeros:
-                    j = max(j + 1, i + pow(curr_zeros, 2))
+        for left in range(N):
+            zeros = 1 if s[left] == '0' else 0
+            right = left
+            while zeros * zeros <= N:
+                next_z = next_zero[right] if right < N else N
+                ones = (next_z - left) - zeros
+                if ones >= zeros * zeros:
+                    soln += min(
+                        next_z - right,
+                        ones - (zeros*zeros) + 1
+                    )
+                right = next_z
+                zeros += 1
+                if right == N:
+                    break
+
         return soln
 
 
