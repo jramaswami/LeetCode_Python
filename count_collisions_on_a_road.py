@@ -25,6 +25,11 @@ class Solution:
                 stack.append('S')
             else:
                 stack.append(car)
+
+        # Count any cars stuck behind crashes
+        while stack[-1] == 'R':
+            stack.pop()
+        collisions += stack.count('R')
         return collisions
 
 
