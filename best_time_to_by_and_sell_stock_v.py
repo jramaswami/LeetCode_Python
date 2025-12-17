@@ -13,19 +13,33 @@ from typing import List
 
 class Solution:
     def maximumProfit(self, prices: List[int], k: int) -> int:
-        # dp[day][transactions] = the maximum profit at day i with t transactions
-        dp = [[-math.inf for _ in range(k+1)] for _ in range(len(prices) + 1)]
-        dp[0][0] = 0
-        for i in range(len(prices)):
-            for t in range(k+1):
-                # No tx
-                dp[i+1][t] = max(dp[i+1][t], dp[i][t])
-                if t + 1 <= k:
-                    # If I have transactions, tx starts on day i and ends on day j
-                    # that means I cannot sell before day j + 1
-                    for j in range(i+1, len(prices)):
-                        # Short tx
-                        dp[j+1][t+1] = max(dp[j+1][t+1], prices[i] - prices[j] + dp[i][t])
-                        # Normal tx
-                        dp[j+1][t+1] = max(dp[j+1][t+1], prices[j] - prices[i] + dp[i][t])
-        return max(dp[-1])
+        LONG, SHORT, NONE = 0, 1, 2
+
+        @functools.cache
+        def rec(index, state, txs):
+            # Base Cases
+            # If we have run out of transactions
+            if txs == 0:
+                return 0
+            # If we have run out of days
+            if index >= len(prices):
+                if state == NONE:
+                    return 0
+                return -math.inf
+
+            # Recursive Cases
+            if state == LONG:
+                sell = rec(index+1, NONE, txs-1) + prices[index]
+                hold = rec(index+1, LONG, txs)
+                return max(sell, hold)
+            elif state == SHORT:
+                buy = rec(index+1, NONE, txs-1) - prices[index]
+                hold = rec(index+1, SHORT, txs)
+                return max(buy, hold)
+            # NONE
+            buy = rec(index+1, LONG, txs) - prices[index]
+            sell = rec(index+1, SHORT, txs) + prices[index]
+            hold = rec(index+1, NONE, txs)
+            return max((buy, sell, hold))
+
+        return rec(0, NONE, k)
