@@ -13,25 +13,19 @@ from typing import List
 
 class Solution:
     def maximumProfit(self, prices: List[int], k: int) -> int:
-        @functools.cache
-        def rec(i, t):
-            if i >= len(prices):
-                return 0
-
-            if t >= k:
-                return 0
-
-            # Normal tx
-            result = -math.inf
-            for j in range(i+1, len(prices)):
-                profit = prices[j] - prices[i]
-                result = max(result, profit + rec(j+1, t+1))
-            # Short tx
-            for j in range(i+1, len(prices)):
-                profit = prices[i] - prices[j]
-                result = max(result, profit + rec(j+1, t+1))
-            # No tx
-            result = max(result, rec(i+1, t))
-            return result
-
-        return rec(0, 0)
+        # dp[day][transactions] = the maximum profit at day i with t transactions
+        dp = [[-math.inf for _ in range(k+1)] for _ in range(len(prices) + 1)]
+        dp[0][0] = 0
+        for i in range(len(prices)):
+            for t in range(k+1):
+                # No tx
+                dp[i+1][t] = max(dp[i+1][t], dp[i][t])
+                if t + 1 <= k:
+                    # If I have transactions, tx starts on day i and ends on day j
+                    # that means I cannot sell before day j + 1
+                    for j in range(i+1, len(prices)):
+                        # Short tx
+                        dp[j+1][t+1] = max(dp[j+1][t+1], prices[i] - prices[j] + dp[i][t])
+                        # Normal tx
+                        dp[j+1][t+1] = max(dp[j+1][t+1], prices[j] - prices[i] + dp[i][t])
+        return max(dp[-1])
