@@ -7,7 +7,6 @@ jramaswami
 
 
 import collections
-import itertools
 from typing import List, Tuple
 
 
@@ -55,26 +54,26 @@ class Solution:
 
         soln = 0
         # Line sweep
-        # events[x] = event
-        # event = (event type, rectangle index)
-        events = collections.defaultdict(list)
+        # events[x][type] = rectangle index
+        events = collections.defaultdict(lambda: [[], []])
         START, END = 1, 0
         for i, (x, _) in enumerate(bottomLeft):
-            events[x].append((START, i))
+            events[x][START].append(i)
         for i, (x, _) in enumerate(topRight):
-            events[x].append((END, i))
+            events[x][END].append(i)
         
         active = set()
         for x in sorted(events):
-            for t, i in events[x]:
-                if t == START:
-                    active.add(i)
-                else:
-                    active.remove(i)
-            for i, j in itertools.combinations(active, 2):
-                h, v = overlap(i, j)
-                dim = min(h, v)
-                soln = max(soln, (dim * dim))
+            # Remove all expiring rectangles
+            active.difference_update(events[x][END])
+            # Get overlap for each additional rectangle
+            # and then add it to the active set
+            for i in events[x][START]:
+                for j in active:
+                    h, v = overlap(i, j)
+                    dim = min(h, v)
+                    soln = max(soln, (dim * dim))
+                active.add(i)
         return soln
 
 
