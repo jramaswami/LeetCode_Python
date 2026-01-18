@@ -28,6 +28,8 @@ class Solution:
         soln = 1
         for k in range(2, min(N, N)+1):
             for r, row in enumerate(grid):
+                if k == soln:
+                    break
                 if r + k > len(grid):
                     break
                 for c, _ in enumerate(row):
