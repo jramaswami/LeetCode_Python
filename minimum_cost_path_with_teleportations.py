@@ -3,51 +3,56 @@ LeetCode
 3651. Minimum Cost Path with Teleportations
 January 2026 Challenge
 jramaswami
+
+Thank you Larry!
 """
 
 
-import heapq
 import math
+import heapq
+import collections
+import sortedcontainers
 
 
 class Solution:
     def minCost(self, grid: list[list[int]], k: int) -> int:
-        teleportations = [[set() for _ in row] for row in grid]
-        for i, row0 in enumerate(grid):
-            for j, _ in enumerate(row0):
-                for x, row1 in enumerate(grid):
-                    for y, _ in enumerate(row1):
-                        if grid[x][y] <= grid[i][j]:
-                            teleportations[i][j].add((x, y))
+        height = len(grid)
+        width = len(grid[0])
 
-        # distance[number of teleports][row][column] = min distance
-        distance = [[[math.inf for _ in row] for row in grid] for _ in range(k+1)]
-        processed = [[[False for _ in row] for row in grid] for _ in range(k+1)]
-        distance[0][0][0] = 0
-        queue = [(0, 0, 0, 0)]
+        items = collections.defaultdict(list)
+        ss = [sortedcontainers.SortedSet() for _ in range(k+1)]
+        for r, row in enumerate(grid):
+            for c, val in enumerate(row):
+                items[val].append((r, c))
+                for k in range(k+1):
+                    ss[k].add(val)
+
+        queue = []
+        # dist[row][col][teleports]
+        dist = [[[math.inf for _ in range(k+1)] for _ in row] for row in grid]
+        dist[0][0][0] = 0
+        heapq.heappush(queue, (0, 0, 0, 0))
+        directions = ((0, 1), (1, 0))
         while queue:
-            d, t, r, c = heapq.heappop(queue)
-            if processed[t][r][c]:
-                continue
-            processed[t][r][c] = True
-            if r == len(grid)-1 and c == len(grid[0])-1:
+            d, r, c, t = heapq.heappop(queue)
+            if r == height - 1 and c == width - 1:
                 return d
-
-            # Normal moves
-            if r + 1 < len(grid):
-                r0 = r + 1
-                c0 = c
-                d0 = d + grid[r0][c0]
-                heapq.heappush(queue, (d0, t, r0, c0))
-            if c + 1 < len(grid[0]):
-                r0 = r
-                c0 = c + 1
-                d0 = d + grid[r0][c0]
-                heapq.heappush(queue, (d0, t, r0, c0))
-            # Teleportations
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < height and 0 <= nc < width:
+                    nd = dist[r][c][t] + grid[nr][nc]
+                    if dist[nr][nc][t] > nd:
+                        dist[nr][nc][t] = nd
+                        heapq.heappush(queue, (nd, nr, nc, t))
             if t + 1 <= k:
-                for r0, c0 in teleportations[r][c]:
-                    heapq.heappush(queue, (d, t+1, r0, c0))
+                while ss[t] and ss[t][0] <= grid[r][c]:
+                    key = ss[t][0]
+                    ss[t].remove(key)
+                    for nr, nc in items[key]:
+                        if dist[nr][nc][t+1] > dist[r][c][t]:
+                            for mt in range(t+1, k+1):
+                                dist[nr][nc][mt] = dist[r][c][t]
+                            heapq.heappush(queue, (dist[r][c][t], nr, nc, t+1))
 
 
 def test_1():
