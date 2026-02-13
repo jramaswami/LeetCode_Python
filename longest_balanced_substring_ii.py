@@ -3,42 +3,56 @@ LeetCode
 3713. Longest Balanced Substring II
 February 2026 Challenge
 jramaswami
+
+REF: https://dev.to/om_shree_0709/beginner-friendly-guide-longest-balanced-substring-ii-problem-3714-c-python-javascript-591f
 """
 
 
-import string
 import itertools
 
 
 class Solution:
     def longestBalanced(self, word: str) -> int:
-        prefixes = [
-            list(itertools.accumulate(
-                1 if letter == char else 0
-                for letter in word
-            ))
-            for char in 'abc'
-        ]
+        soln = 0
+        # Longest single
+        curr_length = 0
+        prev_char = ''
+        for curr_char in word:
+            if curr_char == prev_char:
+                curr_length += 1
+            else:
+                soln = max(soln, curr_length)
+                prev_char = curr_char
+                curr_length = 1
+        soln = max(soln, curr_length)
+        # Longest double
+        for char1, char2 in itertools.combinations('abc', 2):
+            diff = 0
+            first_occ = {0: -1}
+            for i, char in enumerate(word):
+                if char == char1:
+                    diff += 1
+                elif char == char2:
+                    diff -= 1
+                else:
+                    first_occ = {0: i}
+                    diff = 0
+                    continue
 
-        def get(letter_index, left, right):
-            if left == 0:
-                return prefixes[letter_index][right]
-            a = prefixes[letter_index][left - 1]
-            b = prefixes[letter_index][right]
-            return b - a
-
-        # left, right are inclusive
-        for length in range(len(word), 0, -1):
-            for left in range(len(word)):
-                right = left + length - 1
-                if right >= len(word):
-                    break
-
-                freqs = []
-                for i in range(3):
-                    x = get(i, left, right)
-                    if x:
-                        freqs.append(x)
-                if freqs and all(x == freqs[0] for x in freqs):
-                    return length
-        return 0
+                if diff in first_occ:
+                    soln = max(soln, i - first_occ[diff])
+                else:
+                    first_occ[diff] = i
+        # Longest triple
+        threes = {(0, 0): -1}
+        a, b, c = 0, 0, 0
+        for i, char in enumerate(word):
+            if char == 'a': a += 1
+            if char == 'b': b += 1
+            if char == 'c': c += 1
+            key = (a - b, a - c)
+            if key in threes:
+                soln = max(soln, i - threes[key])
+            else:
+                threes[key] = i
+        return soln
