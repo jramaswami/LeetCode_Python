@@ -39,7 +39,7 @@ class Solution:
                     # Must remove from top to satisfy
                     delta = top_sum - bottom_sum
                     if len(g[0]) == 1:
-                        if r > 1 and delta in (g[0][0], g[r][0]):
+                        if r >= 1 and delta in (g[0][0], g[r][0]):
                             return True
                     elif r == 0:
                         # On top we can only remove ends
