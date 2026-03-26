@@ -39,8 +39,7 @@ class Solution:
                     # Must remove from top to satisfy
                     delta = top_sum - bottom_sum
                     if len(g[0]) == 1:
-                        # We can only remove the first item
-                        if g[0][0] == delta:
+                        if r > 1 and delta in (g[0][0], g[r][0]):
                             return True
                     elif r == 0:
                         # On top we can only remove ends
@@ -52,6 +51,8 @@ class Solution:
                     # Must remove from bottom row
                     delta = bottom_sum - top_sum
                     if len(g[0]) == 1:
+                        if r < len(g) - 2 and delta in (g[r+1][0], g[-1][0]):
+                            return True
                         # We can only remove the last item
                         if g[-1][0] == delta:
                             return True
@@ -102,5 +103,12 @@ def test_5():
 def test_6():
     "WA"
     grid = [[100000],[86218],[100000]]
+    expected = True
+    assert Solution().canPartitionGrid(grid) == expected
+
+
+def test_7():
+    "WA"
+    grid = [[25372],[100000],[100000]]
     expected = True
     assert Solution().canPartitionGrid(grid) == expected
