@@ -24,7 +24,7 @@ class Solution:
             bottom_elements = collections.Counter(
                 itertools.chain.from_iterable(row for row in g)
             )
-            for r, row in enumerate(grid[:-1]):
+            for r, row in enumerate(g[:-1]):
                 # Remove elements from bottom and place in top
                 # Remove from bottom sum and add to top sum
                 for x in row:
@@ -38,7 +38,11 @@ class Solution:
                 elif top_sum > bottom_sum:
                     # Must remove from top to satisfy
                     delta = top_sum - bottom_sum
-                    if r == 0:
+                    if len(g[0]) == 1:
+                        # We can only remove the first item
+                        if g[0][0] == delta:
+                            return True
+                    elif r == 0:
                         # On top we can only remove ends
                         if delta in (g[0][0], g[0][-1]):
                             return True
@@ -47,9 +51,13 @@ class Solution:
                 else:
                     # Must remove from bottom row
                     delta = bottom_sum - top_sum
-                    if r == len(grid) - 2:
+                    if len(g[0]) == 1:
+                        # We can only remove the last item
+                        if g[-1][0] == delta:
+                            return True
+                    elif r == len(g) - 2:
                         # On bottom we can only remove ends
-                        if len(g[0]) > 1 and delta in (g[-1][0], g[-1][-1]):
+                        if delta in (g[-1][0], g[-1][-1]):
                             return True
                     elif bottom_elements[delta] >= 1:
                         return True
@@ -87,5 +95,12 @@ def test_3():
 def test_5():
     "WA"
     grid = [[5,5,6,2,2,2]]
+    expected = True
+    assert Solution().canPartitionGrid(grid) == expected
+
+
+def test_6():
+    "WA"
+    grid = [[100000],[86218],[100000]]
     expected = True
     assert Solution().canPartitionGrid(grid) == expected
