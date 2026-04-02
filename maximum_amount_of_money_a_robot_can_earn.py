@@ -7,34 +7,31 @@ jramaswami
 
 
 from typing import List
-import functools
+import math
 
 
 class Solution:
     def maximumAmount(self, coins: List[List[int]]) -> int:
-        INF = pow(10, 10)
+        # dp[row][col][neutralizations left]
+        dp = [[[-math.inf for _ in range(3)] for _ in row] for row in coins]
+        dp[0][0][0] = 0
+        dp[0][0][1] = 0
+        dp[0][0][2] = coins[0][0]
 
-        def neighbors(r, c):
-            if r + 1 < len(coins):
-                yield (r+1, c)
-            if c + 1 < len(coins[r]):
-                yield (r, c+1)
-
-        @functools.cache
-        def rec(r, c, neutralize):
-            # Base case: bottom right
-            if r == len(coins) - 1 and c == len(coins[r]) - 1:
-                # Is this a robber
-                if coins[r][c] < 0 and neutralize > 0:
-                    return 0
-                return coins[r][c]
-            # Recursive case
-            result = -INF
-            if coins[r][c] < 0 and neutralize > 0:
-                for r0, c0 in neighbors(r, c):
-                    result = max(result, rec(r0, c0, neutralize - 1))
-            for r0, c0 in neighbors(r, c):
-                result = max(result, coins[r][c] + rec(r0, c0, neutralize))
-            return result
-
-        return rec(0, 0, 2)
+        for r, row in enumerate(coins):
+            for c, _ in enumerate(row):
+                for n in range(3):
+                    # Down
+                    if r + 1 < len(coins):
+                        # Use neutralization
+                        if n > 0:
+                            dp[r+1][c][n-1] = max(dp[r+1][c][n-1], dp[r][c][n])
+                        # Don't use neutralization
+                        dp[r+1][c][n] = max(dp[r+1][c][n], dp[r][c][n] + coins[r+1][c])
+                    # Right
+                    if c + 1 < len(coins[r]):
+                        if n > 0:
+                            dp[r][c+1][n-1] = max(dp[r][c+1][n-1], dp[r][c][n])
+                        # Don't use neutralization
+                        dp[r][c+1][n] = max(dp[r][c+1][n], dp[r][c][n] + coins[r][c+1])
+        return max(dp[-1][-1][n] for n in range(3))
