@@ -26,14 +26,12 @@ class Solution:
         robots = [Robot(i, d) for i, d in zip(robots0, distance0)]
         robots.sort(key=lambda r: r.index)
         walls = list(sorted(walls0))
-        # print(f'{walls=}')
         # dp_left[i] by robot[i] if it shoots left
         dp_left = [0 for _ in robots]
         # dp_right[i] by robot[i] if it shoots right
         dp_right = [0 for _ in robots]
 
         for i, robot in enumerate(robots):
-            # print(f'{i=} {robot=}')
             # I am shooting left
             # Previous robot shot left
             left_limit = robot.left_limit
@@ -47,7 +45,6 @@ class Solution:
             # Number of walls I can hit
             curr_robot_destroyed = right_index - left_index + 1
             prev_robot_destroyed = dp_left[i-1] if i-1 >= 0 else 0
-            # print(f'L L {left_limit=} {left_index=} {right_index=} {prev_robot_destroyed=} {curr_robot_destroyed=}')
             dp_left[i] = max(dp_left[i], prev_robot_destroyed + curr_robot_destroyed)
 
             # I am shooting left
@@ -62,7 +59,9 @@ class Solution:
             right_index = bisect.bisect_right(walls, robot.index) - 1
             # Number of walls I can hit
             curr_robot_destroyed = right_index - left_index + 1
-            prev_robot_destroyed = dp_left[i-1] if i-1 > 0 else 0
+            prev_robot_destroyed = 0
+            if i - 1 >= 0:
+                prev_robot_destroyed = dp_right[i-1]
             dp_left[i] = max(dp_left[i], prev_robot_destroyed + curr_robot_destroyed)
 
             # I am shooting right
@@ -80,9 +79,6 @@ class Solution:
             if i - 1 >= 0:
                 prev_robot_destroyed = max(dp_left[i-1], dp_right[i-1])
             dp_right[i] = max(dp_right[i], prev_robot_destroyed + curr_robot_destroyed)
-
-        # print(dp_left)
-        # print(dp_right)
         return max(dp_left[-1], dp_right[-1])
 
 
