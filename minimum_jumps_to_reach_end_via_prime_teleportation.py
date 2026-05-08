@@ -7,50 +7,58 @@ jramaswami
 
 
 from typing import List
-import heapq
+import collections
 
 
-def sieve():
-    N = pow(10,6)
-    is_prime = [True for _ in range(pow(10,6))]
-    is_prime[0] = is_prime[1] = False
-    for x in range(4, N, 2):
-        is_prime[x] = False
+MX = pow(10,6) + 10
+is_prime = [True for _ in range(MX)]
+spf = [0 for _ in range(MX)]
+is_prime[0] = is_prime[1] = False
+for p in range(2, MX):
+    if is_prime[p]:
+        spf[p] = p
+        for x in range(2*p, MX, p):
+            is_prime[x] = False
+            if spf[x] == 0:
+                spf[x] = p
 
-    for p in range(3, pow(10,3)+1, 2):
-        if is_prime[p]:
-            for x in range(2*p, N, p):
-                is_prime[x] = False
-    return is_prime
 
-
-PRIMES = sieve()
+def get_factors(x):
+    res = set()
+    while x > 1:
+        p = spf[x]
+        res.add(p)
+        x //= p
+    return res
 
 
 class Solution:
     def minJumps(self, nums: List[int]) -> int:
-        INF = pow(10, 10)
-        soln = [INF for _ in nums]
-        soln[0] = 0
-        queue = [(0, 0)]
+        groups = collections.defaultdict(list)
+        for i, x in enumerate(nums):
+            for p in get_factors(x):
+                groups[p].append(i)
+        queue = collections.deque()
+        queue.append((0, 0))
+        seen_i = set()
+        seen_i.add(0)
+        seen_p = set()
         while queue:
-            d, i = heapq.heappop(queue)
+            i, jumps = queue.popleft()
             if i == len(nums) - 1:
-                return d
-            x = nums[i]
-            if d == soln[i]:
-                # left, right
-                if i + 1 < len(nums) and d + 1 < soln[i + 1]:
-                    soln[i + 1] = d + 1
-                    heapq.heappush(queue, (d+1, i+1))
-                if i - 1 >= 0 and d + 1 < soln[i - 1]:
-                    soln[i - 1] = d + 1
-                    heapq.heappush(queue, (d+1, i-1))
-                if PRIMES[x]:
-                    for j, y in enumerate(nums):
-                        if d + 1 < soln[j] and y % x == 0:
-                            soln[j] = d + 1
-                            heapq.heappush(queue, (d+1, j))
+                return jumps
+            if i + 1 < len(nums) and not i+1 in seen_i:
+                queue.append((i+1, jumps+1))
+                seen_i.add(i+1)
+            if i - 1 >= 0 and not i-1 in seen_i:
+                queue.append((i-1, jumps+1))
+                seen_i.add(i-1)
+            if nums[i] in groups and not nums[i] in seen_p:
+                seen_p.add(nums[i])
+                for j in groups[nums[i]]:
+                    if not j in seen_i:
+                        seen_i.add(j)
+                        queue.append((j, jumps+1))
 
 
 def test_668():
