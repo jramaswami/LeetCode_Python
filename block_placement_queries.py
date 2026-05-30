@@ -28,10 +28,13 @@ class Solution:
                             break
                         curr = min(curr, x)
                         dist = curr - prev
+                        prev = curr
                         if dist >= sz:
                             soln[-1] = True
                             break
-                        prev = curr
+                    dist = x - prev
+                    if dist >= sz:
+                        soln[-1] = True
                 else:
                     if sz <= x:
                         soln[-1] = True
