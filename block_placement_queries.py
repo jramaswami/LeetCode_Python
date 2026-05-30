@@ -19,9 +19,9 @@ class Solution:
                 obstacles.add(q[1])
             else:
                 soln.append(False)
+                x = q[1]
+                sz = q[2]
                 if obstacles:
-                    x = q[1]
-                    sz = q[2]
                     prev = 0
                     for curr in obstacles:
                         if prev >= x:
@@ -33,7 +33,8 @@ class Solution:
                             break
                         prev = curr
                 else:
-                    soln[-1] = True
+                    if sz <= x:
+                        soln[-1] = True
         return soln
 
 
@@ -58,6 +59,13 @@ def test_437():
 
 def test_484():
     "WA"
-    queries = [[2,1,1]]
+    queries = [[2,1,2]]
+    expected = [False]
+    assert Solution().getResults(queries) == expected
+
+
+def test_689():
+    "WA"
+    queries = [[1,1],[2,4,3]]
     expected = [True]
     assert Solution().getResults(queries) == expected
