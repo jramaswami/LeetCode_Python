@@ -35,11 +35,4 @@ class Solution:
                     visited.add(v)
                     queue.append((v, d+1))
 
-        MOD = pow(10, 9) + 7
-        soln = 0
-        for k in range(1, max_dist+1):
-            if k % 2:
-                x =  math.comb(max_dist, k)
-                soln += x
-                soln %= MOD
-        return soln % MOD
+        return pow(2, max_dist-1, pow(10,9)+7)
