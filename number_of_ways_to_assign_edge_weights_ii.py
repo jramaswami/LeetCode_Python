@@ -7,6 +7,7 @@ jramaswami
 
 
 import collections
+import functools
 from typing import List
 
 
@@ -35,6 +36,7 @@ class Solution:
                     lca_table[v] = (lvl+1, u)
                     queue.append(v)
 
+        @functools.cache
         def lca(u, v):
             d = 0
             while lca_table[u][LEVEL] > lca_table[v][LEVEL]:
