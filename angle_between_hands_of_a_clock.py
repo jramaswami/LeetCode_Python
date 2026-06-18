@@ -15,9 +15,12 @@ class Solution:
         minutes_angle = minutes * degrees_per_minute
         # Adjust hour hand
         hour_angle += (degrees_per_hour * minutes / 60)
-        if hour_angle > minutes_angle:
-            return hour_angle - minutes_angle
-        return minutes_angle - hour_angle
+        a, b = hour_angle, minutes_angle
+        if a > b: a, b = b, a
+        soln = b - a
+        if soln > 180:
+            return 360 - soln
+        return soln
 
 
 EPS = pow(10, -5)
